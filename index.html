@@ -2422,6 +2422,170 @@ html.light .res-filter-bar { background: #fff; }
 html.light .res-meta-item { background: #f5f5f5; }
 html.light .res-hero-title { color: #111; }
 
+/* ═══════════════════════════════════════════════
+   DATA ANALYTICS COURSES SECTION
+═══════════════════════════════════════════════ */
+.da-section {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.da-section-header { margin-bottom: 28px; }
+.da-section-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+.da-section-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.da-section-sub {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 680px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.da-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.da-chip {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.da-chip:hover { border-color: var(--orange); color: var(--orange); }
+.da-chip.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+/* DA course cards grid */
+.da-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.da-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.da-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  border-color: rgba(255,121,0,0.4);
+}
+
+.da-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 18px 14px;
+}
+.da-card-logo {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.da-logo-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+.da-card-meta { flex: 1; min-width: 0; }
+.da-card-provider {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.da-card-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.da-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.da-badge-topic { background: rgba(255,121,0,0.12); color: var(--orange); border: 1px solid rgba(255,121,0,0.25); }
+.da-badge-free  { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+.da-badge-paid  { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px solid rgba(99,102,241,0.25); }
+.da-badge-level { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+.da-card-body { padding: 0 18px 18px; flex: 1; }
+.da-card-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.da-card-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.da-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 14px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+}
+.da-card-price {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.da-card-duration {
+  font-size: 11px;
+  color: var(--muted);
+}
+.da-card-cta {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  white-space: nowrap;
+}
+html.light .da-card { background: #fff; }
+html.light .da-card-logo { background: #f5f5f5; }
+html.light .da-chip { border-color: #e0e0e0; }
+@media (max-width: 600px) { .da-grid { grid-template-columns: 1fr; } }
+
 /* Responsive */
 @media (max-width: 600px) {
   .res-grid { grid-template-columns: 1fr; }
@@ -4640,9 +4804,9 @@ html.light .tpl-radio-card { background: #fff; }
       <h1 class="res-hero-title">Professional Certifications<br><span class="res-accent">& Learning Resources</span></h1>
       <p class="res-hero-sub">Curated certifications and courses to accelerate your PM career. Filter by domain, cost, or difficulty — and click any card to go straight to the official provider.</p>
       <div class="res-stats-row">
-        <div class="res-stat"><span class="res-stat-num" id="resTotalCerts">18</span><span class="res-stat-lbl">Certifications</span></div>
+        <div class="res-stat"><span class="res-stat-num" id="resTotalCerts">18</span><span class="res-stat-lbl">PM Certifications</span></div>
         <div class="res-stat-div"></div>
-        <div class="res-stat"><span class="res-stat-num">5</span><span class="res-stat-lbl">Domains</span></div>
+        <div class="res-stat"><span class="res-stat-num">15</span><span class="res-stat-lbl">Data Analytics Courses</span></div>
         <div class="res-stat-div"></div>
         <div class="res-stat"><span class="res-stat-num">Free–$800</span><span class="res-stat-lbl">Price Range</span></div>
       </div>
@@ -4661,6 +4825,7 @@ html.light .tpl-radio-card { background: #fff; }
         <button class="res-chip" data-filter="Risk &amp; Governance" onclick="setResFilter('Risk &amp; Governance',this)">Risk &amp; Governance</button>
         <button class="res-chip" data-filter="Technical" onclick="setResFilter('Technical',this)">Technical</button>
         <button class="res-chip" data-filter="Business" onclick="setResFilter('Business',this)">Business</button>
+        <button class="res-chip" data-filter="Data Analytics" onclick="setResFilter('Data Analytics',this)">📊 Data Analytics</button>
         <button class="res-chip" data-filter="free" onclick="setResFilter('free',this)">💸 Free</button>
       </div>
       <div class="res-sort-wrap">
@@ -4679,8 +4844,26 @@ html.light .tpl-radio-card { background: #fff; }
       <span id="resResultCount" class="res-result-count">Showing 18 certifications</span>
     </div>
 
-    <!-- Cards Grid -->
+    <!-- Cards Grid — PM Certifications -->
     <div class="res-grid" id="resGrid"></div>
+
+    <!-- ── DATA ANALYTICS COURSES SECTION ── -->
+    <div class="da-section" id="daSection">
+      <div class="da-section-header">
+        <div class="da-section-eyebrow">Supplementary Learning</div>
+        <h2 class="da-section-title">📊 Data Analytics & Reporting Courses</h2>
+        <p class="da-section-sub">Not PM certifications — but essential skills for modern DPMs. Power BI, Excel, Power Automate and data storytelling courses from top platforms.</p>
+        <div class="da-filter-row">
+          <button class="da-chip active" data-da="all" onclick="setDaFilter('all',this)">All Courses</button>
+          <button class="da-chip" data-da="Power BI" onclick="setDaFilter('Power BI',this)">📊 Power BI</button>
+          <button class="da-chip" data-da="Excel" onclick="setDaFilter('Excel',this)">📗 Excel</button>
+          <button class="da-chip" data-da="Power Automate" onclick="setDaFilter('Power Automate',this)">⚡ Power Automate</button>
+          <button class="da-chip" data-da="Data Analytics" onclick="setDaFilter('Data Analytics',this)">🔍 Data Analytics</button>
+          <button class="da-chip" data-da="free" onclick="setDaFilter('free',this)">💸 Free</button>
+        </div>
+      </div>
+      <div class="da-grid" id="daGrid"></div>
+    </div>
 
     <!-- Footer note -->
     <div class="res-footer-note">
@@ -4906,7 +5089,7 @@ function showPage(page) {
   const tabs = document.querySelectorAll('.nav-tab');
   const map = {home:0, builder:1, executive:2, resources:3, connect:4};
   tabs[map[page]].classList.add('active');
-  if (page === 'resources') initResources();
+  if (page === 'resources') { initResources(); initDaCourses(); }
   if (page === 'connect') initConnect();
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -7883,6 +8066,317 @@ function closeTour() {
 /* ===================================================
    RESOURCES PAGE — DATA + LOGIC
 =================================================== */
+/* ═══════════════════════════════════
+   DATA ANALYTICS COURSES
+═══════════════════════════════════ */
+const DA_COURSES = [
+  // ── POWER BI ──────────────────────────────────────────────────────────────
+  {
+    id: 'da1',
+    name: 'Microsoft Power BI Data Analyst Professional Certificate',
+    provider: 'Microsoft · Coursera',
+    platform: 'Coursera',
+    topic: 'Power BI',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit · ~$49/mo for certificate',
+    duration: '3 months',
+    emoji: '📊',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png',
+    description: 'Official Microsoft course covering Power BI end-to-end: data prep in Excel, Power Query, DAX, Star schema modelling, dashboards, and PL-300 exam prep. Hands-on projects throughout.',
+    link: 'https://www.coursera.org/professional-certificates/microsoft-power-bi-data-analyst'
+  },
+  {
+    id: 'da2',
+    name: 'Microsoft Power BI Desktop for Business Intelligence',
+    provider: 'Maven Analytics · Udemy',
+    platform: 'Udemy',
+    topic: 'Power BI',
+    level: 'beginner',
+    price: 15,
+    priceFree: false,
+    priceDisplay: '~$15 (Udemy sale)',
+    duration: '16 hours',
+    emoji: '📊',
+    logoUrl: 'https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg',
+    description: 'The #1 best-selling Power BI course on Udemy with 250,000+ five-star reviews. Project-based: you\'ll build KPI dashboards, regional performance reports, and customer analysis for a real company.',
+    link: 'https://www.udemy.com/course/microsoft-power-bi-up-running-with-power-bi-desktop/'
+  },
+  {
+    id: 'da3',
+    name: 'Power BI – Data Analytics Essentials',
+    provider: 'Foresight BI · Udemy',
+    platform: 'Udemy',
+    topic: 'Power BI',
+    level: 'beginner',
+    price: 15,
+    priceFree: false,
+    priceDisplay: '~$15 (Udemy sale)',
+    duration: '12 hours',
+    emoji: '📊',
+    logoUrl: 'https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg',
+    description: 'Taught by a Microsoft Certified Power BI Data Analyst. Covers DAX measures, data modelling, Power Query, and building interactive dashboards. Includes a virtual internship certificate on completion.',
+    link: 'https://www.udemy.com/course/data-analytics-essentials-with-power-bi/'
+  },
+  {
+    id: 'da4',
+    name: 'Microsoft Power BI & Power Platform for Productivity',
+    provider: 'Microsoft · Coursera',
+    platform: 'Coursera',
+    topic: 'Power BI',
+    level: 'intermediate',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '4 months',
+    emoji: '⚡',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png',
+    description: 'Combines Power BI with Power Platform (Power Apps & Power Automate). Covers ETL, data modelling, DAX, dashboards, and business process automation — all in one programme.',
+    link: 'https://www.coursera.org/specializations/microsoft-power-bi-and-power-platform-productivity'
+  },
+  {
+    id: 'da5',
+    name: 'Advanced Power BI: Expert Data Analysis & Visualization',
+    provider: 'Udemy',
+    platform: 'Udemy',
+    topic: 'Power BI',
+    level: 'advanced',
+    price: 15,
+    priceFree: false,
+    priceDisplay: '~$15 (Udemy sale)',
+    duration: '10 hours',
+    emoji: '🔬',
+    logoUrl: 'https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg',
+    description: 'For Power BI users who already know the basics. Covers advanced data modelling, role-level security, fuzzy matching, complex DAX, and real-world case studies.',
+    link: 'https://www.udemy.com/course/advanced-power-bi-expert-data-analysis-and-visualization/'
+  },
+  {
+    id: 'da6',
+    name: 'Get Started with Power BI',
+    provider: 'Microsoft Learn',
+    platform: 'Microsoft Learn',
+    topic: 'Power BI',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: '100% Free',
+    duration: 'Self-paced',
+    emoji: '🆓',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png',
+    description: 'Official free Microsoft training path. Covers Power BI fundamentals, connecting data sources, creating reports and dashboards. Also prepares for the PL-300 certification exam.',
+    link: 'https://learn.microsoft.com/en-us/training/powerplatform/power-bi'
+  },
+  // ── EXCEL ──────────────────────────────────────────────────────────────────
+  {
+    id: 'da7',
+    name: 'Excel Skills for Business Specialization',
+    provider: 'Macquarie University · Coursera',
+    platform: 'Coursera',
+    topic: 'Excel',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '6 months',
+    emoji: '📗',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Microsoft_Office_Excel_%282018%E2%80%93present%29.svg/512px-Microsoft_Office_Excel_%282018%E2%80%93present%29.svg.png',
+    description: 'One of the most popular Excel courses on Coursera. Covers essential to advanced Excel: PivotTables, VLOOKUP, data validation, macros, and dashboards. Ideal for business professionals.',
+    link: 'https://www.coursera.org/specializations/excel'
+  },
+  {
+    id: 'da8',
+    name: 'Microsoft Excel – Excel from Beginner to Advanced',
+    provider: 'Kyle Pew · Udemy',
+    platform: 'Udemy',
+    topic: 'Excel',
+    level: 'beginner',
+    price: 15,
+    priceFree: false,
+    priceDisplay: '~$15 (Udemy sale)',
+    duration: '18 hours',
+    emoji: '📗',
+    logoUrl: 'https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg',
+    description: 'Top-rated Excel course on Udemy with 900,000+ students. Covers the full journey: formulas, functions, PivotTables, charts, macros, and advanced data analysis techniques.',
+    link: 'https://www.udemy.com/course/microsoft-excel-2013-from-beginner-to-advanced-and-beyond/'
+  },
+  {
+    id: 'da9',
+    name: 'Unlock Business Insights: Excel & Power BI',
+    provider: 'Microsoft · Coursera',
+    platform: 'Coursera',
+    topic: 'Excel',
+    level: 'intermediate',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '2 months',
+    emoji: '📗',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png',
+    description: 'Microsoft-designed course linking Excel to Power BI. Learn PivotTables, Power Pivot, advanced formulas, and how to feed Excel data directly into Power BI reports.',
+    link: 'https://www.coursera.org/specializations/unlock-excel-vba-and-power-bi'
+  },
+  // ── POWER AUTOMATE ─────────────────────────────────────────────────────────
+  {
+    id: 'da10',
+    name: 'Power Automate: Automate Business Processes',
+    provider: 'Microsoft Learn',
+    platform: 'Microsoft Learn',
+    topic: 'Power Automate',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: '100% Free',
+    duration: 'Self-paced',
+    emoji: '⚡',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png',
+    description: 'Official Microsoft free training path. Learn to build automated workflows, connect apps and services, automate approvals, and integrate with Teams, SharePoint, and Outlook.',
+    link: 'https://learn.microsoft.com/en-us/training/paths/automate-process-power-automate/'
+  },
+  {
+    id: 'da11',
+    name: 'Microsoft Power Automate – The Complete Guide',
+    provider: 'Udemy',
+    platform: 'Udemy',
+    topic: 'Power Automate',
+    level: 'beginner',
+    price: 15,
+    priceFree: false,
+    priceDisplay: '~$15 (Udemy sale)',
+    duration: '8 hours',
+    emoji: '⚡',
+    logoUrl: 'https://www.udemy.com/staticx/udemy/images/v7/logo-udemy.svg',
+    description: 'Comprehensive guide to Power Automate covering cloud flows, desktop automation (RPA), scheduled flows, and integration with Microsoft 365 apps. Practical projects throughout.',
+    link: 'https://www.udemy.com/course/microsoft-flow/'
+  },
+  {
+    id: 'da12',
+    name: 'Power Automate with SharePoint & Teams',
+    provider: 'Coursera Project Network',
+    platform: 'Coursera',
+    topic: 'Power Automate',
+    level: 'intermediate',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '2 hours',
+    emoji: '⚡',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Coursera-Logo_600x600.svg/512px-Coursera-Logo_600x600.svg.png',
+    description: 'Guided project: build real automation workflows connecting SharePoint and Microsoft Teams using Power Automate. Perfect for DPMs managing documents and team notifications.',
+    link: 'https://www.coursera.org/learn/automate-business-workflows-with-power-automate'
+  },
+  // ── DATA ANALYTICS ─────────────────────────────────────────────────────────
+  {
+    id: 'da13',
+    name: 'Google Data Analytics Professional Certificate',
+    provider: 'Google · Coursera',
+    platform: 'Coursera',
+    topic: 'Data Analytics',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '6 months',
+    emoji: '🔍',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/512px-Google_2015_logo.svg.png',
+    description: 'One of the most popular data analytics programmes online. Covers data cleaning, analysis, visualisation, SQL, R, Tableau, and the full data analyst workflow. No prior experience needed.',
+    link: 'https://www.coursera.org/professional-certificates/google-data-analytics'
+  },
+  {
+    id: 'da14',
+    name: 'Data Analysts\' Toolbox: Excel, Power BI, Python & Tableau',
+    provider: 'Packt · Coursera',
+    platform: 'Coursera',
+    topic: 'Data Analytics',
+    level: 'intermediate',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '3 months',
+    emoji: '🧰',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Coursera-Logo_600x600.svg/512px-Coursera-Logo_600x600.svg.png',
+    description: 'All-in-one course covering Excel, Power BI, Python, Tableau, and Alteryx. Build dashboards, automate workflows, perform statistical analysis, and handle real-world data projects.',
+    link: 'https://www.coursera.org/specializations/packt-data-analysts-toolbox-excel-power-bi-python-and-tableau'
+  },
+  {
+    id: 'da15',
+    name: 'IBM Data Analytics with Excel and R',
+    provider: 'IBM · Coursera',
+    platform: 'Coursera',
+    topic: 'Data Analytics',
+    level: 'beginner',
+    price: 0,
+    priceFree: true,
+    priceDisplay: 'Free to audit',
+    duration: '4 months',
+    emoji: '🔵',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/512px-IBM_logo.svg.png',
+    description: 'IBM-designed professional certificate covering data analytics with Excel and R. Includes data wrangling, visualisation, and building a final capstone project. Counts towards IBM Data Analyst cert.',
+    link: 'https://www.coursera.org/professional-certificates/ibm-data-analyst-r-excel'
+  }
+];
+
+let daActiveFilter = 'all';
+
+function initDaCourses() {
+  renderDaGrid(DA_COURSES);
+}
+
+function setDaFilter(filter, btn) {
+  daActiveFilter = filter;
+  document.querySelectorAll('.da-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderDaGrid(DA_COURSES);
+}
+
+function renderDaGrid(courses) {
+  const grid = document.getElementById('daGrid');
+  if (!grid) return;
+  let filtered = courses;
+  if (daActiveFilter !== 'all') {
+    if (daActiveFilter === 'free') {
+      filtered = courses.filter(c => c.priceFree);
+    } else {
+      filtered = courses.filter(c => c.topic === daActiveFilter);
+    }
+  }
+  if (!filtered.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:14px;padding:20px 0;">No courses match this filter.</p>';
+    return;
+  }
+  grid.innerHTML = filtered.map((c, i) => {
+    const logoHtml = c.logoUrl
+      ? `<img class="da-logo-img" src="${c.logoUrl}" alt="${c.provider}" onerror="this.parentNode.textContent='${c.emoji}'">`
+      : c.emoji;
+    const levelLabel = {beginner:'Beginner', intermediate:'Intermediate', advanced:'Advanced'}[c.level] || c.level;
+    const priceClass = c.priceFree ? 'da-badge-free' : 'da-badge-paid';
+    return `<a class="da-card" href="${c.link}" target="_blank" rel="noopener" style="animation-delay:${i*0.04}s">
+      <div class="da-card-top">
+        <div class="da-card-logo">${logoHtml}</div>
+        <div class="da-card-meta">
+          <div class="da-card-provider">${c.provider}</div>
+          <div class="da-card-badges">
+            <span class="da-badge da-badge-topic">${c.topic}</span>
+            <span class="da-badge ${priceClass}">${c.priceFree ? '🆓 Free' : 'Paid'}</span>
+            <span class="da-badge da-badge-level">${levelLabel}</span>
+          </div>
+        </div>
+      </div>
+      <div class="da-card-body">
+        <div class="da-card-name">${c.name}</div>
+        <div class="da-card-desc">${c.description}</div>
+      </div>
+      <div class="da-card-footer">
+        <div>
+          <div class="da-card-price">${c.priceDisplay}</div>
+          <div class="da-card-duration">⏱ ${c.duration}</div>
+        </div>
+        <div class="da-card-cta">View Course →</div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
 const CERTIFICATIONS = [
   {
     id: 1,
