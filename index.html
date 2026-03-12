@@ -4334,6 +4334,39 @@ html.light .cvgb-sharepoint {
 }
 .sp-advanced summary::-webkit-details-marker { display: none; }
 .sp-advanced[open] summary { color: var(--text); margin-bottom: 2px; }
+
+/* SP modal step cards */
+.sp-steps-visual { display: flex; flex-direction: column; gap: 0; margin: 16px 0 4px; }
+.sp-step-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.sp-step-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #0078d4;
+  color: #fff;
+  font-size: 13px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.sp-step-info { flex: 1; }
+.sp-step-label { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+.sp-step-action { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.sp-step-hint { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.sp-step-divider {
+  text-align: center;
+  font-size: 18px;
+  color: var(--muted);
+  margin: 4px 0;
+  line-height: 1;
+}
 </style>
 </head>
 <body>
@@ -9942,35 +9975,14 @@ function renderResGrid(certs) {
 </div>
 
 
+</body>
 
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <script>
 /* ===================================================
-   SHAREPOINT UPLOAD — Microsoft Graph API + MSAL
+   SHAREPOINT UPLOAD — Download + Open folder approach
+   No Azure App Registration needed.
 =================================================== */
 const SP_FOLDER = 'test CVs';
-
-// ── MSAL config — user fills in their tenant/client on first use ──────────
-// We store in localStorage so they only enter once
-function spGetMsalConfig() {
-  return {
-    auth: {
-      clientId:   localStorage.getItem('ob_sp_client_id') || '',
-      authority:  'https://login.microsoftonline.com/' + (localStorage.getItem('ob_sp_tenant_id') || 'common'),
-      redirectUri: window.location.origin + window.location.pathname
-    },
-    cache: { cacheLocation: 'sessionStorage' }
-  };
-}
-
-let _msalInstance = null;
-function getMsal() {
-  const cfg = spGetMsalConfig();
-  if (!_msalInstance || _msalInstance.config.auth.clientId !== cfg.auth.clientId) {
-    _msalInstance = new msal.PublicClientApplication(cfg);
-  }
-  return _msalInstance;
-}
 
 function sendToSharePoint() {
   if (!currentCVData) {
@@ -9984,9 +9996,9 @@ function spShowModal() {
   const existing = document.getElementById('spModal');
   if (existing) existing.remove();
 
-  const savedSite     = localStorage.getItem('ob_sp_site_url')     || '';
-  const savedClientId = localStorage.getItem('ob_sp_client_id')    || '';
-  const savedTenant   = localStorage.getItem('ob_sp_tenant_id')    || '';
+  const savedSite = localStorage.getItem('ob_sp_site_url') || '';
+  const safeName  = (currentCVData.name || 'profile').replace(/\s+/g, '_');
+  const filename  = 'Orange_CV_' + safeName + '.json';
 
   const overlay = document.createElement('div');
   overlay.className = 'sp-modal-overlay';
@@ -9996,51 +10008,50 @@ function spShowModal() {
       <div class="sp-modal-icon">📤</div>
       <div class="sp-modal-title">Send to SharePoint</div>
       <div class="sp-modal-sub">
-        Uploads your JSON profile to <strong>Shared Documents / ${SP_FOLDER}</strong>
-        using your Microsoft 365 account. A sign-in popup will appear.
+        Two quick steps to get <strong>${filename}</strong>
+        into <strong>Shared Documents / ${SP_FOLDER}</strong>:
       </div>
 
-      <div class="sp-modal-field">
-        <label>SharePoint Site URL</label>
-        <input type="url" id="spSiteUrl" placeholder="https://yourcompany.sharepoint.com/sites/yoursite" value="${savedSite}" oninput="localStorage.setItem('ob_sp_site_url',this.value.trim())">
-      </div>
-
-      <details class="sp-advanced" id="spAdvanced">
-        <summary>⚙️ Azure App Settings <span style="font-size:11px;color:var(--muted);font-weight:400;">(required once)</span></summary>
-        <div style="margin-top:12px;">
-          <div class="sp-modal-field">
-            <label>Azure App (Client) ID</label>
-            <input type="text" id="spClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="${savedClientId}" oninput="localStorage.setItem('ob_sp_client_id',this.value.trim());_msalInstance=null;">
-          </div>
-          <div class="sp-modal-field">
-            <label>Tenant ID <span style="font-weight:400;color:var(--muted)">(or leave blank for any org account)</span></label>
-            <input type="text" id="spTenantId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="${savedTenant}" oninput="localStorage.setItem('ob_sp_tenant_id',this.value.trim());_msalInstance=null;">
-          </div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px;">
-            Create a free Azure App Registration → set platform to <strong>Single-page Application</strong> →
-            add redirect URI: <strong>${window.location.origin + window.location.pathname}</strong> →
-            grant API permissions: <strong>Sites.ReadWrite.All</strong> (Microsoft Graph, Delegated).
+      <div class="sp-steps-visual">
+        <div class="sp-step-card">
+          <div class="sp-step-circle">1</div>
+          <div class="sp-step-info">
+            <div class="sp-step-label">Enter your SharePoint site URL, then click</div>
+            <div class="sp-step-action">📥 Download &amp; Open SharePoint</div>
+            <div class="sp-step-hint">This downloads the JSON file <em>and</em> opens the SharePoint folder in a new tab.</div>
           </div>
         </div>
-      </details>
+        <div class="sp-step-divider">↓</div>
+        <div class="sp-step-card">
+          <div class="sp-step-circle">2</div>
+          <div class="sp-step-info">
+            <div class="sp-step-label">In the SharePoint tab that opens</div>
+            <div class="sp-step-action">Drag the downloaded file into the page — done ✓</div>
+            <div class="sp-step-hint">Or click <strong>Upload</strong> in SharePoint's toolbar and select the file.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sp-modal-field" style="margin-top:20px;">
+        <label>Your SharePoint Site URL</label>
+        <input type="url" id="spSiteUrl"
+          placeholder="https://yourcompany.sharepoint.com/sites/yoursite"
+          value="${savedSite}"
+          oninput="localStorage.setItem('ob_sp_site_url', this.value.trim())">
+      </div>
 
       <div id="spStatus" class="sp-status"></div>
+
       <div class="sp-modal-actions">
         <button class="sp-btn-secondary" onclick="spCloseModal()">Cancel</button>
-        <button class="sp-btn-primary" id="spUploadGo" onclick="spDoUpload()">📤 Sign in &amp; Upload</button>
+        <button class="sp-btn-primary" id="spUploadGo" onclick="spDoDownloadAndOpen()">
+          📥 Download &amp; Open SharePoint
+        </button>
       </div>
     </div>
   `;
   overlay.addEventListener('click', spCloseModal);
   document.body.appendChild(overlay);
-
-  // Auto-open advanced if no client ID saved
-  if (!savedClientId) {
-    setTimeout(() => {
-      const det = document.getElementById('spAdvanced');
-      if (det) det.open = true;
-    }, 100);
-  }
 }
 
 function spCloseModal() {
@@ -10056,119 +10067,52 @@ function spSetStatus(type, msg) {
   el.style.display = 'block';
 }
 
-async function spDoUpload() {
-  const siteUrl  = (document.getElementById('spSiteUrl').value  || '').trim().replace(/\/+$/, '');
-  const clientId = localStorage.getItem('ob_sp_client_id') || '';
-
-  if (!siteUrl)   { spSetStatus('error', '⚠️ Please enter your SharePoint site URL.'); return; }
-  if (!clientId)  { 
-    spSetStatus('error', '⚠️ Please expand ⚙️ Azure App Settings and enter your Client ID first.'); 
-    document.getElementById('spAdvanced').open = true;
-    return; 
+function spDoDownloadAndOpen() {
+  const siteUrl = (document.getElementById('spSiteUrl').value || '').trim().replace(/\/+$/, '');
+  if (!siteUrl) {
+    spSetStatus('error', '⚠️ Please enter your SharePoint site URL first.');
+    return;
+  }
+  if (!siteUrl.startsWith('https://')) {
+    spSetStatus('error', '⚠️ URL must start with https://');
+    return;
   }
 
   const btn = document.getElementById('spUploadGo');
   btn.disabled = true;
-  btn.textContent = 'Signing in…';
-  spSetStatus('info', '🔐 Opening Microsoft sign-in popup…');
 
+  // Step 1: Download the JSON file
+  const safeName = (currentCVData.name || 'profile').replace(/\s+/g, '_');
+  const filename  = 'Orange_CV_' + safeName + '.json';
+  const blob = new Blob([JSON.stringify(currentCVData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // Step 2: Build the SharePoint folder URL and open it
+  // Try to construct a direct link to the "test CVs" folder in Shared Documents
+  let spFolderUrl;
   try {
-    const msalApp = getMsal();
-    await msalApp.initialize();
-
-    // Acquire token via popup
-    const scopes = ['https://graph.microsoft.com/Sites.ReadWrite.All'];
-    let tokenResp;
-    try {
-      // Try silent first (already signed in)
-      const accounts = msalApp.getAllAccounts();
-      if (accounts.length > 0) {
-        tokenResp = await msalApp.acquireTokenSilent({ scopes, account: accounts[0] });
-      } else {
-        tokenResp = await msalApp.acquireTokenPopup({ scopes });
-      }
-    } catch(e) {
-      // Silent failed — force popup
-      tokenResp = await msalApp.acquireTokenPopup({ scopes });
-    }
-
-    const accessToken = tokenResp.accessToken;
-    spSetStatus('info', '🔍 Looking up SharePoint site…');
-
-    // Get site ID from SharePoint URL
-    const siteHostAndPath = siteUrl.replace('https://', '');
-    const [siteHost, ...pathParts] = siteHostAndPath.split('/');
-    const sitePath = pathParts.join('/');
-    const siteInfoUrl = 'https://graph.microsoft.com/v1.0/sites/' + siteHost + ':/' + sitePath;
-
-    const siteResp = await fetch(siteInfoUrl, {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    });
-    if (!siteResp.ok) throw new Error('Site not found. Check your SharePoint URL. (' + siteResp.status + ')');
-    const siteInfo = await siteResp.json();
-    const siteId = siteInfo.id;
-
-    // Get the drive (default document library)
-    spSetStatus('info', '📁 Finding "' + SP_FOLDER + '" folder…');
-    const driveResp = await fetch('https://graph.microsoft.com/v1.0/sites/' + siteId + '/drive', {
-      headers: { 'Authorization': 'Bearer ' + accessToken }
-    });
-    if (!driveResp.ok) throw new Error('Could not access document library. (' + driveResp.status + ')');
-    const driveInfo = await driveResp.json();
-    const driveId = driveInfo.id;
-
-    // Upload file into the folder
-    const safeName = (currentCVData.name || 'profile').replace(/\s+/g, '_');
-    const filename  = 'Orange_CV_' + safeName + '.json';
-    const jsonStr   = JSON.stringify(currentCVData, null, 2);
-    const encoder   = new TextEncoder();
-    const fileBytes = encoder.encode(jsonStr);
-
-    spSetStatus('info', '📤 Uploading <strong>' + filename + '</strong> to ' + SP_FOLDER + '…');
-
-    const uploadUrl = 'https://graph.microsoft.com/v1.0/drives/' + driveId
-      + '/root:/' + encodeURIComponent(SP_FOLDER) + '/' + encodeURIComponent(filename) + ':/content';
-
-    const uploadResp = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'Bearer ' + accessToken,
-        'Content-Type':  'application/json'
-      },
-      body: fileBytes
-    });
-
-    if (uploadResp.ok) {
-      const uploaded = await uploadResp.json();
-      const fileLink = uploaded.webUrl || '';
-      spSetStatus('success',
-        '✅ <strong>' + filename + '</strong> uploaded to <strong>Shared Documents / ' + SP_FOLDER + '</strong>!' +
-        (fileLink ? ' <a href="' + fileLink + '" target="_blank" style="color:#10b981;text-decoration:underline;">View file ↗</a>' : '')
-      );
-      btn.textContent = '✓ Done';
-      setTimeout(spCloseModal, 4000);
-    } else if (uploadResp.status === 404) {
-      spSetStatus('error', '📁 Folder <strong>"' + SP_FOLDER + '"</strong> not found in Shared Documents. Please create it on SharePoint first.');
-      btn.disabled = false; btn.textContent = 'Try Again';
-    } else if (uploadResp.status === 403) {
-      spSetStatus('error', '🔐 Access denied. Make sure your Azure app has <strong>Sites.ReadWrite.All</strong> permission and admin consent was granted.');
-      btn.disabled = false; btn.textContent = 'Try Again';
-    } else {
-      const errBody = await uploadResp.text();
-      throw new Error('Upload failed (' + uploadResp.status + '): ' + errBody.slice(0, 120));
-    }
-
-  } catch(err) {
-    if (err.errorCode === 'user_cancelled' || err.errorCode === 'access_denied') {
-      spSetStatus('error', '❌ Sign-in was cancelled. Please try again.');
-    } else if (err.errorCode === 'popup_window_error') {
-      spSetStatus('error', '🚫 Popup was blocked. Please allow popups for this site and try again.');
-    } else {
-      spSetStatus('error', '❌ ' + (err.message || err.errorCode || 'Unknown error'));
-    }
-    const btn = document.getElementById('spUploadGo');
-    if (btn) { btn.disabled = false; btn.textContent = '📤 Sign in & Upload'; }
+    const url = new URL(siteUrl);
+    const sitePath = url.pathname.replace(/\/+$/, '');
+    // Standard SharePoint folder URL format
+    spFolderUrl = siteUrl + '/Shared%20Documents/' + encodeURIComponent(SP_FOLDER);
+  } catch(e) {
+    spFolderUrl = siteUrl;
   }
+
+  setTimeout(() => {
+    window.open(spFolderUrl, '_blank');
+    spSetStatus('success',
+      '✅ <strong>' + filename + '</strong> is downloading now.<br>' +
+      'The <strong>' + SP_FOLDER + '</strong> folder has opened in a new tab — ' +
+      'just drag the file in or click <strong>Upload</strong>.'
+    );
+    btn.textContent = '✓ Done';
+    btn.disabled = false;
+  }, 400);
 }
 </script>
 </body>
