@@ -635,6 +635,32 @@ input[type=file] {
 .exec-upload-zone h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
 .exec-upload-zone p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
 
+/* Two-column upload layout */
+.exec-upload-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (max-width: 640px) {
+  .exec-upload-two-col { grid-template-columns: 1fr; }
+}
+.exec-upload-card {
+  margin-bottom: 0;          /* override the single-card bottom margin */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 20px;
+}
+.exec-upload-card-report {
+  border-color: rgba(16,185,129,0.4);  /* green tint for report card */
+}
+.exec-upload-card-report:hover {
+  border-color: #10b981;
+  background: rgba(16,185,129,0.06);
+}
+
 .uploaded-files-list { margin-bottom: 20px; }
 .uploaded-file-item {
   display: flex; align-items: center; gap: 10px;
@@ -4367,6 +4393,26 @@ html.light .cvgb-sharepoint {
   margin: 4px 0;
   line-height: 1;
 }
+
+/* ── Manager report save/load buttons ─────────────────────────── */
+.pbi-action-report-export {
+  background: rgba(16,185,129,0.12);
+  border-color: rgba(16,185,129,0.35);
+  color: #10b981;
+}
+.pbi-action-report-export:hover {
+  background: rgba(16,185,129,0.22);
+  border-color: #10b981;
+}
+.pbi-action-report-import {
+  background: rgba(232,109,0,0.10);
+  border-color: rgba(232,109,0,0.35);
+  color: var(--orange);
+}
+.pbi-action-report-import:hover {
+  background: rgba(232,109,0,0.20);
+  border-color: var(--orange);
+}
 </style>
 </head>
 <body>
@@ -5431,12 +5477,27 @@ html.light .cvgb-sharepoint {
     <h2 style="font-size:24px;font-weight:800;margin-bottom:6px;">Manager Dashboard</h2>
     <p style="color:var(--muted);font-size:14px;margin-bottom:28px;">Upload your DPMs' <strong style="color:var(--orange)">.json</strong> profile files to generate a consolidated team skills analysis for internal reporting.</p>
 
-    <div class="exec-upload-zone" onclick="document.getElementById('execFileInput').click()">
-      <div style="font-size:36px;margin-bottom:12px;">📂</div>
-      <h3>Upload CV JSON Files</h3>
-      <p>Click to select one or more <strong style="color:var(--orange)">.json</strong> CV files exported from the CV Builder tab</p>
-      <button class="btn-primary" onclick="event.stopPropagation();document.getElementById('execFileInput').click()">Select JSON Files</button>
-      <input type="file" id="execFileInput" multiple accept=".json" style="display:none" onchange="handleExecFiles(event)">
+    <!-- Upload options: two cards side by side -->
+    <div class="exec-upload-two-col">
+
+      <!-- Option A: Upload individual CV JSONs -->
+      <div class="exec-upload-zone exec-upload-card" onclick="document.getElementById('execFileInput').click()">
+        <div style="font-size:36px;margin-bottom:12px;">📄</div>
+        <h3>Upload CV Profiles</h3>
+        <p>Select one or more <strong style="color:var(--orange)">.json</strong> files exported from the CV Builder tab</p>
+        <button class="btn-primary" onclick="event.stopPropagation();document.getElementById('execFileInput').click()">Select JSON Files</button>
+        <input type="file" id="execFileInput" multiple accept=".json" style="display:none" onchange="handleExecFiles(event)">
+      </div>
+
+      <!-- Option B: Load a previously saved Manager Report -->
+      <div class="exec-upload-zone exec-upload-card exec-upload-card-report" onclick="document.getElementById('managerReportInputTop').click()">
+        <div style="font-size:36px;margin-bottom:12px;">📊</div>
+        <h3>Load Saved Report</h3>
+        <p>Reload a <strong style="color:var(--orange)">Team Report</strong> exported previously with <em>💾 Save Report</em> — restores all profiles instantly</p>
+        <button class="btn-secondary" onclick="event.stopPropagation();document.getElementById('managerReportInputTop').click()">Load Report JSON</button>
+        <input type="file" id="managerReportInputTop" accept=".json" style="display:none" onchange="importManagerReport(event)">
+      </div>
+
     </div>
 
     <div id="execFileList" class="uploaded-files-list"></div>
@@ -5489,6 +5550,9 @@ html.light .cvgb-sharepoint {
           </div>
         </div>
         <div class="pbi-header-actions">
+          <button class="pbi-action-btn pbi-action-report-export" onclick="exportManagerReport()" title="Save all loaded profiles as a single report file">💾 Save Report</button>
+          <button class="pbi-action-btn pbi-action-report-import" onclick="document.getElementById('managerReportInput').click()" title="Load a previously saved report file">📂 Load Report</button>
+          <input type="file" id="managerReportInput" accept=".json" style="display:none" onchange="importManagerReport(event)">
           <button class="pbi-action-btn" onclick="downloadExecPDF()">⬇ Export PDF</button>
           <button class="pbi-action-btn pbi-action-outline" onclick="window.print()">🖨 Print</button>
         </div>
@@ -10011,6 +10075,115 @@ function renderResGrid(certs) {
   }).join('');
 }
 
+/* ===================================================
+   MANAGER REPORT — SAVE & LOAD
+=================================================== */
+function exportManagerReport() {
+  if (!execProfiles || execProfiles.length === 0) {
+    obAlert('No profiles loaded yet. Upload some DPM profiles first.', {title:'Nothing to save', icon:'📂'});
+    return;
+  }
+
+  const report = {
+    schemaVersion: '1.0',
+    reportType:    'manager_report',
+    exportedAt:    new Date().toISOString(),
+    profileCount:  execProfiles.length,
+    profiles:      execProfiles
+  };
+
+  const dateStr   = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const filename  = `OB_Team_Report_${dateStr}.json`;
+  const blob      = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  const a         = document.createElement('a');
+  a.href          = URL.createObjectURL(blob);
+  a.download      = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  // Toast confirmation
+  obToast('💾 Report saved as ' + filename);
+}
+
+function importManagerReport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      let profiles;
+      if (data.reportType === 'manager_report' && Array.isArray(data.profiles)) {
+        profiles = data.profiles;
+      } else if (Array.isArray(data)) {
+        profiles = data;
+      } else {
+        obAlert("This file doesn't look like a valid manager report.", {title:'Invalid file', icon:'⚠️'});
+        return;
+      }
+
+      if (profiles.length === 0) {
+        obAlert('The report file contains no profiles.', {title:'Empty report', icon:'📂'});
+        return;
+      }
+
+      if (execProfiles.length > 0) {
+        const ok = await obConfirm(
+          'This will replace the ' + execProfiles.length + ' currently loaded profile(s) with the ' + profiles.length + ' profile(s) from the report file.',
+          {title:'Replace current profiles?', icon:'📂', confirmLabel:'Load Report'}
+        );
+        if (!ok) return;
+      }
+
+      execProfiles     = profiles;
+      filteredProfiles = [...execProfiles];
+      selectedNames.clear();
+      saveProfilesToStorage();
+
+      renderFileList();
+      buildFilterDropdown();
+      renderFilterChips();
+
+      document.getElementById('execGenBtn').style.display     = 'block';
+      document.getElementById('execFilterBar').style.display  = 'block';
+      document.getElementById('execStorageNote').style.display = 'flex';
+
+      renderExecDashboard(filteredProfiles);
+      document.getElementById('execDashboard').style.display = 'block';
+
+      const dateStr = data.exportedAt ? ' (saved ' + data.exportedAt.slice(0,10) + ')' : '';
+      obToast('📂 Loaded ' + profiles.length + ' profiles from report' + dateStr);
+
+    } catch(err) {
+      obAlert('Could not read the report file: ' + err.message, {title:'Parse Error', icon:'❌'});
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── Simple toast notification ─────────────────────────────────────────────
+function obToast(msg) {
+  const existing = document.getElementById('obToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'obToast';
+  toast.textContent = msg;
+  toast.style.cssText = [
+    'position:fixed', 'bottom:28px', 'left:50%', 'transform:translateX(-50%)',
+    'background:var(--surface)', 'border:1px solid var(--border)',
+    'border-radius:30px', 'padding:10px 22px',
+    'font-size:13px', 'font-weight:700', 'color:var(--text)',
+    'box-shadow:0 8px 24px rgba(0,0,0,.25)',
+    'z-index:9999', 'animation:wzFadeUp .25s ease both',
+    'pointer-events:none'
+  ].join(';');
+  document.body.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+}
 
 </script>
 
@@ -10036,8 +10209,6 @@ function renderResGrid(certs) {
   </div>
 </div>
 
-
-</body>
 
 <script>
 /* ===================================================
