@@ -3462,8 +3462,8 @@ html.light .tpl-radio-card { background: #fff; }
   background: var(--orange);
   color: white;
   border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
+  border-radius: 50px;
+  padding: 13px 32px;
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
   font-weight: 800;
@@ -3499,14 +3499,22 @@ html.light .tpl-radio-card { background: #fff; }
   border-radius: 14px;
   padding: 20px;
 }
+.conn-tips-row-wrap {
+  max-width: 860px;
+  margin: 24px auto 0;
+  padding: 0 24px 60px;
+}
 .conn-tip-icon { font-size: 24px; margin-bottom: 8px; }
 .conn-tip-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
 .conn-tip-text  { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
 /* ── Connect: always-visible send section ── */
 .conn-send-section {
-  border-top: 1px solid var(--border);
-  background: var(--surface2);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  margin-top: 20px;
+  overflow: hidden;
 }
 .conn-live-preview {
   padding: 12px 28px 0;
@@ -3803,6 +3811,430 @@ html.light .tpl-radio-card { background: #fff; }
   100% { box-shadow: 0 4px 24px rgba(0,0,0,0.25); }
 }
 .live-cv-scaler.flashing { animation: liveFlash 0.5s ease; }
+
+/* ══ WIZARD ════════════════════════════════════════════════════════════════ */
+.wz-screen { display: none; }
+.wz-screen-active { display: block; }
+
+/* Welcome screen */
+.wz-welcome {
+  max-width: 640px;
+  margin: 60px auto;
+  text-align: center;
+  padding: 0 20px;
+  animation: wzFadeUp .4s ease both;
+}
+.wz-welcome-icon { font-size: 52px; margin-bottom: 16px; }
+.wz-welcome-title { font-size: 32px; font-weight: 900; color: var(--text); margin: 0 0 12px; }
+.wz-welcome-sub { font-size: 15px; color: var(--muted); margin: 0 0 40px; line-height: 1.6; }
+.wz-welcome-cards {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.wz-entry-card {
+  flex: 1;
+  min-width: 220px;
+  max-width: 270px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 22px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+.wz-entry-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(232,109,0,.18);
+}
+.wz-entry-icon { font-size: 30px; margin-bottom: 12px; }
+.wz-entry-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.wz-entry-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+.wz-entry-arrow {
+  font-size: 18px;
+  color: var(--orange);
+  font-weight: 800;
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  transition: transform .2s;
+}
+.wz-entry-card:hover .wz-entry-arrow { transform: translateX(4px); }
+
+/* Progress bar */
+.wz-progress-wrap {
+  max-width: 760px;
+  margin: 0 auto 32px;
+  padding: 0 24px;
+}
+.wz-progress-track {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.wz-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), #ffaa44);
+  border-radius: 3px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+.wz-step-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+}
+.wz-step-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  text-align: center;
+  flex: 1;
+  transition: color .2s;
+}
+.wz-step-label.wz-label-done { color: var(--orange); }
+.wz-step-label.wz-label-active { color: var(--text); }
+
+/* Step card */
+.wz-step-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  animation: wzFadeUp .35s ease both;
+}
+.wz-step-header { margin-bottom: 28px; }
+.wz-step-badge {
+  display: inline-block;
+  background: rgba(232,109,0,.12);
+  color: var(--orange);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.wz-step-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+.wz-step-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.wz-step-body {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 28px;
+  margin-bottom: 20px;
+}
+
+/* Nav bar */
+.wz-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+}
+.wz-btn-primary {
+  background: var(--orange);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  font-family: inherit;
+}
+.wz-btn-primary:hover { background: #cc6200; transform: translateY(-1px); }
+.wz-btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+  font-family: inherit;
+}
+.wz-btn-secondary:hover { background: var(--surface3); }
+.wz-completeness-mini {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@keyframes wzFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Language level pill buttons ──────────────────────────────── */
+.wz-level-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.wz-level-btn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.wz-level-btn:hover { border-color: var(--orange); color: var(--orange); }
+.wz-level-btn.selected {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+/* ── Custom link row ────────────────────────────────────────────── */
+.custom-link-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.custom-link-row a {
+  flex: 1;
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.custom-link-row .cl-label {
+  font-weight: 700;
+  color: var(--text);
+  min-width: 80px;
+}
+.custom-link-row button {
+  background: rgba(239,68,68,.15);
+  border: none;
+  color: #f87171;
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+/* ══ USEFUL LINKS PAGE ══════════════════════════════════════════ */
+.links-page-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+.links-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.links-hero-badge {
+  display: inline-block;
+  background: rgba(232,109,0,.12);
+  color: var(--orange);
+  border: 1px solid rgba(232,109,0,.25);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 14px;
+}
+.links-hero-title {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+.links-hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+}
+.links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.links-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 22px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+  position: relative;
+}
+.links-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(232,109,0,.15);
+}
+.links-card-wip {
+  border-style: dashed;
+  opacity: .85;
+}
+.links-card-wip:hover { opacity: 1; }
+.links-card-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border-radius: 14px;
+}
+.links-card-body { flex: 1; min-width: 0; }
+.links-card-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.links-wip-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(251,191,36,.15);
+  color: #f59e0b;
+  border: 1px solid rgba(251,191,36,.3);
+  border-radius: 10px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.links-card-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+.links-card-url {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--orange);
+  opacity: .75;
+}
+.links-card-arrow {
+  font-size: 20px;
+  color: var(--orange);
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.links-card:hover .links-card-arrow { transform: translate(2px, -2px); }
+
+/* ── Home page: Useful Links cards ───────────────────────────── */
+.home-link-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  min-width: 260px;
+  max-width: 420px;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
+}
+.home-link-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(232,109,0,.15);
+}
+.home-link-card-wip {
+  border-style: dashed;
+  opacity: .82;
+}
+.home-link-card-wip:hover { opacity: 1; }
+.home-link-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  background: var(--surface2);
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+.home-link-body { flex: 1; min-width: 0; }
+.home-link-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.home-link-wip {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(251,191,36,.15);
+  color: #f59e0b;
+  border: 1px solid rgba(251,191,36,.3);
+  border-radius: 10px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.home-link-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.home-link-arrow {
+  font-size: 18px;
+  color: var(--orange);
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.home-link-card:hover .home-link-arrow { transform: translate(2px,-2px); }
 </style>
 </head>
 <body>
@@ -3816,6 +4248,7 @@ html.light .tpl-radio-card { background: #fff; }
       <button class="nav-tab" onclick="showPage('executive')">Manager Dashboard</button>
       <button class="nav-tab" onclick="showPage('resources')">Resources</button>
       <button class="nav-tab" onclick="showPage('connect')">Ask for Help</button>
+      <button class="nav-tab" onclick="showPage('links')">🔗 Useful Links</button>
     </div>
     <button onclick="showTour()" title="Take the onboarding tour" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">👋 Tour</button>
     <div class="theme-toggle-wrap" title="Toggle light / dark mode">
@@ -4151,6 +4584,36 @@ html.light .tpl-radio-card { background: #fff; }
   </div>
 
   <!-- CTA BANNER -->
+
+  <!-- ── Useful Links ─────────────────────────────────────────────────────── -->
+  <div style="max-width:900px;margin:0 auto 64px;padding:0 24px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <h2 class="section-heading">Useful Links</h2>
+      <p style="font-size:15px;color:var(--muted);margin-top:8px;">Quick access to internal tools for the Orange Business Delivery Practice</p>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+
+      <a class="home-link-card" href="https://ahmedwalid4499.github.io/FTE-Calculator/" target="_blank" rel="noopener">
+        <div class="home-link-icon">🧮</div>
+        <div class="home-link-body">
+          <div class="home-link-title">FTE Calculator</div>
+          <div class="home-link-desc">Calculate headcount, effort, and capacity planning across your team.</div>
+        </div>
+        <div class="home-link-arrow">↗</div>
+      </a>
+
+      <a class="home-link-card home-link-card-wip" href="https://ahmedwalid4499.github.io/dpms-portal/" target="_blank" rel="noopener">
+        <div class="home-link-icon">🏗️</div>
+        <div class="home-link-body">
+          <div class="home-link-title">DPMs Portal <span class="home-link-wip">Under Development</span></div>
+          <div class="home-link-desc">The central hub for Delivery Project Managers — tools, resources, and team info.</div>
+        </div>
+        <div class="home-link-arrow">↗</div>
+      </a>
+
+    </div>
+  </div>
+
   <div class="cta-banner reveal">
     <h2>Ready to get started<br><span style="color:var(--orange)">within your practice?</span></h2>
     <p>DPMs build their profile in minutes. Managers get team insight immediately. No external systems, no logins — everything stays internal.</p>
@@ -4166,49 +4629,51 @@ html.light .tpl-radio-card { background: #fff; }
 <!-- CV BUILDER PAGE -->
 <div id="page-builder" class="page">
 
-  <!-- Profile Completeness Bar -->
-  <div class="completeness-bar-wrap" id="completenessBar">
-    <span class="completeness-label">Profile completeness</span>
-    <div class="completeness-track">
-      <div class="completeness-fill" id="completenessFill" style="width:0%"></div>
-    </div>
-    <span class="completeness-pct" id="completenessPct">0%</span>
-    <span class="completeness-hint" id="completenessHint">Start filling in your profile below</span>
-  </div>
+<!-- ══ WIZARD SHELL ══════════════════════════════════════════════════════════ -->
 
-  <div class="builder-form-col">
-
-  <!-- JSON Import Banner -->
-  <div class="json-import-wrap" id="jsonImportWrap">
-    <div class="json-import-zone" id="jsonImportZone"
-         onclick="document.getElementById('jsonImportInput').click()"
-         ondragover="event.preventDefault();this.classList.add('jiz-drag')"
-         ondragleave="this.classList.remove('jiz-drag')"
-         ondrop="handleJSONDrop(event)">
-      <div class="jiz-icon">📂</div>
-      <div class="jiz-text">
-        <div class="jiz-title">Load an existing profile</div>
-        <div class="jiz-sub">Drop your <strong>.json</strong> file here, or click to browse — all fields will be pre-filled for editing</div>
-      </div>
-      <div class="jiz-btn">Browse file</div>
-      <input type="file" id="jsonImportInput" accept=".json" style="display:none" onchange="handleJSONImport(event)">
-    </div>
-    <div class="jiz-loaded" id="jizLoaded" style="display:none">
-      <div class="jiz-loaded-info">
-        <span class="jiz-loaded-icon">✓</span>
-        <div>
-          <div class="jiz-loaded-name" id="jizLoadedName">Profile loaded</div>
-          <div class="jiz-loaded-hint">All fields populated — edit anything below and re-generate</div>
-        </div>
-      </div>
-      <button class="jiz-clear-btn" onclick="clearImportedProfile()">✕ Clear</button>
+<!-- ── Screen 0: Welcome / Entry ─────────────────────────────────────────── -->
+<div id="wzScreen0" class="wz-screen wz-screen-active">
+  <div class="wz-welcome">
+    <div class="wz-welcome-icon">📋</div>
+    <h1 class="wz-welcome-title">Build Your Skills Profile</h1>
+    <p class="wz-welcome-sub">Create a structured DPM profile to share with your manager, or upload an existing one to review and update.</p>
+    <div class="wz-welcome-cards">
+      <button class="wz-entry-card" onclick="wzStart('new')">
+        <div class="wz-entry-icon">✨</div>
+        <div class="wz-entry-title">Create New Profile</div>
+        <div class="wz-entry-desc">Start fresh — fill in each section step by step</div>
+        <div class="wz-entry-arrow">→</div>
+      </button>
+      <button class="wz-entry-card" onclick="document.getElementById('wzUploadInput').click()">
+        <div class="wz-entry-icon">📂</div>
+        <div class="wz-entry-title">Upload Existing Profile</div>
+        <div class="wz-entry-desc">Load a saved <strong>.json</strong> profile and update it</div>
+        <div class="wz-entry-arrow">→</div>
+      </button>
+      <input type="file" id="wzUploadInput" accept=".json" style="display:none" onchange="wzLoadJSON(event)">
     </div>
   </div>
+</div>
 
-  <div class="generator-wrap">
+<!-- ── Step Progress Bar (shown on steps 1–11) ───────────────────────────── -->
+<div id="wzProgressBar" style="display:none;">
+  <div class="wz-progress-wrap">
+    <div class="wz-progress-track">
+      <div class="wz-progress-fill" id="wzProgressFill"></div>
+    </div>
+    <div class="wz-step-labels" id="wzStepLabels"></div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Basic Information</h2>
+<!-- ── Screen 1: Basic Information ───────────────────────────────────────── -->
+<div id="wzScreen1" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">1 of 11</div>
+      <h2 class="wz-step-title">Basic Information</h2>
+      <p class="wz-step-sub">Your name, role, and a brief professional summary</p>
+    </div>
+    <div class="wz-step-body">
       <div class="form-grid">
         <div class="form-field">
           <label>Full Name</label>
@@ -4231,14 +4696,28 @@ html.light .tpl-radio-card { background: #fff; }
           <input type="file" id="logoUpload" accept="image/*">
         </div>
         <div class="form-field" style="grid-column: 1 / -1;">
-          <label>Professional Summary <span style="font-weight:400;color:var(--muted)">(optional — leave blank to omit from CV)</span></label>
-          <textarea id="summary" rows="3" placeholder="Brief description of your PM expertise and focus areas..." style="resize:vertical;"></textarea>
+          <label>Professional Summary <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea id="summary" rows="4" placeholder="Brief description of your PM expertise and focus areas..." style="resize:vertical;"></textarea>
         </div>
       </div>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(0)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini1"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(2)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Education</h2>
+<!-- ── Screen 2: Education ────────────────────────────────────────────────── -->
+<div id="wzScreen2" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">2 of 11</div>
+      <h2 class="wz-step-title">Education</h2>
+      <p class="wz-step-sub">Degrees, diplomas, and qualifications</p>
+    </div>
+    <div class="wz-step-body">
       <div id="eduList"></div>
       <div class="form-grid" id="eduForm">
         <div class="form-field"><label>Degree / Qualification</label><input type="text" id="eduDegree" placeholder="e.g. BSc Computer Science"></div>
@@ -4253,69 +4732,146 @@ html.light .tpl-radio-card { background: #fff; }
       </div>
       <button class="btn-add-job" onclick="addEducation()" style="margin-top:10px;">+ Add Education</button>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(1)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini2"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(3)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Languages</h2>
-      <div id="langList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+<!-- ── Screen 3: Languages ────────────────────────────────────────────────── -->
+<div id="wzScreen3" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">3 of 11</div>
+      <h2 class="wz-step-title">Languages</h2>
+      <p class="wz-step-sub">Languages you speak and your proficiency level</p>
+    </div>
+    <div class="wz-step-body">
+      <div id="langList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;min-height:10px;"></div>
       <div class="form-grid">
-        <div class="form-field"><label>Language</label><input type="text" id="langName" placeholder="e.g. Arabic"></div>
         <div class="form-field">
-          <label>Proficiency</label>
-          <select id="langLevel" style="width:100%;padding:10px 14px;background:var(--surface2);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;">
-            <option value="Native">Native</option>
-            <option value="Fluent">Fluent</option>
-            <option value="Professional">Professional</option>
-            <option value="Conversational">Conversational</option>
-            <option value="Basic">Basic</option>
-          </select>
+          <label>Language</label>
+          <input type="text" id="langName" placeholder="e.g. Arabic, English, French">
+        </div>
+        <div class="form-field">
+          <label>Proficiency Level</label>
+          <div class="wz-level-btns" id="langLevelBtns">
+            <button type="button" class="wz-level-btn" data-val="Native"       onclick="wzPickLevel(this)">Native</button>
+            <button type="button" class="wz-level-btn" data-val="Fluent"       onclick="wzPickLevel(this)">Fluent</button>
+            <button type="button" class="wz-level-btn" data-val="Professional" onclick="wzPickLevel(this)">Professional</button>
+            <button type="button" class="wz-level-btn" data-val="Intermediate" onclick="wzPickLevel(this)">Intermediate</button>
+            <button type="button" class="wz-level-btn" data-val="Basic"        onclick="wzPickLevel(this)">Basic</button>
+          </div>
+          <input type="hidden" id="langLevel" value="">
         </div>
       </div>
-      <button class="btn-add-job" onclick="addLanguage()" style="margin-top:10px;">+ Add Language</button>
+      <button class="btn-add-job" onclick="addLanguage()" style="margin-top:12px;">+ Add Language</button>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(2)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini3"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(4)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Professional Links</h2>
-      <div class="form-grid">
-        <div class="form-field"><label>LinkedIn</label><input type="text" id="linkLinkedin" placeholder="linkedin.com/in/..."></div>
-        <div class="form-field"><label>Behance</label><input type="text" id="linkBehance" placeholder="behance.net/..."></div>
-        <div class="form-field"><label>ResearchGate</label><input type="text" id="linkResearch" placeholder="researchgate.net/..."></div>
-        <div class="form-field"><label>Google Scholar</label><input type="text" id="linkScholar" placeholder="scholar.google.com/..."></div>
-        <div class="form-field"><label>X (Twitter)</label><input type="text" id="linkX" placeholder="x.com/..."></div>
-        <div class="form-field"><label>Website / Portfolio</label><input type="text" id="linkWebsite" placeholder="yoursite.com"></div>
+<!-- ── Screen 4: Professional Links ─────────────────────────────────────── -->
+<div id="wzScreen4" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">4 of 11</div>
+      <h2 class="wz-step-title">Professional Links</h2>
+      <p class="wz-step-sub">LinkedIn, portfolio, and other professional profiles — all optional</p>
+    </div>
+    <div class="wz-step-body">
+      <!-- Quick presets -->
+      <div class="form-grid" style="margin-bottom:20px;">
+        <div class="form-field"><label>LinkedIn</label><input type="url" id="linkLinkedin" placeholder="https://linkedin.com/in/…" oninput="wzSyncPresetLinks()"></div>
+        <div class="form-field"><label>Website / Portfolio</label><input type="url" id="linkWebsite" placeholder="https://…" oninput="wzSyncPresetLinks()"></div>
+        <div class="form-field"><label>X / Twitter</label><input type="url" id="linkX" placeholder="https://x.com/…" oninput="wzSyncPresetLinks()"></div>
+        <div class="form-field"><label>GitHub / GitLab</label><input type="url" id="linkBehance" placeholder="https://github.com/…" oninput="wzSyncPresetLinks()"></div>
+        <div class="form-field"><label>ResearchGate</label><input type="url" id="linkResearch" placeholder="https://researchgate.net/…" oninput="wzSyncPresetLinks()"></div>
+        <div class="form-field"><label>Google Scholar</label><input type="url" id="linkScholar" placeholder="https://scholar.google.com/…" oninput="wzSyncPresetLinks()"></div>
+      </div>
+      <!-- Custom links -->
+      <div style="border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">+ Add a custom link</div>
+        <div id="customLinksList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Link Label</label>
+            <input type="text" id="customLinkLabel" placeholder="e.g. My Portfolio, Credly Badge">
+          </div>
+          <div class="form-field">
+            <label>URL</label>
+            <input type="url" id="customLinkUrl" placeholder="https://…">
+          </div>
+        </div>
+        <button class="btn-add-job" onclick="wzAddCustomLink()" style="margin-top:8px;">+ Add Custom Link</button>
       </div>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(3)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini4"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(5)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Certifications</h2>
+<!-- ── Screen 5: Certifications ──────────────────────────────────────────── -->
+<div id="wzScreen5" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">5 of 11</div>
+      <h2 class="wz-step-title">Certifications</h2>
+      <p class="wz-step-sub">Select every certification you hold — tick all that apply</p>
+    </div>
+    <div class="wz-step-body">
       <div class="checkbox-grid" id="certGrid">
         <label class="check-label"><input type="checkbox" value="PMP"> PMP</label>
+        <label class="check-label"><input type="checkbox" value="PRINCE2"> PRINCE2</label>
+        <label class="check-label"><input type="checkbox" value="PRINCE2 Agile"> PRINCE2 Agile</label>
         <label class="check-label"><input type="checkbox" value="PMI-ACP"> PMI-ACP</label>
         <label class="check-label"><input type="checkbox" value="PMI-RMP"> PMI-RMP</label>
         <label class="check-label"><input type="checkbox" value="PMI-PBA"> PMI-PBA</label>
-        <label class="check-label"><input type="checkbox" value="PSM I"> PSM I</label>
-        <label class="check-label"><input type="checkbox" value="PSM II"> PSM II</label>
-        <label class="check-label"><input type="checkbox" value="PSPO"> PSPO</label>
-        <label class="check-label"><input type="checkbox" value="SAFe 6.0 SA"> SAFe 6.0 SA</label>
-        <label class="check-label"><input type="checkbox" value="ITIL 4 Foundation"> ITIL 4 Foundation</label>
-        <label class="check-label"><input type="checkbox" value="ITIL 4 CDS"> ITIL 4 CDS</label>
-        <label class="check-label"><input type="checkbox" value="PRINCE2"> PRINCE2</label>
-        <label class="check-label"><input type="checkbox" value="PRINCE2 Agile"> PRINCE2 Agile</label>
-        <label class="check-label"><input type="checkbox" value="Lean Six Sigma GB"> Lean Six Sigma GB</label>
-        <label class="check-label"><input type="checkbox" value="Lean Six Sigma BB"> Lean Six Sigma BB</label>
-        <label class="check-label"><input type="checkbox" value="CSM"> CSM</label>
         <label class="check-label"><input type="checkbox" value="CAPM"> CAPM</label>
+        <label class="check-label"><input type="checkbox" value="CSM"> CSM</label>
+        <label class="check-label"><input type="checkbox" value="SAFe"> SAFe</label>
+        <label class="check-label"><input type="checkbox" value="AgilePM"> AgilePM</label>
+        <label class="check-label"><input type="checkbox" value="ITIL v4"> ITIL v4</label>
         <label class="check-label"><input type="checkbox" value="TOGAF"> TOGAF</label>
-        <label class="check-label"><input type="checkbox" value="AWS Cloud Practitioner"> AWS Cloud Practitioner</label>
-        <label class="check-label"><input type="checkbox" value="Azure Fundamentals"> Azure Fundamentals</label>
-        <label class="check-label"><input type="checkbox" value="Google PM Certificate"> Google PM Certificate</label>
-        <label class="check-label"><input type="checkbox" value="Prosci Change Mgmt"> Prosci Change Mgmt</label>
+        <label class="check-label"><input type="checkbox" value="CISSP"> CISSP</label>
+        <label class="check-label"><input type="checkbox" value="CompTIA Project+"> CompTIA Project+</label>
+        <label class="check-label"><input type="checkbox" value="Six Sigma Green Belt"> Six Sigma Green Belt</label>
+        <label class="check-label"><input type="checkbox" value="Six Sigma Black Belt"> Six Sigma Black Belt</label>
+        <label class="check-label"><input type="checkbox" value="MSP"> MSP</label>
         <label class="check-label"><input type="checkbox" value="MoP"> MoP</label>
+        <label class="check-label"><input type="checkbox" value="P3O"> P3O</label>
+        <label class="check-label"><input type="checkbox" value="MoR"> MoR</label>
+        <label class="check-label"><input type="checkbox" value="OKR Practitioner"> OKR Practitioner</label>
+        <label class="check-label"><input type="checkbox" value="Design Thinking"> Design Thinking</label>
       </div>
       <input class="add-input" type="text" placeholder="+ Add custom certification, press Enter" onkeypress="addItem(event,'certGrid')">
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(4)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini5"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(6)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Tools & Platforms</h2>
+<!-- ── Screen 6: Tools & Platforms ───────────────────────────────────────── -->
+<div id="wzScreen6" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">6 of 11</div>
+      <h2 class="wz-step-title">Tools &amp; Platforms</h2>
+      <p class="wz-step-sub">PM and collaboration tools you work with regularly</p>
+    </div>
+    <div class="wz-step-body">
       <div class="checkbox-grid" id="toolGrid">
         <label class="check-label"><input type="checkbox" value="MS Project"> MS Project</label>
         <label class="check-label"><input type="checkbox" value="Jira"> Jira</label>
@@ -4345,9 +4901,23 @@ html.light .tpl-radio-card { background: #fff; }
       </div>
       <input class="add-input" type="text" placeholder="+ Add custom tool, press Enter" onkeypress="addItem(event,'toolGrid')">
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(5)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini6"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(7)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Professional Skills</h2>
+<!-- ── Screen 7: Professional Skills ─────────────────────────────────────── -->
+<div id="wzScreen7" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">7 of 11</div>
+      <h2 class="wz-step-title">Professional Skills</h2>
+      <p class="wz-step-sub">Core PM and delivery competencies you bring to projects</p>
+    </div>
+    <div class="wz-step-body">
       <div class="checkbox-grid" id="skillGrid">
         <label class="check-label"><input type="checkbox" value="Project Planning"> Project Planning</label>
         <label class="check-label"><input type="checkbox" value="Agile / Scrum"> Agile / Scrum</label>
@@ -4357,7 +4927,7 @@ html.light .tpl-radio-card { background: #fff; }
         <label class="check-label"><input type="checkbox" value="Portfolio Management"> Portfolio Management</label>
         <label class="check-label"><input type="checkbox" value="Risk Management"> Risk Management</label>
         <label class="check-label"><input type="checkbox" value="Issue Management"> Issue Management</label>
-        <label class="check-label"><input type="checkbox" value="Governance & Compliance"> Governance & Compliance</label>
+        <label class="check-label"><input type="checkbox" value="Governance &amp; Compliance"> Governance &amp; Compliance</label>
         <label class="check-label"><input type="checkbox" value="Benefits Realization"> Benefits Realization</label>
         <label class="check-label"><input type="checkbox" value="Contract Management"> Contract Management</label>
         <label class="check-label"><input type="checkbox" value="Stakeholder Management"> Stakeholder Management</label>
@@ -4380,10 +4950,23 @@ html.light .tpl-radio-card { background: #fff; }
       </div>
       <input class="add-input" type="text" placeholder="+ Add custom skill, press Enter" onkeypress="addItem(event,'skillGrid')">
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(6)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini7"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(8)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Products &amp; Services</h2>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Select the Orange Business products and services you have delivered or worked with.</p>
+<!-- ── Screen 8: Products & Services ─────────────────────────────────────── -->
+<div id="wzScreen8" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">8 of 11</div>
+      <h2 class="wz-step-title">Products &amp; Services</h2>
+      <p class="wz-step-sub">Orange Business products and services you have delivered or worked with</p>
+    </div>
+    <div class="wz-step-body">
       <div class="checkbox-grid" id="productGrid">
         <label class="check-label"><input type="checkbox" value="Fortinet"> Fortinet</label>
         <label class="check-label"><input type="checkbox" value="Palo Alto Networks"> Palo Alto Networks</label>
@@ -4413,9 +4996,23 @@ html.light .tpl-radio-card { background: #fff; }
       </div>
       <input class="add-input" type="text" placeholder="+ Add custom product / service, press Enter" onkeypress="addItem(event,'productGrid')">
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(7)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini8"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(9)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <div class="gen-section">
-      <h2>Professional Experience</h2>
+<!-- ── Screen 9: Professional Experience ─────────────────────────────────── -->
+<div id="wzScreen9" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">9 of 11</div>
+      <h2 class="wz-step-title">Professional Experience</h2>
+      <p class="wz-step-sub">Add your work history — one role at a time</p>
+    </div>
+    <div class="wz-step-body">
       <div class="form-grid">
         <div class="form-field"><label>Job Title</label><input type="text" id="jobTitle"></div>
         <div class="form-field"><label>Company</label><input type="text" id="jobCompany"></div>
@@ -4433,17 +5030,37 @@ html.light .tpl-radio-card { background: #fff; }
       <button class="btn-add-job" onclick="addJob()">+ Add This Job</button>
       <div id="jobList"></div>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(8)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini9"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(10)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <!-- ══ Custom Sections ══ -->
-    <div class="gen-section" id="customSectionsPanel">
-      <h2>Custom Sections</h2>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Add any extra section — Awards, Publications, Volunteering, Projects, or anything else.</p>
+<!-- ── Screen 10: Custom Sections ────────────────────────────────────────── -->
+<div id="wzScreen10" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">10 of 11</div>
+      <h2 class="wz-step-title">Custom Sections</h2>
+      <p class="wz-step-sub">Awards, publications, volunteering, projects — anything extra worth showcasing</p>
+    </div>
+    <div class="wz-step-body">
       <div id="customSectionsList"></div>
       <div class="custom-sec-form" id="customSecForm">
         <div class="form-grid">
           <div class="form-field" style="grid-column:1/-1;">
             <label>Section Title</label>
-            <input type="text" id="customSecTitle" placeholder="e.g. Awards & Achievements">
+            <input type="text" id="customSecTitle" placeholder="e.g. Awards &amp; Achievements, Volunteering">
+          </div>
+          <div class="form-field">
+            <label>Subtitle / Role <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <input type="text" id="customSecSubtitle" placeholder="e.g. Best PM Award">
+          </div>
+          <div class="form-field">
+            <label>Organisation <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <input type="text" id="customSecOrg" placeholder="e.g. Orange Business">
           </div>
           <div class="form-field">
             <label>Start Date <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
@@ -4454,90 +5071,97 @@ html.light .tpl-radio-card { background: #fff; }
             <input type="date" id="customSecEnd">
           </div>
           <div class="form-field" style="grid-column:1/-1;">
+            <label class="check-label" style="display:inline-flex;width:auto;margin-bottom:8px;">
+              <input type="checkbox" id="customSecCurrent"> &nbsp;Ongoing / present
+            </label>
+          </div>
+          <div class="form-field" style="grid-column:1/-1;">
             <label>Details / Description</label>
-            <textarea id="customSecDetails" rows="3" placeholder="Describe this section — bullet points, narrative, whatever fits." style="resize:vertical;"></textarea>
+            <textarea id="customSecDetails" rows="3" placeholder="Describe this section." style="resize:vertical;"></textarea>
           </div>
         </div>
         <button class="btn-add-job" onclick="addCustomSection()" style="margin-top:10px;">+ Add Section</button>
       </div>
     </div>
+    <div class="wz-nav-bar">
+      <button class="wz-btn-secondary" onclick="wzGoto(9)">← Back</button>
+      <div class="wz-completeness-mini" id="wzCompMini10"></div>
+      <button class="wz-btn-primary" onclick="wzGoto(11)">Next →</button>
+    </div>
+  </div>
+</div>
 
-    <!-- ══ Template Picker ══ -->
-    <div class="gen-section tpl-chooser-section">
-      <h2>Choose a Template</h2>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Select a layout for your CV — you can switch anytime after generating.</p>
+<!-- ── Screen 11: Template & Generate ────────────────────────────────────── -->
+<div id="wzScreen11" class="wz-screen">
+  <div class="wz-step-wrap">
+    <div class="wz-step-header">
+      <div class="wz-step-badge">11 of 11</div>
+      <h2 class="wz-step-title">Choose a Template &amp; Generate</h2>
+      <p class="wz-step-sub">Pick a layout — you can switch anytime after generating</p>
+    </div>
+    <div class="wz-step-body">
+
+      <!-- Completeness bar on final step -->
+      <div class="completeness-bar-wrap" id="completenessBar" style="margin-bottom:24px;border-radius:10px;">
+        <span class="completeness-label">Profile completeness</span>
+        <div class="completeness-track">
+          <div class="completeness-fill" id="completenessFill" style="width:0%"></div>
+        </div>
+        <span class="completeness-pct" id="completenessPct">0%</span>
+        <span class="completeness-hint" id="completenessHint">Fill in your profile above</span>
+      </div>
+
       <div class="tpl-radio-grid">
-
         <label class="tpl-radio-card" id="tplCard_minimal">
           <input type="radio" name="cvTemplate" value="minimal" checked onchange="highlightTplCard(this)">
           <div class="tpl-radio-thumb tpl-thumb-minimal">
-            <div class="trt-topbar"></div>
-            <div class="trt-name"></div>
-            <div class="trt-role"></div>
-            <div class="trt-divider"></div>
-            <div class="trt-line"></div>
-            <div class="trt-line short"></div>
+            <div class="trt-topbar"></div><div class="trt-name"></div><div class="trt-role"></div>
+            <div class="trt-divider"></div><div class="trt-line"></div><div class="trt-line short"></div>
             <div class="trt-tags"><span></span><span></span><span></span></div>
           </div>
-          <div class="tpl-radio-info">
-            <strong>Minimal</strong>
-            <span>Clean white, orange accents</span>
-          </div>
+          <div class="tpl-radio-info"><strong>Minimal</strong><span>Clean white, orange accents</span></div>
           <div class="tpl-radio-check">✓</div>
         </label>
-
         <label class="tpl-radio-card" id="tplCard_corporate">
           <input type="radio" name="cvTemplate" value="corporate" onchange="highlightTplCard(this)">
           <div class="tpl-radio-thumb tpl-thumb-corporate">
-            <div class="trt-header-dark"></div>
-            <div class="trt-name light"></div>
-            <div class="trt-role corp"></div>
-            <div class="trt-divider corp"></div>
-            <div class="trt-line"></div>
-            <div class="trt-line short"></div>
+            <div class="trt-header-dark"></div><div class="trt-name light"></div><div class="trt-role corp"></div>
+            <div class="trt-divider corp"></div><div class="trt-line"></div><div class="trt-line short"></div>
             <div class="trt-tags corp"><span></span><span></span><span></span></div>
           </div>
-          <div class="tpl-radio-info">
-            <strong>Corporate</strong>
-            <span>Navy header, blue accents</span>
-          </div>
+          <div class="tpl-radio-info"><strong>Corporate</strong><span>Navy header, blue accents</span></div>
           <div class="tpl-radio-check">✓</div>
         </label>
-
         <label class="tpl-radio-card" id="tplCard_modern">
           <input type="radio" name="cvTemplate" value="modern" onchange="highlightTplCard(this)">
           <div class="tpl-radio-thumb tpl-thumb-modern">
             <div class="trt-sidebar-modern"></div>
             <div class="trt-modern-body">
-              <div class="trt-header-dark short"></div>
-              <div class="trt-name light sm"></div>
-              <div class="trt-pill"></div>
-              <div class="trt-line"></div>
-              <div class="trt-line short"></div>
+              <div class="trt-header-dark short"></div><div class="trt-name light sm"></div>
+              <div class="trt-pill"></div><div class="trt-line"></div><div class="trt-line short"></div>
             </div>
           </div>
-          <div class="tpl-radio-info">
-            <strong>Modern</strong>
-            <span>Bold sidebar, pill sections</span>
-          </div>
+          <div class="tpl-radio-info"><strong>Modern</strong><span>Bold sidebar, pill sections</span></div>
           <div class="tpl-radio-check">✓</div>
         </label>
-
       </div>
+
+      <button class="btn-generate-full" onclick="generateCV()" style="margin-top:28px;">⚡ Generate Skills Profile</button>
     </div>
+    <div class="wz-nav-bar" style="margin-top:0;">
+      <button class="wz-btn-secondary" onclick="wzGoto(10)">← Back</button>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</div>
 
-    <button class="btn-generate-full" onclick="generateCV()">⚡ Generate Skills Profile</button>
-
-  </div><!-- end builder-form-col -->
-
-
-  </div><!-- end builder-form-col -->
-
-  <!-- CV Preview (full, generated) -->
+<!-- ══ CV PREVIEW + PERSONAL DASHBOARD (unchanged, shown after generate) ══ -->
   <div id="cvPreviewWrap">
     <div class="cv-generated-bar" style="max-width:900px;margin:0 auto 20px;padding:0 24px;">
       <div class="cvgb-left">
-        <span class="cvgb-label">Template</span>
+        <button class="wz-btn-secondary" style="padding:7px 14px;font-size:12px;margin-right:8px;" onclick="wzBackToEdit()">← Edit Profile</button>
+        <span class="cvgb-label" style="margin-left:4px;">Template</span>
         <div class="cvgb-tpl-btns">
           <button class="cvgb-tpl active" data-tpl="minimal" onclick="switchTpl('minimal',this)">Minimal</button>
           <button class="cvgb-tpl" data-tpl="corporate" onclick="switchTpl('corporate',this)">Corporate</button>
@@ -4655,6 +5279,9 @@ html.light .tpl-radio-card { background: #fff; }
 </div>
 
 </div>
+
+</div>
+
 
 <!-- EXECUTIVE REPORT PAGE -->
 <div id="page-executive" class="page">
@@ -4777,10 +5404,12 @@ html.light .tpl-radio-card { background: #fff; }
           </div>
         </div>
         <!-- Products & Services bar -->
-        <div class="pbi-chart-card" id="execProductBarWrap">
-          <div class="pbi-chart-title">🔷 Products &amp; Services Coverage</div>
-          <div class="pbi-chart-sub">How many DPMs have worked with each Orange Business product</div>
-          <canvas id="execProductBar" height="260"></canvas>
+        <div class="pbi-card" id="execProductBarWrap">
+          <div class="pbi-card-header">
+            <span class="pbi-card-title">Products &amp; Services Coverage</span>
+            <span class="pbi-card-tag">Top 10</span>
+          </div>
+          <canvas id="execProductBar"></canvas>
         </div>
         <div class="pbi-card">
           <div class="pbi-card-header">
@@ -4952,6 +5581,7 @@ html.light .tpl-radio-card { background: #fff; }
 
         <!-- People grid -->
         <div id="connPeopleGrid" class="conn-people-grid"></div>
+        </div>
       </div>
     </div>
 
@@ -5052,7 +5682,7 @@ html.light .tpl-radio-card { background: #fff; }
         <div id="connPreviewSubject" class="conn-preview-subject"></div>
       </div>
       <div id="connValidation" class="conn-validation" style="display:none;"></div>
-      <div style="padding:20px 28px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div style="padding:20px 28px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
         <div style="font-size:13px;color:var(--muted);">
           Complete steps 1–3 above, then click to open Outlook with everything pre-filled.
         </div>
@@ -5065,6 +5695,7 @@ html.light .tpl-radio-card { background: #fff; }
   </div>
 
   <!-- Tips section -->
+  <div class="conn-tips-row-wrap">
   <div class="conn-tips-row">
     <div class="conn-tip">
       <div class="conn-tip-icon">💡</div>
@@ -5082,8 +5713,42 @@ html.light .tpl-radio-card { background: #fff; }
       <div class="conn-tip-text">When someone helps you, update your own profile — and be ready to help the next person who reaches out to you.</div>
     </div>
   </div>
+  </div>
 
 </div>
+</div>
+
+<div id="page-links" class="page">
+  <div class="links-page-wrap">
+    <div class="links-hero">
+      <div class="links-hero-badge">🔗 Quick Access</div>
+      <h1 class="links-hero-title">Useful Links</h1>
+      <p class="links-hero-sub">Internal tools and resources for the Orange Business Delivery Practice</p>
+    </div>
+    <div class="links-grid">
+
+      <a class="links-card" href="https://ahmedwalid4499.github.io/FTE-Calculator/" target="_blank" rel="noopener">
+        <div class="links-card-icon">🧮</div>
+        <div class="links-card-body">
+          <div class="links-card-title">FTE Calculator</div>
+          <div class="links-card-desc">Calculate Full-Time Equivalent staffing across your team — quickly work out headcount, effort, and capacity planning.</div>
+          <div class="links-card-url">ahmedwalid4499.github.io/FTE-Calculator</div>
+        </div>
+        <div class="links-card-arrow">↗</div>
+      </a>
+
+      <a class="links-card links-card-wip" href="https://ahmedwalid4499.github.io/dpms-portal/" target="_blank" rel="noopener">
+        <div class="links-card-icon">🏗️</div>
+        <div class="links-card-body">
+          <div class="links-card-title">DPMs Portal <span class="links-wip-badge">Under Development</span></div>
+          <div class="links-card-desc">The central portal for Delivery Project Managers — a unified hub for resources, tools, and team information.</div>
+          <div class="links-card-url">ahmedwalid4499.github.io/dpms-portal</div>
+        </div>
+        <div class="links-card-arrow">↗</div>
+      </a>
+
+    </div>
+  </div>
 </div>
 
 <!-- ONBOARDING TOUR -->
@@ -5130,7 +5795,7 @@ function showPage(page) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   const tabs = document.querySelectorAll('.nav-tab');
-  const map = {home:0, builder:1, executive:2, resources:3, connect:4};
+  const map = {home:0, builder:1, executive:2, resources:3, connect:4, links:5};
   tabs[map[page]].classList.add('active');
   if (page === 'resources') { initResources(); initDaCourses(); }
   if (page === 'connect') initConnect();
@@ -5268,15 +5933,14 @@ function populateFromJSON(data, filename) {
   // ── Show loaded banner, hide import zone ──
   const displayName = data.name ? `"${data.name}" loaded` : (filename || 'Profile loaded');
   document.getElementById('jizLoadedName').textContent = displayName;
-  document.getElementById('jsonImportZone').style.display = 'none';
-  document.getElementById('jizLoaded').style.display = 'flex';
+  // jsonImportZone removed (wizard handles import)
 
   // ── Update completeness bar ──
   updateCompleteness();
 
   // ── Scroll to form ──
   setTimeout(() => {
-    document.querySelector('.generator-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    wzGoto(1); // restored: scroll to step 1
   }, 200);
 }
 
@@ -5309,6 +5973,7 @@ function populateCheckGrid(gridId, values) {
 }
 
 function clearImportedProfile() {
+  wzGoto(0);
   // Reset all fields
   ['name','company','jobRole','summary',
    'linkLinkedin','linkBehance','linkResearch','linkScholar','linkX','linkWebsite']
@@ -5486,6 +6151,218 @@ function renderLangList() {
   });
 }
 
+/* ── Custom links state ─────────────────────────────────────────── */
+let customLinks = []; // [{label, url}]
+
+function wzPickLevel(btn) {
+  document.querySelectorAll('#langLevelBtns .wz-level-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('langLevel').value = btn.dataset.val;
+}
+
+function wzAddCustomLink() {
+  const label = (document.getElementById('customLinkLabel').value || '').trim();
+  const url   = (document.getElementById('customLinkUrl').value   || '').trim();
+  if (!label || !url) { obAlert('Please enter both a label and a URL.', {icon:'⚠️'}); return; }
+  customLinks.push({ label, url });
+  document.getElementById('customLinkLabel').value = '';
+  document.getElementById('customLinkUrl').value   = '';
+  wzRenderCustomLinks();
+}
+
+function wzRemoveCustomLink(i) {
+  customLinks.splice(i, 1);
+  wzRenderCustomLinks();
+}
+
+function wzRenderCustomLinks() {
+  const container = document.getElementById('customLinksList');
+  if (!container) return;
+  container.innerHTML = '';
+  customLinks.forEach((cl, i) => {
+    const row = document.createElement('div');
+    row.className = 'custom-link-row';
+    row.innerHTML =
+      '<span class="cl-label">' + cl.label + '</span>' +
+      '<a href="' + cl.url + '" target="_blank">' + cl.url + '</a>' +
+      '<button onclick="wzRemoveCustomLink(' + i + ')">✕</button>';
+    container.appendChild(row);
+  });
+}
+
+function wzSyncPresetLinks() { /* live sync handled at generate time */ }
+
+/* ===================================================
+   WIZARD NAVIGATION
+=================================================== */
+let wzCurrent = 0; // 0 = welcome
+
+const WZ_STEP_NAMES = ['', 'Basic Info', 'Education', 'Languages', 'Links',
+  'Certifications', 'Tools', 'Skills', 'Products', 'Experience', 'Custom', 'Template'];
+
+function wzGoto(step) {
+  // Hide all screens
+  document.querySelectorAll('.wz-screen').forEach(s => {
+    s.classList.remove('wz-screen-active');
+  });
+  // Show target
+  const target = document.getElementById('wzScreen' + step);
+  if (target) {
+    target.classList.add('wz-screen-active');
+    // Re-trigger animation
+    target.style.animation = 'none';
+    target.querySelector('.wz-step-wrap, .wz-welcome') && (target.querySelector('.wz-step-wrap, .wz-welcome').style.animation = 'none');
+    requestAnimationFrame(() => {
+      target.querySelector('.wz-step-wrap, .wz-welcome') && (target.querySelector('.wz-step-wrap, .wz-welcome').style.animation = '');
+    });
+  }
+  wzCurrent = step;
+
+  const bar = document.getElementById('wzProgressBar');
+  if (step === 0) {
+    bar.style.display = 'none';
+    // Hide cv preview if going back to welcome
+    document.getElementById('cvPreviewWrap').style.display = 'none';
+    const pd = document.getElementById('personalDashWrap');
+    if (pd) pd.style.display = 'none';
+  } else if (step <= 11) {
+    bar.style.display = 'block';
+    wzUpdateProgress(step);
+  }
+
+  // Scroll to top of page
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateCompleteness();
+}
+
+function wzUpdateProgress(step) {
+  const pct = Math.round((step / 11) * 100);
+  document.getElementById('wzProgressFill').style.width = pct + '%';
+
+  const labelsEl = document.getElementById('wzStepLabels');
+  labelsEl.innerHTML = '';
+  WZ_STEP_NAMES.slice(1).forEach((name, i) => {
+    const s = i + 1;
+    const div = document.createElement('div');
+    div.className = 'wz-step-label' +
+      (s < step ? ' wz-label-done' : s === step ? ' wz-label-active' : '');
+    div.textContent = name;
+    labelsEl.appendChild(div);
+  });
+}
+
+function wzStart(mode) {
+  if (mode === 'new') {
+    // Clear all fields first
+    clearAllFormFields();
+    wzGoto(1);
+  }
+}
+
+function wzLoadJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      populateAllFormFields(data, file.name);
+      wzGoto(1);
+    } catch(err) {
+      obAlert('Could not parse the JSON file. Make sure it is a valid DPM profile.', {title:'Invalid file', icon:'⚠️'});
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-loaded
+  event.target.value = '';
+}
+
+function clearAllFormFields() {
+  // Basic info
+  ['name','company','jobRole','summary'].forEach(id => setValue(id, ''));
+  // Links
+  ['linkLinkedin','linkWebsite','linkX','linkBehance','linkResearch','linkScholar'].forEach(id => setValue(id, ''));
+  // Checkboxes
+  ['certGrid','toolGrid','skillGrid','productGrid'].forEach(gridId => {
+    document.querySelectorAll('#' + gridId + ' input[type="checkbox"]').forEach(cb => cb.checked = false);
+  });
+  // Experience / education / languages
+  jobs = []; bullets = [];
+  document.getElementById('bulletContainer').innerHTML = '';
+  renderJobList();
+  education = [];
+  renderEduList();
+  languages = [];
+  renderLangList();
+  customLinks = [];
+  wzRenderCustomLinks();
+  customSections = [];
+  renderCustomSectionsList();
+  // Photo/logo
+  ['photoUpload','logoUpload'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  if (typeof photoDataURL !== 'undefined') photoDataURL = null;
+  if (typeof logoDataURL !== 'undefined') logoDataURL = null;
+}
+
+function populateAllFormFields(data, filename) {
+  // Basic info
+  setValue('name', data.name || '');
+  setValue('company', data.company || '');
+  setValue('jobRole', data.jobRole || '');
+  setValue('summary', data.summary || '');
+
+  // Links
+  const linkMap = {
+    LinkedIn: 'linkLinkedin', Website: 'linkWebsite',
+    X: 'linkX', Behance: 'linkBehance',
+    ResearchGate: 'linkResearch', 'Google Scholar': 'linkScholar'
+  };
+  Object.entries(linkMap).forEach(([key, id]) => setValue(id, (data.links && data.links[key]) || ''));
+
+  // Checkboxes
+  populateCheckGrid('certGrid', data.certifications || []);
+  populateCheckGrid('toolGrid', data.tools || []);
+  populateCheckGrid('skillGrid', data.skills || []);
+  populateCheckGrid('productGrid', data.products || []);
+
+  // Experience
+  jobs = (data.jobs || []).map(j => ({ ...j, bullets: j.bullets || [] }));
+  bullets = [];
+  document.getElementById('bulletContainer').innerHTML = '';
+  renderJobList();
+
+  // Education
+  education = (data.education || []).map(e => ({ ...e }));
+  renderEduList();
+
+  // Languages
+  languages = (data.languages || []).map(l => ({ ...l }));
+  renderLangList();
+
+  // Custom links
+  customLinks = (data.customLinks || []).map(l => ({ ...l }));
+  wzRenderCustomLinks();
+
+  // Custom sections
+  customSections = (data.customSections || []).map(s => ({ ...s }));
+  renderCustomSectionsList();
+
+  updateCompleteness();
+}
+
+function wzBackToEdit() {
+  // Hide CV preview
+  document.getElementById('cvPreviewWrap').style.display = 'none';
+  const pd = document.getElementById('personalDashWrap');
+  if (pd) pd.style.display = 'none';
+  // Return to last step
+  wzGoto(11);
+}
+
+// Override generateCV to jump to results screen after generating
+const _origGenerateCV = window.generateCV;
+
+
 /* ===================================================
    GENERATE CV
 =================================================== */
@@ -5583,89 +6460,89 @@ function obConfirm(message, { title='Are you sure?', icon='⚠️', confirmLabel
    ASK FOR HELP — CONNECT PAGE
 =================================================== */
 const CONN_DPMS = [
-  {name:'Mai Abdel Wahed',    email:'mai.abdelwahed@orange.com'},
-  {name:'Mira Rezk',          email:'mira.rezk@orange.com'},
-  {name:'Diana Samy',         email:'diana.samy@orange.com'},
-  {name:'Salma El Shazly',    email:'salma.elshazly@orange.com'},
-  {name:'Noha Al Badry',      email:'noha.ahmed@orange.com'},
-  {name:'Mahmoud Dahshan',    email:'mahmoud.dahshan@orange.com'},
-  {name:'May Yassin',         email:'may.yassin@orange.com'},
-  {name:'Emad Osman',         email:'emad.osman@orange.com'},
-  {name:'Meryanos Elsahar',   email:'meryanos.elsahar@orange.com'},
-  {name:'Nada Hossam',        email:'nada.hossam@orange.com'},
-  {name:'Mona Tantawi',       email:'mona.tantawi.ext@orange.com'},
-  {name:'Bassant Amgad',      email:'bassant.amgad@orange.com'},
-  {name:'Rami Magdi',         email:'rami.magdi.ext@orange.com'},
-  {name:'Sabah Ismail',       email:'Sabah.Ismail@orange.com'},
-  {name:'Hussein Shehada',    email:'hussein.shehada@orange.com'},
-  {name:'Ahmed Mohey',        email:'ahmed.mohey@orange.com'},
-  {name:'Ahmed Danish',       email:'ahmed.danish.ext@orange.com'},
-  {name:'Aliaa Medhat',       email:'aliaa.medhat@orange.com'},
-  {name:'Andrew Basha',       email:'Andrew.Basha@orange.com'},
-  {name:'Marah Osman',        email:'marah.osman@orange.com'},
-  {name:'Marwan ElSawaf',     email:'marwan.elsawaf.ext@orange.com'},
-  {name:'Mirna Ahmed',        email:'mirna.ahmed@orange.com'},
-  {name:'Mohamed Hesham',     email:'mohamed1.hesham@orange.com'},
-  {name:'Nasreen Ahmad',      email:'nasreen.ahmad@orange.com'},
-  {name:'Farida Sherif',      email:'farida.sherief.ext@orange.com'},
-  {name:'Nadiaa Ali',         email:'nadia.ali.ext@orange.com'},
-  {name:'Lamis Fahmi',        email:'lamismaher.fahmi.ext@orange.com'},
-  {name:'Karim Hendy',        email:'karim.hendy@orange.com'},
-  {name:'Hussam El Aassar',   email:'hussam.elaassar@orange.com'},
-  {name:'Sherif Basiony',     email:'sherif.basiony.ext@orange.com'},
-  {name:'Nouran El Sakka',    email:'nour.elsakka.ext@orange.com'},
-  {name:'Dona Kaid',          email:'dona.kaid.ext@orange.com'},
-  {name:'Nada Megahed',       email:'Nada.Megahed@orange.com'},
-  {name:'Omar Allam',         email:'omar1.allam.ext@orange.com'},
-  {name:'Maryam Tharwat',     email:'maryam.tharwat@orange.com'},
-  {name:'Mohamed Gewely',     email:'mohamed.gewely.ext@orange.com'},
-  {name:'Ghadir Allam',       email:'ghadir.allam.ext@orange.com'},
-  {name:'Rabab Khattab',      email:'rabab.khattab.ext@orange.com'},
-  {name:'Ahmed Raslan',       email:'ahmed1.raslan.ext@orange.com'},
-  {name:'Youssef El Nozahy',  email:'youssef.elnozahy.ext@orange.com'},
-  {name:'Omar El Gammal',     email:'Omar.elgammal@orange.com'},
-  {name:'Ahmed ElKhateeb',    email:'ahmed.elkhateeb.ext@orange.com'},
-  {name:'Amina El Haggan',    email:'amina.el-haggan.ext@orange.com'},
-  {name:'Abdelrahman Sadek',  email:'abdelrahman.sadek.ext@orange.com'},
-  {name:'Hoda Elmehi',        email:'hoda.elmehi@orange.com'},
-  {name:'Aly Maher',          email:'aly.maher.ext@orange.com'},
-  {name:'Omar Galal',         email:'omar.galal.ext@orange.com'},
-  {name:'Rose Khoury',        email:'rose.khoury.ext@orange.com'},
-  {name:'Moustafa Shady',     email:'moustafa.shady.ext@orange.com'},
-  {name:'Mira Fahim',         email:'Mira.fahim@orange.com'},
-  {name:'Yasmine Zaky',       email:'yasmeen.zaky.ext@orange.com'},
-  {name:'Mohamed Eid',        email:'mohamed2.eid.ext@orange.com'},
-  {name:'Reem Mobarak',       email:'reem.mobarak.ext@orange.com'},
-  {name:'Dina Zanaty',        email:'dina.zanaty.ext@orange.com'},
-  {name:'Mai Aziz',           email:'mai.aziz.ext@orange.com'},
-  {name:'Andrew Fakhry',      email:'andrew.fakhry.ext@orange.com'},
-  {name:'Yara Zaki',          email:'yara.zaki.ext@orange.com'},
-  {name:'Moutassem Helmy',    email:'moutassem.helmy.ext@orange.com'},
-  {name:'Nadine Hashish',     email:'nadine.hashish.ext@orange.com'},
-  {name:'Mohamed EL AZHARY',  email:'mohamed.elazhary.ext@orange.com'},
-  {name:'Ahmed Osama',        email:'ahmed.o.osama.ext@orange.com'},
-  {name:'Peter Ghaly',        email:'peter.ghaly.ext@orange.com'},
-  {name:'Ahmed Hweedy',       email:'ahmed.hweedy.ext@orange.com'},
-  {name:'Mohab Tawila',       email:'mohab.tawila.ext@orange.com'},
-  {name:'Zeina Saafan',       email:'zeina.saafan.ext@orange.com'},
-  {name:'Nouran Moustafa',    email:'nouran.moustafa.ext@orange.com'},
-  {name:'Abanoub Wasfy',      email:'abanoub.wasfy.ext@orange.com'},
-  {name:'Merna Bishay',       email:'merna.bishay.ext@orange.com'},
-  {name:'Nadine Elhawary',    email:'nadine.elhawary.ext@orange.com'},
-  {name:'Hazem Shawkat',      email:'hazem.shawkat.ext@orange.com'},
-  {name:'Salma Anwar',        email:'salma.anwar.ext@orange.com'},
-  {name:'Ahmed Elhadidy',     email:'ahmed1.elhadidy.ext@orange.com'},
-  {name:'Caroline Dib',       email:'caroline.dib.ext@orange.com'},
-  {name:'Ehab Rostom',        email:'Ehab.Rostom@Orange.com'},
-  {name:'Sylvia Raouf',       email:'sylvia.raouf.ext@orange.com'},
-  {name:'Lina Hamad',         email:'Lina.Hamad.ext@orange.com'},
-  {name:'Sarah Mashaly',      email:'sarah.mashaly.ext@orange.com'},
-  {name:'Heidi ElMagdoub',    email:'heidi.elmagdoub.ext@orange.com'},
-  {name:'Islam Youssef',      email:'Islam.youssef.ext@orange.com'},
-  {name:'Ahmed Elbourgy',     email:'ahmed.elbourgy.ext@orange.com'},
-  {name:'Nesma Hassan',       email:'nesma.hassan.ext@orange.com'},
-  {name:'Habiba Mahdy',       email:'Habiba.Mahdy.ext@orange.com'},
-  {name:'Nadine El Hitty',    email:'nadine.elhitty.ext@orange.com'},
+  {name:'Mai Abdel Wahed',      email:'mai.abdelwahed@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Mira Rezk',            email:'mira.rezk@orange.com',               cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Diana Samy',           email:'diana.samy@orange.com',              cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Salma El Shazly',      email:'salma.elshazly@orange.com',          cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Noha Al Badry',        email:'noha.ahmed@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mahmoud Dahshan',      email:'mahmoud.dahshan@orange.com',         cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'May Yassin',           email:'may.yassin@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Emad Osman',           email:'emad.osman@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Meryanos Elsahar',     email:'meryanos.elsahar@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nada Hossam',          email:'nada.hossam@orange.com',             cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Mona Tantawi',         email:'mona.tantawi.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Bassant Amgad',        email:'bassant.amgad@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Rami Magdi',           email:'rami.magdi.ext@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Sabah Ismail',         email:'Sabah.Ismail@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Hussein Shehada',      email:'hussein.shehada@orange.com',         cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Mohey',          email:'ahmed.mohey@orange.com',             cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Danish',         email:'ahmed.danish.ext@orange.com',        cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Aliaa Medhat',         email:'aliaa.medhat@orange.com',            cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Andrew Basha',         email:'Andrew.Basha@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Marah Osman',          email:'marah.osman@orange.com',             cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Marwan ElSawaf',       email:'marwan.elsawaf.ext@orange.com',      cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mirna Ahmed',          email:'mirna.ahmed@orange.com',             cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Hesham',       email:'mohamed1.hesham@orange.com',         cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nasreen Ahmad',        email:'nasreen.ahmad@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Farida Sherif',        email:'farida.sherief.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nadiaa Ali',           email:'nadia.ali.ext@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Lamis Fahmi',          email:'lamismaher.fahmi.ext@orange.com',    cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Karim Hendy',          email:'karim.hendy@orange.com',             cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Hussam El Aassar',     email:'hussam.elaassar@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Sherif Basiony',       email:'sherif.basiony.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nouran El Sakka',      email:'nour.elsakka.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Dona Kaid',            email:'dona.kaid.ext@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nada Megahed',         email:'Nada.Megahed@orange.com',            cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Omar Allam',           email:'omar1.allam.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Maryam Tharwat',       email:'maryam.tharwat@orange.com',          cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Gewely',       email:'mohamed.gewely.ext@orange.com',      cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Ghadir Allam',         email:'ghadir.allam.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Rabab Khattab',        email:'rabab.khattab.ext@orange.com',       cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Ahmed Raslan',         email:'ahmed1.raslan.ext@orange.com',       cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Youssef El Nozahy',    email:'youssef.elnozahy.ext@orange.com',    cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Omar El Gammal',       email:'Omar.elgammal@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed ElKhateeb',      email:'ahmed.elkhateeb.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Amina El Haggan',      email:'amina.el-haggan.ext@orange.com',     cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Abdelrahman Sadek',    email:'abdelrahman.sadek.ext@orange.com',   cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Hoda Elmehi',          email:'hoda.elmehi@orange.com',             cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Aly Maher',            email:'aly.maher.ext@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Omar Galal',           email:'omar.galal.ext@orange.com',          cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Rose Khoury',          email:'rose.khoury.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Moustafa Shady',       email:'moustafa.shady.ext@orange.com',      cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'peter.sabet@orange.com'},
+  {name:'Mira Fahim',           email:'Mira.fahim@orange.com',              cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Yasmine Zaky',         email:'yasmeen.zaky.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Eid',          email:'mohamed2.eid.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Reem Mobarak',         email:'reem.mobarak.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Dina Zanaty',          email:'dina.zanaty.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mai Aziz',             email:'mai.aziz.ext@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Andrew Fakhry',        email:'andrew.fakhry.ext@orange.com',       cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Yara Zaki',            email:'yara.zaki.ext@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Moutassem Helmy',      email:'moutassem.helmy.ext@orange.com',     cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nadine Hashish',       email:'nadine.hashish.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed EL AZHARY',    email:'mohamed.elazhary.ext@orange.com',    cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Osama',          email:'ahmed.o.osama.ext@orange.com',       cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Peter Ghaly',          email:'peter.ghaly.ext@orange.com',         cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Hweedy',         email:'ahmed.hweedy.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Mohab Tawila',         email:'mohab.tawila.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Zeina Saafan',         email:'zeina.saafan.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
+  {name:'Nouran Moustafa',      email:'nouran.moustafa.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Abanoub Wasfy',        email:'abanoub.wasfy.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Merna Bishay',         email:'merna.bishay.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nadine Elhawary',      email:'nadine.elhawary.ext@orange.com',     cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Hazem Shawkat',        email:'hazem.shawkat.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Salma Anwar',          email:'salma.anwar.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Elhadidy',       email:'ahmed1.elhadidy.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Caroline Dib',         email:'caroline.dib.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ehab Rostom',          email:'Ehab.Rostom@Orange.com',             cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Sylvia Raouf',         email:'sylvia.raouf.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Lina Hamad',           email:'Lina.Hamad.ext@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Sarah Mashaly',        email:'sarah.mashaly.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Heidi ElMagdoub',      email:'heidi.elmagdoub.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Islam Youssef',        email:'Islam.youssef.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Elbourgy',       email:'ahmed.elbourgy.ext@orange.com',      cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nesma Hassan',         email:'nesma.hassan.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Habiba Mahdy',         email:'Habiba.Mahdy.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nadine El Hitty',      email:'nadine.elhitty.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
 ];
 
 // Sort alphabetically by first name
@@ -5699,7 +6576,7 @@ function connFilterPeople() {
     const btn = document.createElement('button');
     btn.className = 'conn-person-btn' + (connSelected.has(p.email) ? ' selected' : '');
     btn.dataset.email = p.email;
-    btn.innerHTML = `<div class="conn-person-avatar">${initials}</div><div class="conn-person-name">${p.name}</div>`;
+    btn.innerHTML = '<div class="conn-person-avatar">' + initials + '</div><div class="conn-person-name">' + p.name + '</div>';
     btn.onclick = () => connTogglePerson(p);
     grid.appendChild(btn);
   });
@@ -5712,7 +6589,7 @@ function connTogglePerson(p) {
   } else {
     connSelected.add(p.email);
   }
-  connFilterPeople(); // re-render grid with updated selection state
+  connFilterPeople();
   connRenderChips();
   connUpdateCompose();
 }
@@ -6267,6 +7144,12 @@ function generateCV() {
   };
   ['LinkedIn','Behance','ResearchGate','Google Scholar','X','Website'].forEach((n,i) =>
     addLink(n, ['linkLinkedin','linkBehance','linkResearch','linkScholar','linkX','linkWebsite'][i]));
+  // Custom links
+  (customLinks || []).forEach(cl => {
+    const a = document.createElement('a'); a.className = 'cv-link';
+    a.href = cl.url; a.textContent = cl.label; a.target = '_blank';
+    linksList.appendChild(a);
+  });
 
   // Logo
   const logoInput = document.getElementById('logoUpload');
@@ -6376,6 +7259,7 @@ function generateCV() {
     certifications: certs,
     tools, skills, products, jobs,
     education, languages, links,
+    customLinks: customLinks || [],
     pmScore: calcPMScore(certs, tools, skills)
   };
 
@@ -7108,18 +7992,42 @@ function renderExecDashboard(profiles) {
       productBarEl.parentElement.style.display = 'none';
     } else {
       productBarEl.parentElement.style.display = '';
+      const productPalette = [
+        '#FF7900','#ff8f1f','#ffa540','#ffba60','#ffcf80',
+        '#e05c00','#cc4f00','#b84200','#a33600','#8f2b00'
+      ];
       chartInstances['execProductBar'] = new Chart(productBarEl.getContext('2d'), {
         type: 'bar',
         data: {
           labels: topProducts.map(t=>t[0]),
-          datasets: [{ label:'Count', data:topProducts.map(t=>t[1]), backgroundColor:'#4a90d9', borderRadius:4 }]
+          datasets: [{
+            label: 'DPMs',
+            data: topProducts.map(t=>t[1]),
+            backgroundColor: topProducts.map((_,i) => productPalette[i % productPalette.length]),
+            borderRadius: 5,
+            borderSkipped: false
+          }]
         },
         options: {
           indexAxis: 'y',
-          plugins: { legend: { display:false } },
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ' ' + ctx.parsed.x + ' DPM' + (ctx.parsed.x !== 1 ? 's' : '')
+              }
+            }
+          },
           scales: {
-            x: { ticks:{ color:tickColor, stepSize:1 }, grid:{ color:gridColor } },
-            y: { ticks:{ color:labelColor, font:{size:11} }, grid:{ display:false } }
+            x: {
+              ticks: { color: tickColor, stepSize: 1, precision: 0 },
+              grid: { color: gridColor }
+            },
+            y: {
+              ticks: { color: labelColor, font: { size: 11 } },
+              grid: { display: false }
+            }
           }
         }
       });
@@ -8519,7 +9427,7 @@ const CERTIFICATIONS = [
     duration: "1–3 months prep",
     importance: 85,
     emoji: "👑",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/peoplecert.org",
     description: "Widely adopted in Europe, the Middle East, and government. A process-based methodology with clear governance and defined roles. PRINCE2 7 is the latest edition.",
     exam: "Foundation: 60 questions · 1 hr · Practitioner: 68 questions · 2.5 hrs",
     link: "https://www.axelos.com/certifications/propath/prince2-project-management"
@@ -8537,7 +9445,7 @@ const CERTIFICATIONS = [
     duration: "2-day course",
     importance: 82,
     emoji: "🔄",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/scrumalliance.org",
     description: "Foundational Scrum certification covering the Scrum framework, Sprint ceremonies, and the Scrum Master role. Requires attending an official course.",
     exam: "50 questions · 60 min · Online · Renew every 2 years (16 SEUs)",
     link: "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster"
@@ -8555,7 +9463,7 @@ const CERTIFICATIONS = [
     duration: "2–4 weeks prep",
     importance: 80,
     emoji: "🌀",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/scrum.org",
     description: "Rigorous, no-training-required Scrum certification. Highly respected in the industry for testing real understanding of the Scrum Guide. No renewal required.",
     exam: "80 questions · 60 min · Online open-book · 85% passing score · No expiry",
     link: "https://www.scrum.org/assessments/professional-scrum-master-i-certification"
@@ -8609,7 +9517,7 @@ const CERTIFICATIONS = [
     duration: "2–4 weeks prep",
     importance: 75,
     emoji: "⚙️",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/peoplecert.org",
     description: "The world-leading IT service management framework. Essential for DPMs working on digital or IT projects. Covers service value system, practices, and key concepts.",
     exam: "40 questions · 60 min · Pearson VUE · No expiry",
     link: "https://www.axelos.com/certifications/itil-service-management/itil-4-foundation"
@@ -8681,7 +9589,7 @@ const CERTIFICATIONS = [
     duration: "2–4 months",
     importance: 70,
     emoji: "🟢",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/asq.org",
     description: "Covers process improvement methodologies using Lean and Six Sigma tools (DMAIC). Valuable for DPMs leading process improvement or efficiency projects.",
     exam: "110 questions · 4.5 hours (IASSC) · Open-book allowed",
     link: "https://www.iassc.org/six-sigma-certification/lean-six-sigma-green-belt/"
@@ -8717,7 +9625,7 @@ const CERTIFICATIONS = [
     duration: "2-day course",
     importance: 76,
     emoji: "🚀",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/scaledagile.com",
     description: "Leading certification for Scaled Agile Framework at enterprise level. Essential for DPMs working in large organizations using SAFe. Covers PI Planning, ARTs, and Lean-Agile leadership.",
     exam: "45 questions · 90 min · Online · Renew annually",
     link: "https://scaledagile.com/training/safe-agilist/"
@@ -8735,7 +9643,7 @@ const CERTIFICATIONS = [
     duration: "3-day program",
     importance: 72,
     emoji: "🔀",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/prosci.com",
     description: "The most recognized change management certification globally. Covers the ADKAR model and structured approach to managing the people side of change on projects.",
     exam: "Project-based assessment · No traditional exam · Scenario application",
     link: "https://www.prosci.com/certification/change-management-certification-program"
@@ -8753,7 +9661,7 @@ const CERTIFICATIONS = [
     duration: "3–6 months prep",
     importance: 69,
     emoji: "🧩",
-    logoUrl: "",
+    logoUrl: "https://logo.clearbit.com/iiba.org",
     description: "Premier certification for senior business analysis professionals. Requires 7,500 hours of BA experience. Covers BABOK Guide domains comprehensively.",
     exam: "120 questions · 3.5 hours · Pearson VUE · Renew every 3 years (60 CDUs)",
     link: "https://www.iiba.org/certification/cbap/"
