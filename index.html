@@ -4820,6 +4820,15 @@ html.light .cvgb-sharepoint {
           <input type="text" id="jobRole" placeholder="e.g. Senior Project Manager">
         </div>
         <div class="form-field">
+          <label>APM Cluster</label>
+          <div class="wz-level-btns" id="clusterBtns">
+            <button type="button" class="wz-level-btn" data-val="N&S EU (Inc. Transversal)" onclick="wzPickCluster(this)">🌍 N&amp;S EU (Inc. Transversal)</button>
+            <button type="button" class="wz-level-btn" data-val="DACH (Inc. BASF)"          onclick="wzPickCluster(this)">🏔️ DACH (Inc. BASF)</button>
+            <button type="button" class="wz-level-btn" data-val="Benelux"                   onclick="wzPickCluster(this)">🌷 Benelux</button>
+          </div>
+          <input type="hidden" id="apmCluster" value="">
+        </div>
+        <div class="form-field">
           <label>Profile Photo <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
           <input type="file" id="photoUpload" accept="image/*">
         </div>
@@ -6021,6 +6030,12 @@ function populateFromJSON(data, filename) {
   setValue('name',    data.name    || '');
   setValue('company', data.company || '');
   setValue('jobRole', data.jobRole || '');
+  // Restore cluster selection
+  const savedCluster = data.apmCluster || '';
+  setValue('apmCluster', savedCluster);
+  document.querySelectorAll('#clusterBtns .wz-level-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.val === savedCluster);
+  });
   setValue('summary', data.summary || '');
 
   // ── Links ──
@@ -6287,6 +6302,12 @@ function renderLangList() {
 /* ── Custom links state ─────────────────────────────────────────── */
 let customLinks = []; // [{label, url}]
 
+function wzPickCluster(btn) {
+  document.querySelectorAll('#clusterBtns .wz-level-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('apmCluster').value = btn.dataset.val;
+}
+
 function wzPickLevel(btn) {
   document.querySelectorAll('#langLevelBtns .wz-level-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
@@ -6413,6 +6434,8 @@ function wzLoadJSON(event) {
 function clearAllFormFields() {
   // Basic info
   ['name','company','jobRole','summary'].forEach(id => setValue(id, ''));
+  setValue('apmCluster','');
+  document.querySelectorAll('#clusterBtns .wz-level-btn').forEach(b=>b.classList.remove('selected'));
   // Links
   ['linkLinkedin','linkWebsite','linkX','linkBehance','linkResearch','linkScholar'].forEach(id => setValue(id, ''));
   // Checkboxes
@@ -6593,92 +6616,91 @@ function obConfirm(message, { title='Are you sure?', icon='⚠️', confirmLabel
    ASK FOR HELP — CONNECT PAGE
 =================================================== */
 const CONN_DPMS = [
-  {name:'Mai Abdel Wahed',      email:'mai.abdelwahed@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Mira Rezk',            email:'mira.rezk@orange.com',               cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Diana Samy',           email:'diana.samy@orange.com',              cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Salma El Shazly',      email:'salma.elshazly@orange.com',          cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Noha Al Badry',        email:'noha.ahmed@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mahmoud Dahshan',      email:'mahmoud.dahshan@orange.com',         cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'May Yassin',           email:'may.yassin@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Emad Osman',           email:'emad.osman@orange.com',              cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Meryanos Elsahar',     email:'meryanos.elsahar@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Nada Hossam',          email:'nada.hossam@orange.com',             cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Mona Tantawi',         email:'mona.tantawi.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Bassant Amgad',        email:'bassant.amgad@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Rami Magdi',           email:'rami.magdi.ext@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Sabah Ismail',         email:'Sabah.Ismail@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Hussein Shehada',      email:'hussein.shehada@orange.com',         cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Ahmed Mohey',          email:'ahmed.mohey@orange.com',             cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Ahmed Danish',         email:'ahmed.danish.ext@orange.com',        cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Aliaa Medhat',         email:'aliaa.medhat@orange.com',            cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Andrew Basha',         email:'Andrew.Basha@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Marah Osman',          email:'marah.osman@orange.com',             cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Marwan ElSawaf',       email:'marwan.elsawaf.ext@orange.com',      cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mirna Ahmed',          email:'mirna.ahmed@orange.com',             cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mohamed Hesham',       email:'mohamed1.hesham@orange.com',         cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Nasreen Ahmad',        email:'nasreen.ahmad@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Farida Sherif',        email:'farida.sherief.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Nadiaa Ali',           email:'nadia.ali.ext@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Lamis Fahmi',          email:'lamismaher.fahmi.ext@orange.com',    cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Karim Hendy',          email:'karim.hendy@orange.com',             cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Hussam El Aassar',     email:'hussam.elaassar@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Sherif Basiony',       email:'sherif.basiony.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Nouran El Sakka',      email:'nour.elsakka.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Dona Kaid',            email:'dona.kaid.ext@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Nada Megahed',         email:'Nada.Megahed@orange.com',            cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Omar Allam',           email:'omar1.allam.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Maryam Tharwat',       email:'maryam.tharwat@orange.com',          cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mohamed Gewely',       email:'mohamed.gewely.ext@orange.com',      cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Ghadir Allam',         email:'ghadir.allam.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Rabab Khattab',        email:'rabab.khattab.ext@orange.com',       cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Ahmed Raslan',         email:'ahmed1.raslan.ext@orange.com',       cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Youssef El Nozahy',    email:'youssef.elnozahy.ext@orange.com',    cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Omar El Gammal',       email:'Omar.elgammal@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Ahmed ElKhateeb',      email:'ahmed.elkhateeb.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Amina El Haggan',      email:'amina.el-haggan.ext@orange.com',     cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Abdelrahman Sadek',    email:'abdelrahman.sadek.ext@orange.com',   cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Hoda Elmehi',          email:'hoda.elmehi@orange.com',             cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Aly Maher',            email:'aly.maher.ext@orange.com',           cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Omar Galal',           email:'omar.galal.ext@orange.com',          cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Rose Khoury',          email:'rose.khoury.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Moustafa Shady',       email:'moustafa.shady.ext@orange.com',      cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'peter.sabet@orange.com'},
-  {name:'Mira Fahim',           email:'Mira.fahim@orange.com',              cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Yasmine Zaky',         email:'yasmeen.zaky.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mohamed Eid',          email:'mohamed2.eid.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Reem Mobarak',         email:'reem.mobarak.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Dina Zanaty',          email:'dina.zanaty.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mai Aziz',             email:'mai.aziz.ext@orange.com',            cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Andrew Fakhry',        email:'andrew.fakhry.ext@orange.com',       cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Yara Zaki',            email:'yara.zaki.ext@orange.com',           cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Moutassem Helmy',      email:'moutassem.helmy.ext@orange.com',     cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Nadine Hashish',       email:'nadine.hashish.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Mohamed EL AZHARY',    email:'mohamed.elazhary.ext@orange.com',    cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Ahmed Osama',          email:'ahmed.o.osama.ext@orange.com',       cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Peter Ghaly',          email:'peter.ghaly.ext@orange.com',         cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Ahmed Hweedy',         email:'ahmed.hweedy.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Mohab Tawila',         email:'mohab.tawila.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Zeina Saafan',         email:'zeina.saafan.ext@orange.com',        cluster:'Benelux', manager:'Maryam Etry',    managerEmail:'maryam.etry@orange.com'},
-  {name:'Nouran Moustafa',      email:'nouran.moustafa.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Abanoub Wasfy',        email:'abanoub.wasfy.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Merna Bishay',         email:'merna.bishay.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Nadine Elhawary',      email:'nadine.elhawary.ext@orange.com',     cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Hazem Shawkat',        email:'hazem.shawkat.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Salma Anwar',          email:'salma.anwar.ext@orange.com',         cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Ahmed Elhadidy',       email:'ahmed1.elhadidy.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Caroline Dib',         email:'caroline.dib.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Ehab Rostom',          email:'Ehab.Rostom@Orange.com',             cluster:'N&S EU',  manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Sylvia Raouf',         email:'sylvia.raouf.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Lina Hamad',           email:'Lina.Hamad.ext@orange.com',          cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Sarah Mashaly',        email:'sarah.mashaly.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Heidi ElMagdoub',      email:'heidi.elmagdoub.ext@orange.com',     cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Islam Youssef',        email:'Islam.youssef.ext@orange.com',       cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Ahmed Elbourgy',       email:'ahmed.elbourgy.ext@orange.com',      cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Nesma Hassan',         email:'nesma.hassan.ext@orange.com',        cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
-  {name:'Habiba Mahdy',         email:'Habiba.Mahdy.ext@orange.com',        cluster:'N&S EU',  manager:'Karim ElZarka',  managerEmail:'karim.elzarka@orange.com'},
-  {name:'Nadine El Hitty',      email:'nadine.elhitty.ext@orange.com',      cluster:'DACH',    manager:'Peter Sabet',    managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mai Abdel Wahed',email:'mai.abdelwahed@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mira Rezk',email:'mira.rezk@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Diana Samy',email:'diana.samy@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Salma El Shazly',email:'salma.elshazly@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Noha Al Badry',email:'noha.ahmed@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mahmoud Dahshan',email:'mahmoud.dahshan@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'May Yassin',email:'may.yassin@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Emad Osman',email:'emad.osman@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Meryanos Elsahar',email:'meryanos.elsahar@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nada Hossam',email:'nada.hossam@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Mona Tantawi',email:'mona.tantawi.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Bassant Amgad',email:'bassant.amgad@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Rami Magdi',email:'rami.magdi.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Sabah Ismail',email:'Sabah.Ismail@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Hussein Shehada',email:'hussein.shehada@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Mohey',email:'ahmed.mohey@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Danish',email:'ahmed.danish.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Aliaa Medhat',email:'aliaa.medhat@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Andrew Basha',email:'Andrew.Basha@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Marah Osman',email:'marah.osman@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Marwan ElSawaf',email:'marwan.elsawaf.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mirna Ahmed',email:'mirna.ahmed@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Hesham',email:'mohamed1.hesham@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nasreen Ahmad',email:'nasreen.ahmad@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Farida Sherif',email:'farida.sherief.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nadia Ali',email:'nadia.ali.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Lamis Fahmi',email:'lamismaher.fahmi.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Karim Hendy',email:'karim.hendy@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Hussam El Aassar',email:'hussam.elaassar@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Sherif Basiony',email:'sherif.basiony.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nouran El Sakka',email:'nour.elsakka.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Dona Kaid',email:'dona.kaid.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nada Megahed',email:'Nada.Megahed@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Omar Allam',email:'omar1.allam.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Maryam Tharwat',email:'maryam.tharwat@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Gewely',email:'mohamed.gewely.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Ghadir Allam',email:'ghadir.allam.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Rabab Khattab',email:'rabab.khattab.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Ahmed Raslan',email:'ahmed1.raslan.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Youssef El Nozahy',email:'youssef.elnozahy.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Omar El Gammal',email:'Omar.elgammal@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed ElKhateeb',email:'ahmed.elkhateeb.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Amina El Haggan',email:'amina.el-haggan.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Abdelrahman Sadek',email:'abdelrahman.sadek.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Hoda Elmehi',email:'hoda.elmehi@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Aly Maher',email:'aly.maher.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Omar Galal',email:'omar.galal.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Rose Khoury',email:'rose.khoury.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Moustafa Shady',email:'moustafa.shady.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mira Fahim',email:'Mira.fahim@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Yasmine Zaky',email:'yasmeen.zaky.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed Eid',email:'mohamed2.eid.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Reem Mobarak',email:'reem.mobarak.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Dina Zanaty',email:'dina.zanaty.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mai Aziz',email:'mai.aziz.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Andrew Fakhry',email:'andrew.fakhry.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Yara Zaki',email:'yara.zaki.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Moutassem Helmy',email:'moutassem.helmy.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Nadine Hashish',email:'nadine.hashish.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Mohamed EL AZHARY',email:'mohamed.elazhary.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Osama',email:'ahmed.o.osama.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Peter Ghaly',email:'peter.ghaly.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Hweedy',email:'ahmed.hweedy.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Mohab Tawila',email:'mohab.tawila.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Zeina Saafan',email:'zeina.saafan.ext@orange.com',cluster:'Benelux',manager:'Maryam Etry',managerEmail:'maryam.etry@orange.com'},
+  {name:'Nouran Moustafa',email:'nouran.moustafa.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Abanoub Wasfy',email:'abanoub.wasfy.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Merna Bishay',email:'merna.bishay.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nadine Elhawary',email:'nadine.elhawary.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Hazem Shawkat',email:'hazem.shawkat.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Salma Anwar',email:'salma.anwar.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ahmed Elhadidy',email:'ahmed1.elhadidy.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Caroline Dib',email:'caroline.dib.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Ehab Rostom',email:'Ehab.Rostom@Orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Sylvia Raouf',email:'sylvia.raouf.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Lina Hamad',email:'Lina.Hamad.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Sarah Mashaly',email:'sarah.mashaly.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Heidi ElMagdoub',email:'heidi.elmagdoub.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Islam Youssef',email:'Islam.youssef.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Ahmed Elbourgy',email:'ahmed.elbourgy.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nesma Hassan',email:'nesma.hassan.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
+  {name:'Habiba Mahdy',email:'Habiba.Mahdy.ext@orange.com',cluster:'N&S EU (Inc. Transversal)',manager:'Karim ElZarka',managerEmail:'karim.elzarka@orange.com'},
+  {name:'Nadine El Hitty',email:'nadine.elhitty.ext@orange.com',cluster:'DACH (Inc. BASF)',manager:'Peter Sabet',managerEmail:'Peter.sabet@orange.com'},
 ];
 
-// Sort alphabetically by first name
 CONN_DPMS.sort((a,b) => a.name.localeCompare(b.name));
 
 let connSelected = new Set(); // selected emails
@@ -6689,29 +6711,66 @@ function initConnect() {
   connFilterPeople();
 }
 
-// ── Filter / render people grid ─────────────────────────────────────────────
+// ── Cluster display config ───────────────────────────────────────────────────
+const CLUSTER_CONFIG = {
+  'N&S EU (Inc. Transversal)': { emoji: '🌍', color: '#FF7900' },
+  'DACH (Inc. BASF)':          { emoji: '🏔️', color: '#0078d4' },
+  'Benelux':                   { emoji: '🌷', color: '#10b981' },
+};
+const CLUSTER_ORDER = ['N&S EU (Inc. Transversal)', 'DACH (Inc. BASF)', 'Benelux'];
+
+// ── Filter / render people grid grouped by cluster ────────────────────────
 function connFilterPeople() {
   const q = (document.getElementById('connSearch').value || '').toLowerCase().trim();
   const grid = document.getElementById('connPeopleGrid');
   grid.innerHTML = '';
 
   const filtered = q
-    ? CONN_DPMS.filter(p => p.name.toLowerCase().includes(q))
+    ? CONN_DPMS.filter(p => p.name.toLowerCase().includes(q) || p.cluster.toLowerCase().includes(q))
     : CONN_DPMS;
 
   if (filtered.length === 0) {
-    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0;grid-column:1/-1;">No DPMs match your search.</div>';
+    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px 0;grid-column:1/-1;">No DPMs match your search.</div>';
     return;
   }
 
+  // Group by cluster
+  const groups = {};
+  CLUSTER_ORDER.forEach(c => groups[c] = []);
   filtered.forEach(p => {
-    const initials = p.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-    const btn = document.createElement('button');
-    btn.className = 'conn-person-btn' + (connSelected.has(p.email) ? ' selected' : '');
-    btn.dataset.email = p.email;
-    btn.innerHTML = '<div class="conn-person-avatar">' + initials + '</div><div class="conn-person-name">' + p.name + '</div>';
-    btn.onclick = () => connTogglePerson(p);
-    grid.appendChild(btn);
+    if (!groups[p.cluster]) groups[p.cluster] = [];
+    groups[p.cluster].push(p);
+  });
+
+  CLUSTER_ORDER.forEach(clusterName => {
+    const members = groups[clusterName];
+    if (!members || members.length === 0) return;
+
+    const cfg = CLUSTER_CONFIG[clusterName] || { emoji: '📍', color: 'var(--orange)' };
+
+    // Cluster header — spans full width
+    const header = document.createElement('div');
+    header.className = 'conn-cluster-header';
+    header.style.cssText = 'grid-column:1/-1;display:flex;align-items:center;gap:8px;margin:10px 0 4px;';
+    header.innerHTML =
+      '<span style="font-size:15px;">' + cfg.emoji + '</span>' +
+      '<span style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:' + cfg.color + ';">' + clusterName + '</span>' +
+      '<span style="font-size:11px;color:var(--muted);font-weight:500;">· ' + members.length + ' DPMs</span>' +
+      '<div style="flex:1;height:1px;background:var(--border);margin-left:6px;"></div>';
+    grid.appendChild(header);
+
+    members.forEach(p => {
+      const initials = p.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+      const btn = document.createElement('button');
+      btn.className = 'conn-person-btn' + (connSelected.has(p.email) ? ' selected' : '');
+      btn.dataset.email = p.email;
+      btn.style.setProperty('--cluster-color', cfg.color);
+      btn.innerHTML =
+        '<div class="conn-person-avatar" style="background:' + cfg.color + '22;color:' + cfg.color + ';">' + initials + '</div>' +
+        '<div class="conn-person-name">' + p.name + '</div>';
+      btn.onclick = () => connTogglePerson(p);
+      grid.appendChild(btn);
+    });
   });
 }
 
@@ -7173,6 +7232,7 @@ function generateCV() {
   const name = document.getElementById('name').value;
   const company = document.getElementById('company').value;
   const jobRole = document.getElementById('jobRole').value.trim();
+  const apmCluster = (document.getElementById('apmCluster') ? document.getElementById('apmCluster').value.trim() : '');
   const summaryInput = document.getElementById('summary').value.trim();
 
   document.getElementById('cvName').textContent = name;
@@ -7387,7 +7447,7 @@ function generateCV() {
     schemaVersion: '1.0',
     generatedAt: new Date().toISOString(),
     lastUpdated: new Date().toISOString(),
-    name, company, jobRole,
+    name, company, jobRole, apmCluster,
     summary: summaryInput,
     certifications: certs,
     tools, skills, products, jobs,
@@ -7646,11 +7706,13 @@ async function downloadCVDocx() {
 =================================================== */
 function downloadCVJSON() {
   if (!currentCVData) { obAlert('Please generate the CV first.', {title:'Nothing to export', icon:'📄'}); return; }
-  const safeName = (currentCVData.name || 'profile').replace(/\s+/g, '_');
+  const safeName    = (currentCVData.name || 'profile').replace(/\s+/g, '_');
+  const safeCluster = (currentCVData.apmCluster || '').replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+  const jsonFilename = safeCluster ? `Orange_CV_${safeName}_${safeCluster}.json` : `Orange_CV_${safeName}.json`;
   const blob = new Blob([JSON.stringify(currentCVData, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Orange_CV_${safeName}.json`;
+  a.download = jsonFilename;
   a.click();
   URL.revokeObjectURL(a.href);
 }
