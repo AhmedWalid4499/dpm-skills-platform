@@ -4382,6 +4382,39 @@ html.light .tpl-radio-card { background: #fff; }
     </div>
 
     <div class="gen-section">
+      <h2>Products &amp; Services</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Select the Orange Business products and services you have delivered or worked with.</p>
+      <div class="checkbox-grid" id="productGrid">
+        <label class="check-label"><input type="checkbox" value="Fortinet"> Fortinet</label>
+        <label class="check-label"><input type="checkbox" value="Palo Alto Networks"> Palo Alto Networks</label>
+        <label class="check-label"><input type="checkbox" value="Cisco Devices"> Cisco Devices</label>
+        <label class="check-label"><input type="checkbox" value="Unified Communications"> Unified Communications</label>
+        <label class="check-label"><input type="checkbox" value="LAN Devices"> LAN Devices</label>
+        <label class="check-label"><input type="checkbox" value="WAN / SD-WAN"> WAN / SD-WAN</label>
+        <label class="check-label"><input type="checkbox" value="MPLS Networks"> MPLS Networks</label>
+        <label class="check-label"><input type="checkbox" value="Cloud Connectivity"> Cloud Connectivity</label>
+        <label class="check-label"><input type="checkbox" value="Microsoft 365"> Microsoft 365</label>
+        <label class="check-label"><input type="checkbox" value="Microsoft Azure"> Microsoft Azure</label>
+        <label class="check-label"><input type="checkbox" value="AWS"> AWS</label>
+        <label class="check-label"><input type="checkbox" value="Google Cloud"> Google Cloud</label>
+        <label class="check-label"><input type="checkbox" value="Managed Security Services"> Managed Security Services</label>
+        <label class="check-label"><input type="checkbox" value="SOC / SIEM"> SOC / SIEM</label>
+        <label class="check-label"><input type="checkbox" value="Endpoint Security"> Endpoint Security</label>
+        <label class="check-label"><input type="checkbox" value="Zero Trust Network Access"> Zero Trust Network Access</label>
+        <label class="check-label"><input type="checkbox" value="Contact Centre Solutions"> Contact Centre Solutions</label>
+        <label class="check-label"><input type="checkbox" value="Video Conferencing"> Video Conferencing</label>
+        <label class="check-label"><input type="checkbox" value="IoT Solutions"> IoT Solutions</label>
+        <label class="check-label"><input type="checkbox" value="Data Centre Services"> Data Centre Services</label>
+        <label class="check-label"><input type="checkbox" value="Backup &amp; Recovery"> Backup &amp; Recovery</label>
+        <label class="check-label"><input type="checkbox" value="Network Monitoring"> Network Monitoring</label>
+        <label class="check-label"><input type="checkbox" value="IP Telephony / VoIP"> IP Telephony / VoIP</label>
+        <label class="check-label"><input type="checkbox" value="Business Internet"> Business Internet</label>
+        <label class="check-label"><input type="checkbox" value="Digital Workplace"> Digital Workplace</label>
+      </div>
+      <input class="add-input" type="text" placeholder="+ Add custom product / service, press Enter" onkeypress="addItem(event,'productGrid')">
+    </div>
+
+    <div class="gen-section">
       <h2>Professional Experience</h2>
       <div class="form-grid">
         <div class="form-field"><label>Job Title</label><input type="text" id="jobTitle"></div>
@@ -4546,6 +4579,10 @@ html.light .tpl-radio-card { background: #fff; }
           <div class="cv-tags" id="cvToolList"></div>
           <div class="cv-section-title">Professional Skills</div>
           <div class="cv-tags" id="cvSkillList"></div>
+          <div id="cvProductSection">
+            <div class="cv-section-title">Products &amp; Services</div>
+            <div class="cv-tags" id="cvProductList"></div>
+          </div>
           <div id="cvLangSection">
             <div class="cv-section-title">Languages</div>
             <div class="cv-tags" id="cvLangList"></div>
@@ -4738,6 +4775,12 @@ html.light .tpl-radio-card { background: #fff; }
           <div style="max-width:260px;margin:0 auto;">
             <canvas id="execSkillDonut"></canvas>
           </div>
+        </div>
+        <!-- Products & Services bar -->
+        <div class="pbi-chart-card" id="execProductBarWrap">
+          <div class="pbi-chart-title">🔷 Products &amp; Services Coverage</div>
+          <div class="pbi-chart-sub">How many DPMs have worked with each Orange Business product</div>
+          <canvas id="execProductBar" height="260"></canvas>
         </div>
         <div class="pbi-card">
           <div class="pbi-card-header">
@@ -5203,6 +5246,10 @@ function populateFromJSON(data, filename) {
   // ── Skills ──
   const skills = data.skills || [];
   populateCheckGrid('skillGrid', skills);
+
+  // ── Products & Services ──
+  const products = data.products || [];
+  populateCheckGrid('productGrid', products);
 
   // ── Jobs / Experience ──
   jobs = (data.jobs || []).map(j => ({ ...j, bullets: j.bullets || [] }));
@@ -6134,11 +6181,12 @@ function generateCV() {
   const certList = document.getElementById('cvCertList');
   const toolList = document.getElementById('cvToolList');
   const skillList = document.getElementById('cvSkillList');
+  const productList = document.getElementById('cvProductList');
   const expList = document.getElementById('cvExpList');
   const linksList = document.getElementById('cvLinksList');
-  certList.innerHTML = ''; toolList.innerHTML = ''; skillList.innerHTML = ''; expList.innerHTML = ''; linksList.innerHTML = '';
+  certList.innerHTML = ''; toolList.innerHTML = ''; skillList.innerHTML = ''; productList.innerHTML = ''; expList.innerHTML = ''; linksList.innerHTML = '';
 
-  const certs = [], tools = [], skills = [];
+  const certs = [], tools = [], skills = [], products = [];
 
   document.querySelectorAll('#certGrid input:checked').forEach(c => {
     const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
@@ -6154,6 +6202,15 @@ function generateCV() {
     const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
     skillList.appendChild(tag); skills.push(c.value);
   });
+
+  document.querySelectorAll('#productGrid input:checked').forEach(c => {
+    const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
+    productList.appendChild(tag); products.push(c.value);
+  });
+
+  // Show/hide products section
+  const prodSec = document.getElementById('cvProductSection');
+  if (prodSec) prodSec.style.display = products.length ? 'block' : 'none';
 
   jobs.forEach(job => {
     const block = document.createElement('div'); block.className = 'cv-exp-block';
@@ -6317,7 +6374,7 @@ function generateCV() {
     name, company, jobRole,
     summary: summaryInput,
     certifications: certs,
-    tools, skills, jobs,
+    tools, skills, products, jobs,
     education, languages, links,
     pmScore: calcPMScore(certs, tools, skills)
   };
@@ -6474,6 +6531,7 @@ async function downloadCVDocx() {
     if ((d.certifications||[]).length > 0) { body += heading('Certifications');      body += tags(d.certifications); }
     if ((d.tools||[]).length > 0)          { body += heading('Tools & Technologies'); body += tags(d.tools); }
     if ((d.skills||[]).length > 0)         { body += heading('Professional Skills');  body += tags(d.skills); }
+    if ((d.products||[]).length > 0)       { body += heading('Products & Services');  body += tags(d.products); }
     if ((d.languages||[]).length > 0)      { body += heading('Languages');            body += tags((d.languages||[]).map(l=>l.name+' · '+l.level)); }
 
     // Links
@@ -6722,12 +6780,13 @@ async function parseCVFile(file) {
         const certs = data.certifications || [];
         const tools = data.tools || [];
         const skills = data.skills || [];
+        const products = data.products || [];
         resolve({
           name: data.name || file.name.replace('.json',''),
           company: data.company || '',
           jobRole: data.jobRole || '',
           summary: data.summary || '',
-          certs, tools, skills,
+          certs, tools, skills, products,
           jobs: data.jobs || [],
           education: data.education || [],
           languages: data.languages || [],
@@ -6923,14 +6982,16 @@ function renderExecDashboard(profiles) {
   document.getElementById('execSubtitle').textContent = 'Generated ' + now + ' · Orange Business Skills Platform';
 
   // ── KPI STRIP ─────────────────────────────────────────────────────────────
-  const totalCerts = profiles.reduce((a, p) => a + p.certs.length, 0);
-  const totalTools = new Set(profiles.flatMap(p => p.tools)).size;
-  const avgScore = Math.round(profiles.reduce((a,p) => a + p.score, 0) / profiles.length);
+  const totalCerts    = profiles.reduce((a, p) => a + p.certs.length, 0);
+  const totalTools    = new Set(profiles.flatMap(p => p.tools)).size;
+  const totalProducts = new Set(profiles.flatMap(p => p.products||[])).size;
+  const avgScore      = Math.round(profiles.reduce((a,p) => a + p.score, 0) / profiles.length);
 
   document.getElementById('execKPIs').innerHTML =
     '<div class="pbi-kpi"><div class="pbi-kpi-label">Team Members</div><div class="pbi-kpi-value">' + profiles.length + '</div><div class="pbi-kpi-sub">DPMs in view</div></div>' +
     '<div class="pbi-kpi"><div class="pbi-kpi-label">Certifications</div><div class="pbi-kpi-value">' + totalCerts + '</div><div class="pbi-kpi-sub">Across team</div></div>' +
-    '<div class="pbi-kpi"><div class="pbi-kpi-label">Unique Tools</div><div class="pbi-kpi-value">' + totalTools + '</div><div class="pbi-kpi-sub">Tool coverage</div></div>';
+    '<div class="pbi-kpi"><div class="pbi-kpi-label">Unique Tools</div><div class="pbi-kpi-value">' + totalTools + '</div><div class="pbi-kpi-sub">Tool coverage</div></div>' +
+    '<div class="pbi-kpi"><div class="pbi-kpi-label">Products Coverage</div><div class="pbi-kpi-value">' + totalProducts + '</div><div class="pbi-kpi-sub">Unique products</div></div>';
 
   // ── RADAR ─────────────────────────────────────────────────────────────────
   const teamCatScores = Object.entries(PM_CATEGORIES).map(([cat, catSkills]) => {
@@ -7034,6 +7095,36 @@ function renderExecDashboard(profiles) {
       }
     }
   });
+
+  // ── PRODUCTS BAR ─────────────────────────────────────────────────────────
+  const allProductsArr = profiles.flatMap(p => p.products||[]);
+  const productFreq = {};
+  allProductsArr.forEach(t => productFreq[t] = (productFreq[t]||0)+1);
+  const topProducts = Object.entries(productFreq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const productBarEl = document.getElementById('execProductBar');
+  if (productBarEl) {
+    destroyChart('execProductBar');
+    if (topProducts.length === 0) {
+      productBarEl.parentElement.style.display = 'none';
+    } else {
+      productBarEl.parentElement.style.display = '';
+      chartInstances['execProductBar'] = new Chart(productBarEl.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: topProducts.map(t=>t[0]),
+          datasets: [{ label:'Count', data:topProducts.map(t=>t[1]), backgroundColor:'#4a90d9', borderRadius:4 }]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: { legend: { display:false } },
+          scales: {
+            x: { ticks:{ color:tickColor, stepSize:1 }, grid:{ color:gridColor } },
+            y: { ticks:{ color:labelColor, font:{size:11} }, grid:{ display:false } }
+          }
+        }
+      });
+    }
+  }
 
   // ── SKILL DONUT ───────────────────────────────────────────────────────────
   const catTotals = Object.entries(PM_CATEGORIES).map(([cat, catSkills]) =>
@@ -7934,6 +8025,7 @@ function calcCompleteness() {
   // Tools (10pts)
   total += 10;
   const toolCount = document.querySelectorAll('#toolGrid input:checked').length;
+  const productCount = document.querySelectorAll('#productGrid input:checked').length;
   if (toolCount > 0) score += Math.min(toolCount / 3, 1) * 10;
   else missing.push('tools');
 
