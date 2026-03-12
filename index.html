@@ -4235,6 +4235,105 @@ html.light .tpl-radio-card { background: #fff; }
   transition: transform .2s;
 }
 .home-link-card:hover .home-link-arrow { transform: translate(2px,-2px); }
+
+/* ── SharePoint upload button ────────────────────────────────── */
+.cvgb-sharepoint {
+  background: rgba(0,120,212,0.12);
+  border: 1.5px solid rgba(0,120,212,0.35);
+  color: #0078d4;
+}
+.cvgb-sharepoint:hover {
+  background: rgba(0,120,212,0.22);
+  border-color: #0078d4;
+}
+html.light .cvgb-sharepoint {
+  background: rgba(0,120,212,0.08);
+  color: #0078d4;
+}
+
+/* ── SharePoint modal ────────────────────────────────────────── */
+.sp-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+  animation: wzFadeUp .2s ease both;
+}
+.sp-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 36px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 24px 64px rgba(0,0,0,.4);
+}
+.sp-modal-icon { font-size: 40px; margin-bottom: 12px; }
+.sp-modal-title { font-size: 20px; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+.sp-modal-sub   { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 20px; }
+.sp-modal-field { margin-bottom: 14px; }
+.sp-modal-field label { display:block; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; }
+.sp-modal-field input {
+  width: 100%; box-sizing: border-box;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+  transition: border-color .15s;
+}
+.sp-modal-field input:focus { outline:none; border-color:#0078d4; }
+.sp-modal-actions { display:flex; gap:10px; margin-top:22px; }
+.sp-btn-primary {
+  flex:1; background:#0078d4; color:#fff; border:none;
+  border-radius:10px; padding:12px; font-size:14px; font-weight:800;
+  cursor:pointer; font-family:inherit; transition:background .15s;
+}
+.sp-btn-primary:hover { background:#106ebe; }
+.sp-btn-primary:disabled { background:#555; cursor:not-allowed; }
+.sp-btn-secondary {
+  background:var(--surface2); color:var(--text);
+  border:1px solid var(--border); border-radius:10px;
+  padding:12px 20px; font-size:14px; font-weight:700;
+  cursor:pointer; font-family:inherit;
+}
+.sp-btn-secondary:hover { background:var(--surface3); }
+.sp-status {
+  margin-top:14px; padding:11px 14px;
+  border-radius:9px; font-size:13px; font-weight:600;
+  display:none;
+}
+.sp-status.info    { background:rgba(0,120,212,.12); color:#0078d4; border:1px solid rgba(0,120,212,.25); }
+.sp-status.success { background:rgba(16,185,129,.12); color:#10b981; border:1px solid rgba(16,185,129,.25); }
+.sp-status.error   { background:rgba(239,68,68,.12);  color:#f87171; border:1px solid rgba(239,68,68,.25); }
+.sp-step-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.sp-step-num {
+  width:24px;height:24px; border-radius:50%;
+  background:rgba(0,120,212,.15); color:#0078d4;
+  font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sp-step-text { font-size:13px; color:var(--muted); line-height:1.4; }
+
+/* SP advanced section */
+.sp-advanced {
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.sp-advanced summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--muted);
+  list-style: none;
+  user-select: none;
+}
+.sp-advanced summary::-webkit-details-marker { display: none; }
+.sp-advanced[open] summary { color: var(--text); margin-bottom: 2px; }
 </style>
 </head>
 <body>
@@ -5172,6 +5271,7 @@ html.light .tpl-radio-card { background: #fff; }
         <button class="cvgb-btn cvgb-word" onclick="downloadCVDocx()">⬇&nbsp; Download Word</button>
         <button class="cvgb-btn cvgb-json" onclick="downloadCVJSON()">⬇&nbsp; Download JSON</button>
         <button class="cvgb-btn cvgb-print" onclick="window.print()">🖨&nbsp; Print</button>
+        <button class="cvgb-btn cvgb-sharepoint" id="spUploadBtn" onclick="sendToSharePoint()">📤&nbsp; Send to SharePoint</button>
       </div>
     </div>
     <div class="cv-doc" id="cvDoc">
@@ -9820,7 +9920,8 @@ function renderResGrid(certs) {
 </script>
 
 <!-- Load docx library for Word export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
+</script>
 
 <!-- FOOTER -->
 <footer style="border-top:1px solid var(--border);padding:20px;text-align:center;font-size:12px;color:var(--muted);font-family:'Outfit',sans-serif;">
@@ -9841,5 +9942,233 @@ function renderResGrid(certs) {
 </div>
 
 
+
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+/* ===================================================
+   SHAREPOINT UPLOAD — Microsoft Graph API + MSAL
+=================================================== */
+const SP_FOLDER = 'test CVs';
+
+// ── MSAL config — user fills in their tenant/client on first use ──────────
+// We store in localStorage so they only enter once
+function spGetMsalConfig() {
+  return {
+    auth: {
+      clientId:   localStorage.getItem('ob_sp_client_id') || '',
+      authority:  'https://login.microsoftonline.com/' + (localStorage.getItem('ob_sp_tenant_id') || 'common'),
+      redirectUri: window.location.origin + window.location.pathname
+    },
+    cache: { cacheLocation: 'sessionStorage' }
+  };
+}
+
+let _msalInstance = null;
+function getMsal() {
+  const cfg = spGetMsalConfig();
+  if (!_msalInstance || _msalInstance.config.auth.clientId !== cfg.auth.clientId) {
+    _msalInstance = new msal.PublicClientApplication(cfg);
+  }
+  return _msalInstance;
+}
+
+function sendToSharePoint() {
+  if (!currentCVData) {
+    obAlert('Please generate your CV first.', {title:'Nothing to send', icon:'📄'});
+    return;
+  }
+  spShowModal();
+}
+
+function spShowModal() {
+  const existing = document.getElementById('spModal');
+  if (existing) existing.remove();
+
+  const savedSite     = localStorage.getItem('ob_sp_site_url')     || '';
+  const savedClientId = localStorage.getItem('ob_sp_client_id')    || '';
+  const savedTenant   = localStorage.getItem('ob_sp_tenant_id')    || '';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'sp-modal-overlay';
+  overlay.id = 'spModal';
+  overlay.innerHTML = `
+    <div class="sp-modal" onclick="event.stopPropagation()">
+      <div class="sp-modal-icon">📤</div>
+      <div class="sp-modal-title">Send to SharePoint</div>
+      <div class="sp-modal-sub">
+        Uploads your JSON profile to <strong>Shared Documents / ${SP_FOLDER}</strong>
+        using your Microsoft 365 account. A sign-in popup will appear.
+      </div>
+
+      <div class="sp-modal-field">
+        <label>SharePoint Site URL</label>
+        <input type="url" id="spSiteUrl" placeholder="https://yourcompany.sharepoint.com/sites/yoursite" value="${savedSite}" oninput="localStorage.setItem('ob_sp_site_url',this.value.trim())">
+      </div>
+
+      <details class="sp-advanced" id="spAdvanced">
+        <summary>⚙️ Azure App Settings <span style="font-size:11px;color:var(--muted);font-weight:400;">(required once)</span></summary>
+        <div style="margin-top:12px;">
+          <div class="sp-modal-field">
+            <label>Azure App (Client) ID</label>
+            <input type="text" id="spClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="${savedClientId}" oninput="localStorage.setItem('ob_sp_client_id',this.value.trim());_msalInstance=null;">
+          </div>
+          <div class="sp-modal-field">
+            <label>Tenant ID <span style="font-weight:400;color:var(--muted)">(or leave blank for any org account)</span></label>
+            <input type="text" id="spTenantId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" value="${savedTenant}" oninput="localStorage.setItem('ob_sp_tenant_id',this.value.trim());_msalInstance=null;">
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.6;margin-top:8px;">
+            Create a free Azure App Registration → set platform to <strong>Single-page Application</strong> →
+            add redirect URI: <strong>${window.location.origin + window.location.pathname}</strong> →
+            grant API permissions: <strong>Sites.ReadWrite.All</strong> (Microsoft Graph, Delegated).
+          </div>
+        </div>
+      </details>
+
+      <div id="spStatus" class="sp-status"></div>
+      <div class="sp-modal-actions">
+        <button class="sp-btn-secondary" onclick="spCloseModal()">Cancel</button>
+        <button class="sp-btn-primary" id="spUploadGo" onclick="spDoUpload()">📤 Sign in &amp; Upload</button>
+      </div>
+    </div>
+  `;
+  overlay.addEventListener('click', spCloseModal);
+  document.body.appendChild(overlay);
+
+  // Auto-open advanced if no client ID saved
+  if (!savedClientId) {
+    setTimeout(() => {
+      const det = document.getElementById('spAdvanced');
+      if (det) det.open = true;
+    }, 100);
+  }
+}
+
+function spCloseModal() {
+  const m = document.getElementById('spModal');
+  if (m) m.remove();
+}
+
+function spSetStatus(type, msg) {
+  const el = document.getElementById('spStatus');
+  if (!el) return;
+  el.className = 'sp-status ' + type;
+  el.innerHTML = msg;
+  el.style.display = 'block';
+}
+
+async function spDoUpload() {
+  const siteUrl  = (document.getElementById('spSiteUrl').value  || '').trim().replace(/\/+$/, '');
+  const clientId = localStorage.getItem('ob_sp_client_id') || '';
+
+  if (!siteUrl)   { spSetStatus('error', '⚠️ Please enter your SharePoint site URL.'); return; }
+  if (!clientId)  { 
+    spSetStatus('error', '⚠️ Please expand ⚙️ Azure App Settings and enter your Client ID first.'); 
+    document.getElementById('spAdvanced').open = true;
+    return; 
+  }
+
+  const btn = document.getElementById('spUploadGo');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+  spSetStatus('info', '🔐 Opening Microsoft sign-in popup…');
+
+  try {
+    const msalApp = getMsal();
+    await msalApp.initialize();
+
+    // Acquire token via popup
+    const scopes = ['https://graph.microsoft.com/Sites.ReadWrite.All'];
+    let tokenResp;
+    try {
+      // Try silent first (already signed in)
+      const accounts = msalApp.getAllAccounts();
+      if (accounts.length > 0) {
+        tokenResp = await msalApp.acquireTokenSilent({ scopes, account: accounts[0] });
+      } else {
+        tokenResp = await msalApp.acquireTokenPopup({ scopes });
+      }
+    } catch(e) {
+      // Silent failed — force popup
+      tokenResp = await msalApp.acquireTokenPopup({ scopes });
+    }
+
+    const accessToken = tokenResp.accessToken;
+    spSetStatus('info', '🔍 Looking up SharePoint site…');
+
+    // Get site ID from SharePoint URL
+    const siteHostAndPath = siteUrl.replace('https://', '');
+    const [siteHost, ...pathParts] = siteHostAndPath.split('/');
+    const sitePath = pathParts.join('/');
+    const siteInfoUrl = 'https://graph.microsoft.com/v1.0/sites/' + siteHost + ':/' + sitePath;
+
+    const siteResp = await fetch(siteInfoUrl, {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (!siteResp.ok) throw new Error('Site not found. Check your SharePoint URL. (' + siteResp.status + ')');
+    const siteInfo = await siteResp.json();
+    const siteId = siteInfo.id;
+
+    // Get the drive (default document library)
+    spSetStatus('info', '📁 Finding "' + SP_FOLDER + '" folder…');
+    const driveResp = await fetch('https://graph.microsoft.com/v1.0/sites/' + siteId + '/drive', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (!driveResp.ok) throw new Error('Could not access document library. (' + driveResp.status + ')');
+    const driveInfo = await driveResp.json();
+    const driveId = driveInfo.id;
+
+    // Upload file into the folder
+    const safeName = (currentCVData.name || 'profile').replace(/\s+/g, '_');
+    const filename  = 'Orange_CV_' + safeName + '.json';
+    const jsonStr   = JSON.stringify(currentCVData, null, 2);
+    const encoder   = new TextEncoder();
+    const fileBytes = encoder.encode(jsonStr);
+
+    spSetStatus('info', '📤 Uploading <strong>' + filename + '</strong> to ' + SP_FOLDER + '…');
+
+    const uploadUrl = 'https://graph.microsoft.com/v1.0/drives/' + driveId
+      + '/root:/' + encodeURIComponent(SP_FOLDER) + '/' + encodeURIComponent(filename) + ':/content';
+
+    const uploadResp = await fetch(uploadUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type':  'application/json'
+      },
+      body: fileBytes
+    });
+
+    if (uploadResp.ok) {
+      const uploaded = await uploadResp.json();
+      const fileLink = uploaded.webUrl || '';
+      spSetStatus('success',
+        '✅ <strong>' + filename + '</strong> uploaded to <strong>Shared Documents / ' + SP_FOLDER + '</strong>!' +
+        (fileLink ? ' <a href="' + fileLink + '" target="_blank" style="color:#10b981;text-decoration:underline;">View file ↗</a>' : '')
+      );
+      btn.textContent = '✓ Done';
+      setTimeout(spCloseModal, 4000);
+    } else if (uploadResp.status === 404) {
+      spSetStatus('error', '📁 Folder <strong>"' + SP_FOLDER + '"</strong> not found in Shared Documents. Please create it on SharePoint first.');
+      btn.disabled = false; btn.textContent = 'Try Again';
+    } else if (uploadResp.status === 403) {
+      spSetStatus('error', '🔐 Access denied. Make sure your Azure app has <strong>Sites.ReadWrite.All</strong> permission and admin consent was granted.');
+      btn.disabled = false; btn.textContent = 'Try Again';
+    } else {
+      const errBody = await uploadResp.text();
+      throw new Error('Upload failed (' + uploadResp.status + '): ' + errBody.slice(0, 120));
+    }
+
+  } catch(err) {
+    if (err.errorCode === 'user_cancelled' || err.errorCode === 'access_denied') {
+      spSetStatus('error', '❌ Sign-in was cancelled. Please try again.');
+    } else if (err.errorCode === 'popup_window_error') {
+      spSetStatus('error', '🚫 Popup was blocked. Please allow popups for this site and try again.');
+    } else {
+      spSetStatus('error', '❌ ' + (err.message || err.errorCode || 'Unknown error'));
+    }
+    const btn = document.getElementById('spUploadGo');
+    if (btn) { btn.disabled = false; btn.textContent = '📤 Sign in & Upload'; }
+  }
+}
+</script>
 </body>
-</html>
