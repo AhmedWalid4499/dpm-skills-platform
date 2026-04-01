@@ -638,11 +638,14 @@ input[type=file] {
 /* Two-column upload layout */
 .exec-upload-two-col {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .exec-upload-two-col { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 580px) {
   .exec-upload-two-col { grid-template-columns: 1fr; }
 }
 .exec-upload-card {
@@ -659,6 +662,13 @@ input[type=file] {
 .exec-upload-card-report:hover {
   border-color: #10b981;
   background: rgba(16,185,129,0.06);
+}
+.exec-upload-card-team {
+  border-color: rgba(129,140,248,0.4);  /* indigo tint for team card */
+}
+.exec-upload-card-team:hover {
+  border-color: #818cf8;
+  background: rgba(129,140,248,0.06);
 }
 
 .uploaded-files-list { margin-bottom: 20px; }
@@ -4413,6 +4423,726 @@ html.light .cvgb-sharepoint {
   background: rgba(232,109,0,0.20);
   border-color: var(--orange);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LANDING PAGE REDESIGN — Emil philosophy
+   Custom easing, stagger, compound micro-details
+═══════════════════════════════════════════════════════════════ */
+:root {
+  --ease-out-strong:   cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* ── Google Font upgrade: add Inter for body text polish ─────────────── */
+/* Outfit stays for headings, we sharpen body weight usage */
+
+/* ── HERO ──────────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid background */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,121,0,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,121,0,0.045) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 100%);
+  pointer-events: none;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -300px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(circle, rgba(255,121,0,0.12) 0%, rgba(255,121,0,0.04) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 28px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,121,0,0.25);
+  border-radius: 100px;
+  background: rgba(255,121,0,0.06);
+  backdrop-filter: blur(8px);
+  animation: heroFadeUp 0.7s var(--ease-out-strong) both;
+}
+
+.hero h1 {
+  font-size: clamp(44px, 6.5vw, 80px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -2.5px;
+  margin-bottom: 24px;
+  animation: heroFadeUp 0.7s var(--ease-out-strong) 0.08s both;
+}
+
+.hero h1 .accent {
+  color: var(--orange);
+  position: relative;
+  display: inline-block;
+}
+
+/* Underline accent on h1 */
+.hero h1 .accent::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--orange), rgba(255,121,0,0.2));
+  border-radius: 2px;
+  transform-origin: left;
+  animation: underlineGrow 0.6s var(--ease-out-strong) 0.5s both;
+}
+
+.hero p {
+  max-width: 540px;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.75;
+  margin-bottom: 44px;
+  animation: heroFadeUp 0.7s var(--ease-out-strong) 0.14s both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: heroFadeUp 0.7s var(--ease-out-strong) 0.2s both;
+}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn-primary {
+  padding: 13px 28px;
+  background: var(--orange);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 160ms ease, transform 120ms ease, box-shadow 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 0 0 0 rgba(255,121,0,0);
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: var(--orange-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,121,0,0.35);
+  }
+}
+.btn-primary:active { transform: scale(0.97); transition-duration: 80ms; }
+
+.btn-secondary {
+  padding: 13px 28px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 120ms ease;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(255,121,0,0.05);
+    transform: translateY(-1px);
+  }
+}
+.btn-secondary:active { transform: scale(0.97); transition-duration: 80ms; }
+
+/* ── HERO STATS STRIP ────────────────────────────────────────────────────── */
+.hero-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 60px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  animation: heroFadeUp 0.7s var(--ease-out-strong) 0.28s both;
+}
+.hero-stat {
+  flex: 1;
+  padding: 18px 28px;
+  text-align: center;
+  position: relative;
+}
+.hero-stat + .hero-stat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: var(--border);
+}
+.hero-stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--orange);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hero-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── SECTION TYPOGRAPHY ──────────────────────────────────────────────────── */
+.section-eyebrow {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 14px;
+}
+
+.section-heading {
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin: 0 0 16px;
+}
+
+.section-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+/* ── WHY SECTION ─────────────────────────────────────────────────────────── */
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 100px 40px;
+}
+@media (max-width: 860px) {
+  .why-grid { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+}
+
+.why-points { list-style: none; padding: 0; margin: 32px 0 0; display: flex; flex-direction: column; gap: 24px; }
+
+.why-point {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s var(--ease-out-strong), transform 0.5s var(--ease-out-strong);
+}
+.why-point.visible { opacity: 1; transform: translateY(0); }
+.why-point:nth-child(1) { transition-delay: 0ms; }
+.why-point:nth-child(2) { transition-delay: 60ms; }
+.why-point:nth-child(3) { transition-delay: 120ms; }
+.why-point:nth-child(4) { transition-delay: 180ms; }
+
+.why-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: rgba(255,121,0,0.1);
+  border: 1px solid rgba(255,121,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background 160ms ease, transform 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .why-point:hover .why-icon { background: rgba(255,121,0,0.18); transform: scale(1.05); }
+}
+.why-point-text h4 { font-size: 15px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.2px; }
+.why-point-text p  { font-size: 14px; color: var(--muted); line-height: 1.65; margin: 0; }
+
+/* Why visual */
+.why-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 360px;
+}
+.why-orb {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,121,0,0.3), rgba(255,121,0,0.06));
+  border: 1px solid rgba(255,121,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 2;
+  box-shadow: 0 0 60px rgba(255,121,0,0.12);
+}
+.why-orb-inner { font-size: 40px; }
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,121,0,0.15);
+  animation: orbitSpin 12s linear infinite;
+}
+.orbit-ring:nth-child(1) { width: 220px; height: 220px; }
+.orbit-ring:nth-child(2) { width: 320px; height: 320px; animation-duration: 18s; animation-direction: reverse; }
+.orbit-dot {
+  position: absolute;
+  top: 0; left: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--orange);
+  transform: translateX(-50%) translateY(-50%);
+  box-shadow: 0 0 12px var(--orange);
+}
+
+/* ── AUDIENCE / TAB SECTION ─────────────────────────────────────────────── */
+.audience-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+@media (max-width: 720px) { .audience-wrap { padding: 64px 20px; } }
+
+.audience-tabs {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  padding: 6px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.audience-tab {
+  flex: 1;
+  min-width: 110px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 9px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: background 150ms ease, color 150ms ease, transform 120ms ease;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .audience-tab:hover:not(.at-active) { color: var(--text); background: rgba(255,255,255,0.04); }
+}
+.audience-tab:active { transform: scale(0.97); }
+.audience-tab.at-active { background: var(--orange); color: white; box-shadow: 0 2px 10px rgba(255,121,0,0.3); }
+
+.audience-panels { position: relative; }
+.audience-panel { display: none; }
+.audience-panel.ap-active {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+  animation: panelFadeIn 0.25s var(--ease-out-strong) both;
+}
+@media (max-width: 860px) { .audience-panel.ap-active { grid-template-columns: 1fr; } }
+
+.ap-features { display: flex; flex-direction: column; gap: 0; }
+.ap-feature-header { margin-bottom: 28px; }
+.ap-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+.ap-badge-dpm { background: rgba(255,121,0,0.12); color: var(--orange); }
+.ap-badge-mgr { background: rgba(129,140,248,0.12); color: #818cf8; }
+.ap-badge-res { background: rgba(245,158,11,0.12); color: #f59e0b; }
+
+.ap-headline { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 10px; line-height: 1.2; }
+.ap-sub { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+.ap-list { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 16px; }
+.ap-list-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ap-list-item:hover { border-color: var(--border); background: var(--surface2); }
+}
+.ap-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.ap-item-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; letter-spacing: -0.1px; }
+.ap-item-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+.ap-footer { margin-top: auto; }
+
+.ap-preview {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+.ap-preview-header {
+  padding: 14px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── FEATURES SECTION ───────────────────────────────────────────────────── */
+.features-wrap {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.features-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 100px 40px;
+}
+@media (max-width: 720px) { .features-inner { padding: 64px 20px; } }
+
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 52px;
+}
+
+.feature-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 200ms ease, transform 200ms var(--ease-out-strong), box-shadow 200ms ease;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.feature-card.visible { opacity: 1; transform: translateY(0); }
+.feature-card:nth-child(1) { transition-delay: 0ms; }
+.feature-card:nth-child(2) { transition-delay: 60ms; }
+.feature-card:nth-child(3) { transition-delay: 120ms; }
+.feature-card:nth-child(4) { transition-delay: 180ms; }
+.feature-card:nth-child(5) { transition-delay: 240ms; }
+
+/* Subtle glow on hover from top-left */
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,121,0,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .feature-card:hover {
+    border-color: rgba(255,121,0,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  }
+  .feature-card:hover::before { opacity: 1; }
+}
+.feature-card:active { transform: scale(0.985); }
+
+.fc-icon { font-size: 28px; display: block; margin-bottom: 14px; }
+.fc-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
+.fc-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
+.fc-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(255,121,0,0.1);
+  color: var(--orange);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.fc-tag-res { background: rgba(245,158,11,0.1); color: #f59e0b; }
+
+/* ── HOW IT WORKS ───────────────────────────────────────────────────────── */
+.how-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 100px 40px;
+}
+@media (max-width: 720px) { .how-wrap { padding: 64px 20px; } }
+
+.steps-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 52px;
+  position: relative;
+}
+
+/* Connector line between steps */
+.steps-cards::before {
+  content: '';
+  position: absolute;
+  top: 44px;
+  left: calc(33.33% + 8px);
+  right: calc(33.33% + 8px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--orange), rgba(255,121,0,0.2), var(--orange));
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .steps-cards { grid-template-columns: 1fr; }
+  .steps-cards::before { display: none; }
+}
+
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 200ms ease, transform 200ms var(--ease-out-strong), box-shadow 200ms ease;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.step-card.visible { opacity: 1; transform: translateY(0); }
+.step-card:nth-child(1).visible { transition-delay: 0ms; }
+.step-card:nth-child(2).visible { transition-delay: 80ms; }
+.step-card:nth-child(3).visible { transition-delay: 160ms; }
+@media (hover: hover) and (pointer: fine) {
+  .step-card:hover { border-color: rgba(255,121,0,0.4); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
+}
+.step-card.sc-active { border-color: var(--orange); box-shadow: 0 0 0 1px var(--orange); }
+
+.step-card-scene { height: 160px; background: var(--surface2); border-bottom: 1px solid var(--border); overflow: hidden; }
+.step-card-body { padding: 20px; }
+
+.step-card-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.step-card-title { font-size: 15px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.2px; }
+.step-card-desc  { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+.step-card-tags  { display: flex; flex-wrap: wrap; gap: 6px; }
+.step-card-tag   { font-size: 11px; padding: 3px 9px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+
+/* ── USEFUL LINKS ───────────────────────────────────────────────────────── */
+.home-links-section {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  text-align: center;
+}
+.home-links-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+.home-link-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--text);
+  width: 360px;
+  transition: border-color 160ms ease, transform 180ms var(--ease-out-strong), box-shadow 180ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .home-link-card:hover {
+    border-color: rgba(255,121,0,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+}
+.home-link-card:active { transform: scale(0.98); }
+.home-link-card-wip { border-style: dashed; border-color: rgba(245,158,11,0.3); }
+.home-link-icon { font-size: 28px; flex-shrink: 0; }
+.home-link-body { flex: 1; text-align: left; }
+.home-link-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; }
+.home-link-desc  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.home-link-arrow { font-size: 18px; color: var(--muted); flex-shrink: 0; transition: transform 160ms ease, color 160ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .home-link-card:hover .home-link-arrow { transform: translate(2px, -2px); color: var(--orange); }
+}
+.home-link-wip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: rgba(245,158,11,0.15);
+  color: #f59e0b;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── CTA BANNER ─────────────────────────────────────────────────────────── */
+.cta-banner {
+  margin: 0 40px 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,121,0,0.12) 0%, rgba(255,121,0,0.04) 60%, transparent 100%);
+  border: 1px solid rgba(255,121,0,0.25);
+  padding: 72px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,121,0,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,121,0,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+@media (max-width: 720px) { .cta-banner { margin: 0 20px 60px; padding: 52px 24px; } }
+
+.cta-banner h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -1.2px; margin-bottom: 12px; position: relative; z-index: 1; }
+.cta-banner p  { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; position: relative; z-index: 1; }
+.cta-banner-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+/* Light mode overrides */
+html.light .hero::after {
+  background-image:
+    linear-gradient(rgba(232,109,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,109,0,0.06) 1px, transparent 1px);
+}
+html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08) 0%, rgba(232,109,0,0.03) 60%, transparent 100%); }
+
+/* ── REVEAL ON SCROLL ───────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--ease-out-strong), transform 0.6s var(--ease-out-strong);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 60ms; }
+.reveal-delay-2 { transition-delay: 120ms; }
+.reveal-delay-3 { transition-delay: 180ms; }
+.reveal-delay-4 { transition-delay: 240ms; }
+
+/* ── KEYFRAMES ──────────────────────────────────────────────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes underlineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-eyebrow, .hero h1, .hero p, .hero-actions, .hero-stats,
+  .why-point, .feature-card, .step-card, .reveal {
+    animation: none !important;
+    transition: opacity 0.2s ease !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero h1 .accent::after { animation: none; transform: none; }
+  .orbit-ring { animation: none; }
+}
 </style>
 </head>
 <body>
@@ -4439,24 +5169,51 @@ html.light .cvgb-sharepoint {
 
 <!-- HOME PAGE -->
 <div id="page-home" class="page active">
+
+  <!-- ══════════════════ HERO ══════════════════ -->
   <div class="hero">
-    <div class="hero-eyebrow">Orange Business · Delivery Practice</div>
+    <div class="hero-eyebrow">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--orange);display:inline-block;"></span>
+      Orange Business · Delivery Practice
+    </div>
+
     <h1>DPM Skills<br><span class="accent">Profile Platform</span></h1>
-    <p>The internal tool for Delivery Project Managers to document their skills and for managers to understand team capability — structured, visual, and always up to date.</p>
+
+    <p>The internal tool for Delivery Project Managers to document their skills — and for managers to understand team capability. Structured, visual, and always up to date.</p>
+
     <div class="hero-actions">
       <button class="btn-primary" onclick="showPage('builder')">⚡ Build My Skills Profile</button>
       <button class="btn-secondary" onclick="showPage('executive')">📊 Manager Dashboard</button>
-      <button class="btn-secondary" onclick="showPage('resources')" style="background:rgba(255,121,0,0.15);border-color:rgba(255,121,0,0.4);color:var(--orange);">📚 Browse Certifications</button>
-      <button class="btn-secondary" onclick="showPage('connect')" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:#10b981;">🤝 Ask for Help</button>
+      <button class="btn-secondary" onclick="showPage('resources')" style="border-color:rgba(255,121,0,0.3);color:var(--orange);">📚 Certifications</button>
+      <button class="btn-secondary" onclick="showPage('connect')" style="border-color:rgba(16,185,129,0.3);color:#10b981;">🤝 Ask for Help</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">83</div>
+        <div class="hero-stat-label">DPMs</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Clusters</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">18</div>
+        <div class="hero-stat-label">Certifications</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">5 min</div>
+        <div class="hero-stat-label">To build a profile</div>
+      </div>
     </div>
   </div>
 
-  <!-- WHY SECTION -->
+  <!-- ══════════════════ WHY SECTION ══════════════════ -->
   <div class="why-grid">
     <div>
       <span class="section-eyebrow">Why this platform exists</span>
       <h2 class="section-heading">Skills visibility across<br>the Delivery Practice</h2>
-      <p class="section-sub">Within Orange Business, DPMs bring a wide range of expertise — from Agile delivery to enterprise tooling to stakeholder management. This platform creates a single, structured way to capture and communicate that expertise internally, so managers always have an accurate picture of their team's capability.</p>
+      <p class="section-sub">DPMs bring a wide range of expertise — from Agile delivery to enterprise tooling to stakeholder management. This platform captures that expertise in a single, structured way so managers always have an accurate picture of team capability.</p>
       <ul class="why-points">
         <li class="why-point">
           <div class="why-icon">🎯</div>
@@ -4491,18 +5248,16 @@ html.light .cvgb-sharepoint {
     <div class="why-visual">
       <div class="orbit-ring"><div class="orbit-dot"></div></div>
       <div class="orbit-ring"><div class="orbit-dot" style="top:auto;bottom:0;transform:translateX(-50%) translateY(50%);background:#ffaa44;"></div></div>
-      <div class="why-orb">
-        <div class="why-orb-inner">🧠</div>
-      </div>
+      <div class="why-orb"><div class="why-orb-inner">🧠</div></div>
     </div>
   </div>
 
-  <!-- FOR EMPLOYEES & MANAGERS -->
+  <!-- ══════════════════ AUDIENCE TABS ══════════════════ -->
   <div class="audience-wrap">
     <div style="text-align:center;margin-bottom:48px;">
       <span class="section-eyebrow">Built for the whole practice</span>
       <h2 class="section-heading">Four tabs, one platform</h2>
-      <p class="section-sub" style="max-width:600px;margin:12px auto 0;">DPMs build profiles. Managers analyse team capability. Everyone grows with curated certifications — and connects with colleagues for peer learning.</p>
+      <p class="section-sub" style="margin:12px auto 0;">DPMs build profiles. Managers analyse team capability. Everyone grows with curated certifications — and connects with colleagues for peer learning.</p>
     </div>
 
     <div class="audience-tabs">
@@ -4514,7 +5269,6 @@ html.light .cvgb-sharepoint {
 
     <div class="audience-panels">
 
-      <!-- DPM Panel -->
       <div class="audience-panel ap-active" id="ap-dpm">
         <div class="ap-features">
           <div class="ap-feature-header">
@@ -4523,35 +5277,21 @@ html.light .cvgb-sharepoint {
             <div class="ap-sub">Your skills span tools, methodologies, certifications, and real-world delivery. Capture all of it in one structured internal profile.</div>
           </div>
           <ul class="ap-list">
-            <li class="ap-list-item">
-              <div class="ap-icon">📋</div>
-              <div><div class="ap-item-title">Build a complete skills profile</div><div class="ap-item-desc">Document every certification, tool, and methodology you've mastered in one structured internal profile.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">📊</div>
-              <div><div class="ap-item-title">See your own competency picture</div><div class="ap-item-desc">PM readiness score, radar chart, and skill breakdown — understand where you excel and where to grow next.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">📄</div>
-              <div><div class="ap-item-title">Download a structured profile</div><div class="ap-item-desc">Export a branded PDF and a JSON file to share with your manager or submit for internal reporting.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🎯</div>
-              <div><div class="ap-item-title">Be visible for the right projects</div><div class="ap-item-desc">When managers are staffing engagements, a structured profile makes it easy to match the right DPM to the challenge.</div></div>
-            </li>
+            <li class="ap-list-item"><div class="ap-icon">📋</div><div><div class="ap-item-title">Build a complete skills profile</div><div class="ap-item-desc">Document every certification, tool, and methodology you've mastered in one structured internal profile.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">📊</div><div><div class="ap-item-title">See your own competency picture</div><div class="ap-item-desc">PM readiness score, radar chart, and skill breakdown — understand where you excel and where to grow next.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">📄</div><div><div class="ap-item-title">Download a structured profile</div><div class="ap-item-desc">Export a branded Word doc and a JSON file to share with your manager or submit for internal reporting.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🎯</div><div><div class="ap-item-title">Be visible for the right projects</div><div class="ap-item-desc">When managers are staffing engagements, a structured profile makes it easy to match the right DPM to the challenge.</div></div></li>
           </ul>
           <div class="ap-footer">
             <button class="btn-primary" onclick="showPage('builder')" style="width:100%;justify-content:center;">⚡ Build My Skills Profile</button>
           </div>
         </div>
-
         <div class="ap-preview" id="ap-dpm-visual">
           <div class="ap-preview-header">Your profile at a glance</div>
           <div class="ap-visual-scene" id="dpm-scene" style="flex:1;position:relative;overflow:hidden;min-height:280px;"></div>
         </div>
       </div>
 
-      <!-- Manager Panel -->
       <div class="audience-panel" id="ap-mgr">
         <div class="ap-features">
           <div class="ap-feature-header">
@@ -4560,35 +5300,21 @@ html.light .cvgb-sharepoint {
             <div class="ap-sub">Know who has the right skills for each engagement. Get a real-time view of your team's capabilities from profiles your DPMs submit directly.</div>
           </div>
           <ul class="ap-list">
-            <li class="ap-list-item">
-              <div class="ap-icon">🔍</div>
-              <div><div class="ap-item-title">Instant team-wide visibility</div><div class="ap-item-desc">Upload your team's profile files and get a full internal dashboard in seconds — no spreadsheets required.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🟧</div>
-              <div><div class="ap-item-title">Skill gap heatmap</div><div class="ap-item-desc">See exactly which PM competency domains are strong or weak across each DPM at a glance.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">↔️</div>
-              <div><div class="ap-item-title">Side-by-side comparison</div><div class="ap-item-desc">Compare any two DPMs across all five competency domains for fair, informed staffing decisions.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">📚</div>
-              <div><div class="ap-item-title">Training recommendations</div><div class="ap-item-desc">Automatically receive suggested certifications and courses based on gaps detected across your team.</div></div>
-            </li>
+            <li class="ap-list-item"><div class="ap-icon">🔍</div><div><div class="ap-item-title">Instant team-wide visibility</div><div class="ap-item-desc">Upload your team's profile files and get a full internal dashboard in seconds — no spreadsheets required.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🟧</div><div><div class="ap-item-title">Skill gap heatmap</div><div class="ap-item-desc">See exactly which PM competency domains are strong or weak across each DPM at a glance.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">↔️</div><div><div class="ap-item-title">Side-by-side comparison</div><div class="ap-item-desc">Compare any two DPMs across all five competency domains for fair, informed staffing decisions.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">💾</div><div><div class="ap-item-title">Save &amp; reload reports</div><div class="ap-item-desc">Export a full team report as a single JSON file and reload it instantly next session — no re-uploading needed.</div></div></li>
           </ul>
           <div class="ap-footer">
             <button class="btn-primary" onclick="showPage('executive')" style="width:100%;justify-content:center;background:#818cf8;border-color:#818cf8;">📊 Open Manager Dashboard</button>
           </div>
         </div>
-
         <div class="ap-preview" id="ap-mgr-visual">
           <div class="ap-preview-header">Team dashboard snapshot</div>
           <div class="ap-visual-scene" id="mgr-scene" style="flex:1;position:relative;overflow:hidden;min-height:280px;"></div>
         </div>
       </div>
 
-      <!-- Resources Panel -->
       <div class="audience-panel" id="ap-res">
         <div class="ap-features">
           <div class="ap-feature-header">
@@ -4597,36 +5323,21 @@ html.light .cvgb-sharepoint {
             <div class="ap-sub">From PMP to AWS to Google PM — browse 18 curated certifications with exam details, pricing, prep time, and direct links to official providers.</div>
           </div>
           <ul class="ap-list">
-            <li class="ap-list-item">
-              <div class="ap-icon">🏆</div>
-              <div><div class="ap-item-title">18 curated certifications</div><div class="ap-item-desc">Hand-picked across Project Management, Agile, Risk, Technical, and Business domains — the ones employers actually value.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">💰</div>
-              <div><div class="ap-item-title">Price, prep time &amp; exam details</div><div class="ap-item-desc">Every card shows the cost, estimated study time, exam format, question count, and renewal requirements so you can plan ahead.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🔍</div>
-              <div><div class="ap-item-title">Filter by domain or difficulty</div><div class="ap-item-desc">Browse by Agile, Risk &amp; Governance, Technical, Business, or sort by price and difficulty to find what fits your current level.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🔗</div>
-              <div><div class="ap-item-title">Direct links to providers</div><div class="ap-item-desc">Each card links straight to the official enrolment page — PMI, Scrum Alliance, AWS, Google, Microsoft, and more.</div></div>
-            </li>
+            <li class="ap-list-item"><div class="ap-icon">🏆</div><div><div class="ap-item-title">18 curated certifications</div><div class="ap-item-desc">Hand-picked across PM, Agile, Risk, Technical, and Business domains — the ones employers actually value.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">💰</div><div><div class="ap-item-title">Price, prep time &amp; exam details</div><div class="ap-item-desc">Every card shows cost, study time, exam format, question count, and renewal requirements so you can plan ahead.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🔍</div><div><div class="ap-item-title">Filter by domain or difficulty</div><div class="ap-item-desc">Browse by Agile, Risk &amp; Governance, Technical, Business, or sort by price and difficulty to find what fits your level.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🔗</div><div><div class="ap-item-title">Direct links to providers</div><div class="ap-item-desc">Each card links straight to the official enrolment page — PMI, Scrum Alliance, AWS, Google, Microsoft and more.</div></div></li>
           </ul>
           <div class="ap-footer">
             <button class="btn-primary" onclick="showPage('resources')" style="width:100%;justify-content:center;background:linear-gradient(135deg,#FF7900,#ff9933);border-color:transparent;">📚 Browse Certifications</button>
           </div>
         </div>
-
         <div class="ap-preview" id="ap-res-visual">
           <div class="ap-preview-header">Certification library at a glance</div>
           <div class="ap-visual-scene" id="res-scene" style="flex:1;position:relative;overflow:hidden;min-height:280px;"></div>
         </div>
       </div>
 
-
-      <!-- Ask for Help Panel -->
       <div class="audience-panel" id="ap-connect">
         <div class="ap-features">
           <div class="ap-feature-header">
@@ -4635,22 +5346,10 @@ html.light .cvgb-sharepoint {
             <div class="ap-sub">The fastest way to grow is to ask someone who's already done it. Connect with colleagues across the practice for knowledge transfer, certification tips, and project advice.</div>
           </div>
           <ul class="ap-list">
-            <li class="ap-list-item">
-              <div class="ap-icon">🔍</div>
-              <div><div class="ap-item-title">Find the right person instantly</div><div class="ap-item-desc">Search across all 83 DPMs by name and select one or more colleagues to reach out to.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🎯</div>
-              <div><div class="ap-item-title">Six topic categories</div><div class="ap-item-desc">Course guidance, certification advice, project challenges, tools &amp; processes, general questions, or a formal KT session request.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">📨</div>
-              <div><div class="ap-item-title">One click to Outlook</div><div class="ap-item-desc">The subject line is auto-generated. Write your message and click Ready to Send — your Outlook opens with everything pre-filled.</div></div>
-            </li>
-            <li class="ap-list-item">
-              <div class="ap-icon">🔄</div>
-              <div><div class="ap-item-title">Build a learning culture</div><div class="ap-item-desc">Knowledge transfer strengthens the whole practice. When someone helps you, update your profile — and be ready for the next person to reach out.</div></div>
-            </li>
+            <li class="ap-list-item"><div class="ap-icon">🌍</div><div><div class="ap-item-title">Browseable by cluster</div><div class="ap-item-desc">DPMs are grouped by N&amp;S EU, DACH, and Benelux clusters — find the right colleague quickly across 83 team members.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🎯</div><div><div class="ap-item-title">Six topic categories</div><div class="ap-item-desc">Course guidance, certification advice, project challenges, tools &amp; processes, general questions, or a KT session request.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">📨</div><div><div class="ap-item-title">One click to Outlook</div><div class="ap-item-desc">The subject line is auto-generated. Write your message and click Ready to Send — your Outlook opens pre-filled.</div></div></li>
+            <li class="ap-list-item"><div class="ap-icon">🔄</div><div><div class="ap-item-title">Build a learning culture</div><div class="ap-item-desc">Knowledge transfer strengthens the whole practice. When someone helps you, be ready for the next person to reach out.</div></div></li>
           </ul>
           <div class="ap-footer">
             <button class="btn-primary" onclick="showPage('connect')" style="width:100%;justify-content:center;background:linear-gradient(135deg,#10b981,#059669);border-color:transparent;">🤝 Ask for Help</button>
@@ -4665,7 +5364,7 @@ html.light .cvgb-sharepoint {
     </div>
   </div>
 
-  <!-- FEATURES SECTION -->
+  <!-- ══════════════════ FEATURES SECTION ══════════════════ -->
   <div class="features-wrap">
     <div class="features-inner">
       <div class="reveal">
@@ -4674,41 +5373,41 @@ html.light .cvgb-sharepoint {
         <p class="section-sub">From individual profile creation to team-wide reporting — with a learning hub to help you grow every step of the way.</p>
       </div>
       <div class="feature-cards">
-        <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-card">
           <span class="fc-icon">📝</span>
           <div class="fc-title">Skills Profile Builder</div>
-          <div class="fc-desc">DPMs fill in their certifications, tools, skills, and work experience. An AI-assisted summary is generated and a structured profile is exported in minutes.</div>
+          <div class="fc-desc">Step-by-step wizard covering certifications, tools, skills, and work experience. Generates a branded Word doc and structured JSON in minutes.</div>
           <span class="fc-tag">For DPMs</span>
         </div>
-        <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-card">
           <span class="fc-icon">📡</span>
           <div class="fc-title">Competency Visualization</div>
-          <div class="fc-desc">After generating a profile, see your PM readiness score, category radar chart, and skill breakdown — a clear picture of where you stand across five delivery domains.</div>
+          <div class="fc-desc">After generating a profile, see your PM readiness score, category radar chart, and skill breakdown across five delivery domains.</div>
           <span class="fc-tag">Auto-generated</span>
         </div>
-        <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-card">
           <span class="fc-icon">🏛</span>
           <div class="fc-title">Manager Dashboard</div>
-          <div class="fc-desc">Upload your team's profiles to get an instant internal dashboard — KPIs, skill gap heatmap, side-by-side comparisons, and a downloadable PDF report.</div>
+          <div class="fc-desc">Upload team profiles for an instant internal dashboard — KPIs, skill gap heatmap, side-by-side comparisons, and saveable report bundles.</div>
           <span class="fc-tag">For Managers</span>
         </div>
-        <div class="feature-card reveal reveal-delay-4" onclick="showPage('resources')" style="cursor:pointer;">
+        <div class="feature-card" onclick="showPage('resources')" style="cursor:pointer;">
           <span class="fc-icon">📚</span>
           <div class="fc-title">Certification Resources</div>
-          <div class="fc-desc">Browse 18 curated PM certifications — PMP, PMI-ACP, CSM, AWS, Azure and more — with exam details, pricing, prep time, and direct links to official providers.</div>
+          <div class="fc-desc">Browse 18 curated PM certifications — PMP, PMI-ACP, CSM, AWS, Azure and more — with exam details, pricing, and direct provider links.</div>
           <span class="fc-tag fc-tag-res">Learning Hub</span>
         </div>
-        <div class="feature-card reveal reveal-delay-4" onclick="showPage('connect')" style="cursor:pointer;">
+        <div class="feature-card" onclick="showPage('connect')" style="cursor:pointer;">
           <span class="fc-icon">🤝</span>
           <div class="fc-title">Ask for Help</div>
-          <div class="fc-desc">Connect with fellow DPMs for knowledge transfer. Select colleagues, pick a topic, write your question — your Outlook opens ready to send in one click.</div>
-          <span class="fc-tag" style="background:rgba(16,185,129,0.15);color:#10b981;">Peer Learning</span>
+          <div class="fc-desc">Connect with fellow DPMs for knowledge transfer. Select colleagues, pick a topic, write your question — Outlook opens ready to send.</div>
+          <span class="fc-tag" style="background:rgba(16,185,129,0.12);color:#10b981;">Peer Learning</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- HOW IT WORKS -->
+  <!-- ══════════════════ HOW IT WORKS ══════════════════ -->
   <div class="how-wrap">
     <div style="text-align:center;">
       <span class="section-eyebrow">How it works</span>
@@ -4716,12 +5415,12 @@ html.light .cvgb-sharepoint {
     </div>
 
     <div class="steps-cards" id="stepsCards">
-
       <div class="step-card sc-active" onclick="stepCardClick(0)" id="sc-0">
         <div class="step-card-scene" id="scs-0"></div>
         <div class="step-card-body">
+          <div class="step-card-num">1</div>
           <div class="step-card-title">DPM builds their profile</div>
-          <div class="step-card-desc">Each DPM opens the CV Builder, ticks their certifications, tools, and skills, fills in experience — then generates a branded PDF and a structured JSON file.</div>
+          <div class="step-card-desc">Each DPM opens the CV Builder, ticks their certifications, tools, and skills, fills in experience — then generates a branded Word doc and a structured JSON file.</div>
           <div class="step-card-tags">
             <span class="step-card-tag">Certifications</span>
             <span class="step-card-tag">Tools</span>
@@ -4730,12 +5429,12 @@ html.light .cvgb-sharepoint {
           </div>
         </div>
       </div>
-
       <div class="step-card" onclick="stepCardClick(1)" id="sc-1">
         <div class="step-card-scene" id="scs-1"></div>
         <div class="step-card-body">
+          <div class="step-card-num">2</div>
           <div class="step-card-title">Profile is submitted internally</div>
-          <div class="step-card-desc">The DPM shares their JSON file with their manager via Teams, email, or a shared folder. Consistent format, no reformatting needed across any team size.</div>
+          <div class="step-card-desc">The DPM shares their JSON file with their manager via Teams, email, or a shared folder. Consistent format across any team size — no reformatting needed.</div>
           <div class="step-card-tags">
             <span class="step-card-tag">JSON format</span>
             <span class="step-card-tag">Stays internal</span>
@@ -4743,34 +5442,29 @@ html.light .cvgb-sharepoint {
           </div>
         </div>
       </div>
-
       <div class="step-card" onclick="stepCardClick(2)" id="sc-2">
         <div class="step-card-scene" id="scs-2"></div>
         <div class="step-card-body">
+          <div class="step-card-num">3</div>
           <div class="step-card-title">Manager analyses the team</div>
-          <div class="step-card-desc">Upload all collected profiles into the Manager Dashboard for an instant team view — skill radar, gap heatmap, side-by-side comparisons, and CSV export.</div>
+          <div class="step-card-desc">Upload all profiles — or reload a saved report bundle — for an instant team view: skill radar, gap heatmap, comparisons, and PDF export.</div>
           <div class="step-card-tags">
             <span class="step-card-tag">Team radar</span>
             <span class="step-card-tag">Gap heatmap</span>
             <span class="step-card-tag">PDF export</span>
-            <span class="step-card-tag">Cert tracking</span>
+            <span class="step-card-tag">Save &amp; reload</span>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- CTA BANNER -->
-
-  <!-- ── Useful Links ─────────────────────────────────────────────────────── -->
-  <div style="max-width:900px;margin:0 auto 64px;padding:0 24px;">
-    <div style="text-align:center;margin-bottom:32px;">
-      <h2 class="section-heading">Useful Links</h2>
-      <p style="font-size:15px;color:var(--muted);margin-top:8px;">Quick access to internal tools for the Orange Business Delivery Practice</p>
-    </div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
-
+  <!-- ══════════════════ USEFUL LINKS ══════════════════ -->
+  <div class="home-links-section reveal">
+    <span class="section-eyebrow">Internal tools</span>
+    <h2 class="section-heading" style="margin-top:8px;">Useful Links</h2>
+    <p class="section-sub" style="margin:10px auto 0;">Quick access to tools for the Orange Business Delivery Practice</p>
+    <div class="home-links-row">
       <a class="home-link-card" href="https://ahmedwalid4499.github.io/FTE-Calculator/" target="_blank" rel="noopener">
         <div class="home-link-icon">🧮</div>
         <div class="home-link-body">
@@ -4779,7 +5473,6 @@ html.light .cvgb-sharepoint {
         </div>
         <div class="home-link-arrow">↗</div>
       </a>
-
       <a class="home-link-card home-link-card-wip" href="https://ahmedwalid4499.github.io/dpms-portal/" target="_blank" rel="noopener">
         <div class="home-link-icon">🏗️</div>
         <div class="home-link-body">
@@ -4788,22 +5481,22 @@ html.light .cvgb-sharepoint {
         </div>
         <div class="home-link-arrow">↗</div>
       </a>
-
     </div>
   </div>
 
+  <!-- ══════════════════ CTA BANNER ══════════════════ -->
   <div class="cta-banner reveal">
     <h2>Ready to get started<br><span style="color:var(--orange)">within your practice?</span></h2>
     <p>DPMs build their profile in minutes. Managers get team insight immediately. No external systems, no logins — everything stays internal.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <div class="cta-banner-actions">
       <button class="btn-primary" onclick="showPage('builder')">⚡ Build My Skills Profile</button>
       <button class="btn-secondary" onclick="showPage('executive')">📊 Manager Dashboard</button>
-      <button class="btn-secondary" onclick="showPage('resources')" style="background:rgba(255,121,0,0.15);border-color:rgba(255,121,0,0.4);color:var(--orange);">📚 Browse Certifications</button>
-      <button class="btn-secondary" onclick="showPage('connect')" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:#10b981;">🤝 Ask for Help</button>
+      <button class="btn-secondary" onclick="showPage('resources')" style="border-color:rgba(255,121,0,0.3);color:var(--orange);">📚 Certifications</button>
+      <button class="btn-secondary" onclick="showPage('connect')" style="border-color:rgba(16,185,129,0.3);color:#10b981;">🤝 Ask for Help</button>
     </div>
   </div>
-</div>
 
+</div>
 <!-- CV BUILDER PAGE -->
 <div id="page-builder" class="page">
 
@@ -5498,6 +6191,14 @@ html.light .cvgb-sharepoint {
         <input type="file" id="managerReportInputTop" accept=".json" style="display:none" onchange="importManagerReport(event)">
       </div>
 
+      <!-- Option C: Load hardcoded current team -->
+      <div class="exec-upload-zone exec-upload-card exec-upload-card-team" onclick="loadCurrentTeamDashboard()">
+        <div style="font-size:36px;margin-bottom:12px;">🏢</div>
+        <h3>Current Team Dashboard</h3>
+        <p>Load the <strong style="color:#818cf8">live team roster</strong> — all 78 DPMs with their current certifications, pre-loaded and ready</p>
+        <button class="btn-secondary" onclick="event.stopPropagation();loadCurrentTeamDashboard()" style="border-color:rgba(129,140,248,0.5);color:#818cf8;">Show Team Dashboard</button>
+      </div>
+
     </div>
 
     <div id="execFileList" class="uploaded-files-list"></div>
@@ -5562,8 +6263,8 @@ html.light .cvgb-sharepoint {
       <div class="pbi-kpi-strip" id="execKPIs"></div>
 
       <!-- ── ROW 2: RADAR (left 40%) + TOP CERT CARD (right 60%) ── -->
-      <div class="pbi-row pbi-row-40-60">
-        <div class="pbi-card">
+      <div class="pbi-row pbi-row-40-60" id="execRow2">
+        <div class="pbi-card" id="execRadarCard">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Team Competency Radar</span>
             <span class="pbi-card-tag">All domains</span>
@@ -5601,7 +6302,7 @@ html.light .cvgb-sharepoint {
 
       <!-- ── ROW 4: DONUT (30%) + COVERAGE BARS (70%) ── -->
       <div class="pbi-row pbi-row-30-70">
-        <div class="pbi-card">
+        <div class="pbi-card" id="execSkillDonutCard">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Skills by Category</span>
           </div>
@@ -5617,7 +6318,7 @@ html.light .cvgb-sharepoint {
           </div>
           <canvas id="execProductBar"></canvas>
         </div>
-        <div class="pbi-card">
+        <div class="pbi-card" id="execCoverBarsCard">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Category Coverage</span>
             <span class="pbi-card-tag">Team average</span>
@@ -5627,12 +6328,22 @@ html.light .cvgb-sharepoint {
       </div>
 
       <!-- ── ROW 5: HEATMAP FULL ── -->
-      <div class="pbi-card pbi-card-full">
+      <div class="pbi-card pbi-card-full" id="execHeatmapCard">
         <div class="pbi-card-header">
           <span class="pbi-card-title">Skill Heatmap</span>
           <span class="pbi-card-tag">Person × Domain</span>
         </div>
         <div id="execHeatmap" style="overflow-x:auto;margin-top:8px;"></div>
+      </div>
+
+
+      <!-- ── CERT HEATMAP (hardcoded team mode) ── -->
+      <div class="pbi-card pbi-card-full" id="execCertHeatmapCard" style="display:none;">
+        <div class="pbi-card-header">
+          <span class="pbi-card-title">Certification Heatmap</span>
+          <span class="pbi-card-tag">Person × Certificate</span>
+        </div>
+        <div id="execCertHeatmap" style="overflow-x:auto;margin-top:8px;"></div>
       </div>
 
       <!-- ── ROW 6: TEAM TABLE FULL ── -->
@@ -5648,7 +6359,7 @@ html.light .cvgb-sharepoint {
       </div>
 
       <!-- ── ROW 7: SIDE-BY-SIDE COMPARISON ── -->
-      <div class="pbi-card pbi-card-full">
+      <div class="pbi-card pbi-card-full" id="execCompareCard">
         <div class="pbi-card-header">
           <span class="pbi-card-title">Member Comparison</span>
           <span class="pbi-card-tag">Side-by-side radar</span>
@@ -6775,6 +7486,47 @@ function initConnect() {
   connFilterPeople();
 }
 
+// ── Scroll-reveal observer (landing page) ────────────────────────────────
+(function() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // For parent containers, also trigger child stagger items
+        entry.target.querySelectorAll('.why-point, .feature-card, .step-card').forEach(child => {
+          child.classList.add('visible');
+        });
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  function observeLanding() {
+    document.querySelectorAll('.reveal, .why-points, .feature-cards, .steps-cards').forEach(el => io.observe(el));
+    // Also directly observe individual stagger items for precise control
+    document.querySelectorAll('.why-point, .feature-card, .step-card').forEach(el => io.observe(el));
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeLanding);
+  } else {
+    observeLanding();
+  }
+
+  // Re-run when navigating back to home
+  const _origShowPage = window.showPage;
+  document.addEventListener('DOMContentLoaded', () => {
+    const origShowPage = window.showPage;
+    if (origShowPage) {
+      window.showPage = function(page) {
+        origShowPage(page);
+        if (page === 'home') setTimeout(observeLanding, 50);
+      };
+    }
+  });
+})();
+
 // ── Cluster display config ───────────────────────────────────────────────────
 const CLUSTER_CONFIG = {
   'N&S EU (Inc. Transversal)': { emoji: '🌍', color: '#FF7900' },
@@ -7866,6 +8618,7 @@ async function handleExecFiles(event) {
 
   renderFileList();
   document.getElementById('execGenBtn').style.display = 'block';
+  setHardcodedTeamMode(false); // restore full skill sections
 
   // Reset file input so same file can be re-uploaded
   event.target.value = '';
@@ -8112,6 +8865,226 @@ async function buildExecReport() {
 /* ===================================================
    RENDER EXECUTIVE DASHBOARD (filterable)
 =================================================== */
+
+/* ═══════════════════════════════════════════════════════════════
+   CURRENT TEAM DATA — hardcoded, editable below
+   To add/remove certificates for a team member, find their row
+   and edit the certs array. Cert names are case-sensitive.
+   Available certs: "PMP", "ACP", "PSM1", "PSPO1",
+     "Synergy Foundation", "Synergy Practitioner", "SCM",
+     "SAFE", "ITIL Foundation", "ITIL Strategist",
+     "MSC", "Six Sigma", "MBA"
+═══════════════════════════════════════════════════════════════ */
+const HARDCODED_TEAM = [
+  { name:'Mahmoud Dahshan', certs:["PMP","ACP","PSM1","PSPO1","ITIL Foundation"] },
+  { name:'Ghadir Allam', certs:["PMP","ACP","PSM1","PSPO1","Synergy Foundation","Synergy Practitioner"] },
+  { name:'Mohamed Hesham', certs:["PMP","ACP","PSM1","PSPO1","Synergy Foundation","Synergy Practitioner"] },
+  { name:'Peter Ghaly', certs:["PMP","ACP","PSM1","PSPO1"] },
+  { name:'Meryanos Elsahar', certs:["PMP","ACP","PSM1","Synergy Foundation","Synergy Practitioner","ITIL Foundation","MBA"] },
+  { name:'Ahmed Mohey', certs:["PMP","ACP","PSM1","Synergy Foundation","Synergy Practitioner"] },
+  { name:'Nasreen Ahmad', certs:["PMP","ACP","PSM1","Synergy Foundation"] },
+  { name:'Ahmed Osama', certs:["PMP","ACP","PSM1","ITIL Foundation","MSC"] },
+  { name:'Ehab Rostom', certs:["PMP","ACP","PSM1","ITIL Foundation"] },
+  { name:'Abanoub WASFY', certs:["PMP","ACP","PSM1","Six Sigma"] },
+  { name:'Hussein Shehada', certs:["PMP","ACP","PSM1"] },
+  { name:'May Yassin', certs:["PMP","ACP","PSM1"] },
+  { name:'Nadiaa Ali', certs:["PMP","ACP","Synergy Foundation","Synergy Practitioner","Six Sigma","MBA"] },
+  { name:'Hussam El Aassar', certs:["PMP","PSM1","Synergy Foundation","ITIL Foundation"] },
+  { name:'Bassant Amgad', certs:["PMP","PSM1","Synergy Foundation"] },
+  { name:'Sylvia Raouf', certs:["PMP","PSM1","ITIL Foundation"] },
+  { name:'Islam Youssef', certs:["PMP","PSM1"] },
+  { name:'Nadine Elhawary', certs:["PMP","PSM1"] },
+  { name:'Mira Fahim', certs:["PMP","PSM1"] },
+  { name:'Amina El Haggan', certs:["PMP","PSM1","MBA"] },
+  { name:'Abdelrahman Sadek', certs:["PMP","Synergy Foundation","Synergy Practitioner"] },
+  { name:'Karim Hendy', certs:["PMP","Synergy Foundation","ITIL Foundation"] },
+  { name:'Omar Galal', certs:["PMP","Synergy Foundation"] },
+  { name:'Nada Hossam', certs:["PMP","Synergy Foundation"] },
+  { name:'Marah Osman', certs:["PMP","Synergy Foundation"] },
+  { name:'Merna Bishay', certs:["PMP","ITIL Foundation"] },
+  { name:'Aly Maher', certs:["PMP"] },
+  { name:'Andrew Fakhry', certs:["PMP"] },
+  { name:'Dona Kaid', certs:["PMP"] },
+  { name:'Lamis Fahmi', certs:["PMP","SAFE"] },
+  { name:'Mai Abdel Wahed', certs:["PMP"] },
+  { name:'Mohamed Gewely', certs:["PMP"] },
+  { name:'Reem Mobarak', certs:["PMP"] },
+  { name:'Yara Zaki', certs:["PMP"] },
+  { name:'Yasmine Zaky', certs:["PMP"] },
+  { name:'Andrew Basha', certs:["PMP"] },
+  { name:'Mohamed EL AZHARY', certs:["ACP"] },
+  { name:'Mona Tantawi', certs:["ACP"] },
+  { name:'Rose Khoury', certs:["ACP"] },
+  { name:'Nada Megahed', certs:["PSM1","PSPO1","Synergy Foundation","Synergy Practitioner","ITIL Foundation"] },
+  { name:'Emad Osman', certs:["PSM1","Six Sigma"] },
+  { name:'Habiba Mahdy', certs:["PSM1","Six Sigma"] },
+  { name:'Ahmed Raslan', certs:["PSM1"] },
+  { name:'Hoda Elmehi', certs:["PSM1"] },
+  { name:'Moutassem Helmy', certs:["PSM1"] },
+  { name:'Rabab Khattab', certs:["PSM1"] },
+  { name:'Farida Sherif', certs:["PSM1"] },
+  { name:'Salma El Shazly', certs:["PSM1"] },
+  { name:'Sabah Ismail', certs:["Synergy Foundation"] },
+  { name:'Ahmed Hweedy', certs:["Six Sigma"] },
+  { name:'ahmed elbourgy', certs:["Six Sigma"] },
+  { name:'Ahmed Danish', certs:[] },
+  { name:'Ahmed ElKhateeb', certs:[] },
+  { name:'Ahmed Elhadidiy', certs:[] },
+  { name:'Aliaa Medhat', certs:[] },
+  { name:'Caroline Dib', certs:[] },
+  { name:'Dina Zanaty', certs:[] },
+  { name:'Hazem Shawkat', certs:[] },
+  { name:'Heidi ElMagdoub', certs:[] },
+  { name:'Lina Hamad', certs:[] },
+  { name:'Mai Aziz', certs:[] },
+  { name:'Marwan ElSawaf', certs:[] },
+  { name:'Mira Rezk', certs:[] },
+  { name:'Mirna Ahmed', certs:[] },
+  { name:'Mohab Tawila', certs:[] },
+  { name:'Mohamed Eid', certs:[] },
+  { name:'Moustafa Shady', certs:[] },
+  { name:'Nadine Hashish', certs:[] },
+  { name:'Noha Al Badry', certs:[] },
+  { name:'Omar Allam', certs:[] },
+  { name:'Omar El Gammal', certs:[] },
+  { name:'Rami Magdi', certs:[] },
+  { name:'Nouran Moustafa', certs:[] },
+  { name:'Salma Anwar', certs:[] },
+  { name:'Sarah Mashaly', certs:[] },
+  { name:'Sherif Basiony', certs:[] },
+  { name:'Youssef El Nozahy', certs:[] },
+  { name:'Zeina Saafan', certs:[] }
+];
+
+// ── Convert HARDCODED_TEAM row → full profile object ─────────────────────
+function hardcodedTeamToProfiles() {
+  return HARDCODED_TEAM.map(m => {
+    const certs = m.certs || [];
+    return {
+      name:        m.name,
+      company:     'Orange Business',
+      jobRole:     'Delivery Project Manager',
+      summary:     '',
+      certs:       certs,
+      tools:       [],
+      skills:      [],
+      products:    [],
+      jobs:        [],
+      education:   [],
+      languages:   [],
+      links:       {},
+      score:       calcPMScore(certs, [], []),
+      lastUpdated: null
+    };
+  });
+}
+
+// ── IDs of skill-only sections to hide in hardcoded-team mode ────────────
+const SKILL_ONLY_SECTIONS = [
+  'execRadarCard','execSkillDonutCard','execCoverBarsCard',
+  'execHeatmapCard','execCompareCard'
+];
+
+// ── Toggle skill vs cert sections ─────────────────────────────────────────
+function setHardcodedTeamMode(on) {
+  SKILL_ONLY_SECTIONS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = on ? 'none' : '';
+  });
+  const certHeatmap = document.getElementById('execCertHeatmapCard');
+  if (certHeatmap) certHeatmap.style.display = on ? '' : 'none';
+}
+
+// ── Cert heatmap renderer ─────────────────────────────────────────────────
+function renderCertHeatmap(profiles) {
+  // Gather all certs that appear at least once, sorted by frequency desc
+  const freq = {};
+  profiles.forEach(p => p.certs.forEach(c => { freq[c] = (freq[c]||0)+1; }));
+  const allCerts = Object.keys(freq).sort((a,b) => freq[b]-freq[a]);
+  if (allCerts.length === 0) {
+    document.getElementById('execCertHeatmap').innerHTML =
+      '<div style="color:var(--muted);padding:16px;">No certifications recorded.</div>';
+    return;
+  }
+
+  const isLight = document.documentElement.classList.contains('light');
+  const totalMembers = profiles.length;
+
+  let html = '<table style="border-collapse:collapse;width:100%;font-size:11px;min-width:600px;">';
+
+  // Header: cert names rotated
+  html += '<tr><th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;' +
+          'border-bottom:1px solid var(--border);min-width:140px;position:sticky;left:0;background:var(--surface);">Name</th>';
+  allCerts.forEach(cert => {
+    const pct = Math.round(freq[cert] / totalMembers * 100);
+    html += '<th style="padding:4px 6px;text-align:center;color:var(--muted);font-weight:700;' +
+            'border-bottom:1px solid var(--border);min-width:62px;max-width:80px;">' +
+            '<div style="writing-mode:vertical-rl;transform:rotate(180deg);height:80px;display:flex;' +
+            'align-items:center;justify-content:flex-start;font-size:10px;line-height:1.2;">' + cert + '</div>' +
+            '<div style="font-size:9px;color:var(--orange);font-weight:800;margin-top:2px;">' + pct + '%</div>' +
+            '</th>';
+  });
+  html += '</tr>';
+
+  // One row per person
+  profiles.forEach(p => {
+    const certSet = new Set(p.certs);
+    html += '<tr>';
+    html += '<td style="padding:6px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(128,128,128,0.1);' +
+            'position:sticky;left:0;background:var(--surface);font-size:12px;">' + p.name + '</td>';
+    allCerts.forEach(cert => {
+      const has = certSet.has(cert);
+      const bg  = has
+        ? (isLight ? '#FF7900' : '#FF7900')
+        : (isLight ? '#f0f0f0' : '#1a1a1a');
+      const text = has ? '#fff' : (isLight ? '#ccc' : '#333');
+      html += '<td style="padding:5px 6px;text-align:center;background:' + bg + ';' +
+              'border-bottom:1px solid rgba(128,128,128,0.1);border-left:1px solid rgba(128,128,128,0.05);">' +
+              '<span style="color:' + text + ';font-size:13px;font-weight:700;">' + (has ? '✓' : '') + '</span>' +
+              '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  document.getElementById('execCertHeatmap').innerHTML = html;
+}
+
+// ── Load hardcoded team into dashboard ────────────────────────────────────
+async function loadCurrentTeamDashboard() {
+  const profiles = hardcodedTeamToProfiles();
+
+  if (execProfiles.length > 0) {
+    const ok = await obConfirm(
+      'This will replace the ' + execProfiles.length + ' currently loaded profile(s) with the full hardcoded team (' + profiles.length + ' members).',
+      { title: 'Load Current Team?', icon: '🏢', confirmLabel: 'Load Team' }
+    );
+    if (!ok) return;
+  }
+
+  execProfiles     = profiles;
+  filteredProfiles = [...execProfiles];
+  selectedNames.clear();
+  saveProfilesToStorage();
+
+  renderFileList();
+  buildFilterDropdown();
+  renderFilterChips();
+
+  document.getElementById('execGenBtn').style.display     = 'block';
+  document.getElementById('execFilterBar').style.display  = 'block';
+  document.getElementById('execStorageNote').style.display = 'flex';
+
+  // Render dashboard then apply cert-only mode
+  renderExecDashboard(filteredProfiles);
+  document.getElementById('execDashboard').style.display = 'block';
+
+  // Hide skill sections, show cert heatmap
+  setHardcodedTeamMode(true);
+  renderCertHeatmap(filteredProfiles);
+
+  obToast('🏢 Loaded ' + profiles.length + ' team members — cert view active');
+}
 function renderExecDashboard(profiles) {
   try {
   if (profiles.length === 0) {
@@ -10153,6 +11126,7 @@ function importManagerReport(event) {
 
       renderExecDashboard(filteredProfiles);
       document.getElementById('execDashboard').style.display = 'block';
+      setHardcodedTeamMode(false); // restore full skill sections
 
       const dateStr = data.exportedAt ? ' (saved ' + data.exportedAt.slice(0,10) + ')' : '';
       obToast('📂 Loaded ' + profiles.length + ' profiles from report' + dateStr);
