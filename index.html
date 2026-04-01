@@ -781,6 +781,8 @@ input[type=file] {
 .pbi-row-40-60 { grid-template-columns: 2fr 3fr; }
 .pbi-row-50-50 { grid-template-columns: 1fr 1fr; }
 .pbi-row-30-70 { grid-template-columns: 3fr 7fr; }
+.pbi-row-33-33-33 { grid-template-columns: 1fr 1fr 1fr; }
+.pbi-row-40-30-30 { grid-template-columns: 2fr 1.5fr 1.5fr; }
 
 /* Cards */
 .pbi-card {
@@ -926,7 +928,7 @@ html.light .score-low  { background: rgba(239,68,68,0.12); color: #dc2626; }
 
 /* Responsive */
 @media (max-width: 700px) {
-  .pbi-row-40-60, .pbi-row-50-50, .pbi-row-30-70 { grid-template-columns: 1fr; }
+  .pbi-row-40-60, .pbi-row-50-50, .pbi-row-30-70, .pbi-row-33-33-33, .pbi-row-40-30-30 { grid-template-columns: 1fr; }
   .pbi-kpi-strip { grid-template-columns: 1fr 1fr; }
 }
 
@@ -1197,6 +1199,54 @@ html.light .score-low  { background: rgba(239,68,68,0.12); color: #dc2626; }
   flex-shrink: 0;
 }
 .dfb-chip-remove:hover { background: rgba(239,68,68,0.3); color: #f87171; }
+/* Cluster filter pills */
+.dfb-cluster-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.dfb-cluster-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.dfb-cluster-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+.dfb-cluster-pill:hover { border-color: var(--orange); color: var(--text); }
+.dfb-cluster-pill.active-nseu  { background: rgba(255,121,0,0.12);  border-color: #FF7900;  color: #FF7900;  }
+.dfb-cluster-pill.active-dach  { background: rgba(0,120,212,0.12);  border-color: #0078d4;  color: #0078d4;  }
+.dfb-cluster-pill.active-bnlx  { background: rgba(16,185,129,0.12); border-color: #10b981;  color: #10b981;  }
+.dfb-cluster-pill.active-all   { background: rgba(255,121,0,0.1);   border-color: #FF7900;  color: #FF7900;  }
+.dfb-cluster-count {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 100px;
+  background: rgba(128,128,128,0.15);
+}
+.dfb-cluster-pill.active-nseu  .dfb-cluster-count { background: rgba(255,121,0,0.2); }
+.dfb-cluster-pill.active-dach  .dfb-cluster-count { background: rgba(0,120,212,0.2); }
+.dfb-cluster-pill.active-bnlx  .dfb-cluster-count { background: rgba(16,185,129,0.2); }
+
 .dfb-clear-btn {
   padding: 7px 14px;
   background: transparent;
@@ -6210,7 +6260,16 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
     <!-- Filter bar — shown once files are loaded -->
     <div id="execFilterBar" style="display:none;">
       <div class="dash-filter-bar">
-        <div class="dfb-label">Filter team</div>
+        <!-- Cluster filter pills -->
+        <div class="dfb-cluster-row">
+          <span class="dfb-cluster-label">Cluster</span>
+          <button class="dfb-cluster-pill active-all" id="clusterPill-all"   onclick="setClusterFilter('all')">🌐 All <span class="dfb-cluster-count" id="clusterCount-all">—</span></button>
+          <button class="dfb-cluster-pill"            id="clusterPill-nseu"  onclick="setClusterFilter('nseu')">🌍 N&amp;S EU <span class="dfb-cluster-count" id="clusterCount-nseu">—</span></button>
+          <button class="dfb-cluster-pill"            id="clusterPill-dach"  onclick="setClusterFilter('dach')">🏔️ DACH <span class="dfb-cluster-count" id="clusterCount-dach">—</span></button>
+          <button class="dfb-cluster-pill"            id="clusterPill-bnlx"  onclick="setClusterFilter('bnlx')">🌷 Benelux <span class="dfb-cluster-count" id="clusterCount-bnlx">—</span></button>
+        </div>
+
+        <div class="dfb-label">Filter members</div>
 
         <!-- Search bar -->
         <div class="dfb-search-wrap">
@@ -6262,41 +6321,50 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
       <!-- ── ROW 1: KPI STRIP ── -->
       <div class="pbi-kpi-strip" id="execKPIs"></div>
 
-      <!-- ── ROW 2: RADAR (left 40%) + TOP CERT CARD (right 60%) ── -->
-      <div class="pbi-row pbi-row-40-60" id="execRow2">
+      <!-- ── ROW 2: RADAR | TOP CERTS | CERT DISTRIBUTION BAR ── -->
+      <div class="pbi-row pbi-row-33-33-33" id="execRow2">
         <div class="pbi-card" id="execRadarCard">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Team Competency Radar</span>
             <span class="pbi-card-tag">All domains</span>
           </div>
-          <div class="pbi-chart-wrap" style="max-width:360px;margin:0 auto;">
+          <div class="pbi-chart-wrap" style="max-width:320px;margin:0 auto;">
             <canvas id="execRadar"></canvas>
           </div>
         </div>
         <div class="pbi-card">
           <div class="pbi-card-header">
-            <span class="pbi-card-title">Top Certification</span>
+            <span class="pbi-card-title">Top Certifications</span>
             <span class="pbi-card-tag">Most held</span>
           </div>
           <div id="execTopCertCard" style="padding-top:8px;"></div>
         </div>
-      </div>
-
-      <!-- ── ROW 3: CERT BAR + TOOL BAR ── -->
-      <div class="pbi-row pbi-row-50-50">
         <div class="pbi-card">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Certification Distribution</span>
-            <span class="pbi-card-tag">Top 10</span>
+            <span class="pbi-card-tag">Vertical · Top 10</span>
           </div>
-          <canvas id="execCertBar"></canvas>
+          <div style="position:relative;height:220px;">
+            <canvas id="execCertBarV"></canvas>
+          </div>
         </div>
+      </div>
+
+      <!-- ── ROW 3: TOOL ADOPTION + TOP USED TOOLS TABLE ── -->
+      <div class="pbi-row pbi-row-50-50">
         <div class="pbi-card">
           <div class="pbi-card-header">
             <span class="pbi-card-title">Tool Adoption</span>
-            <span class="pbi-card-tag">Top 10</span>
+            <span class="pbi-card-tag">Top 10 · by count</span>
           </div>
           <canvas id="execToolBar"></canvas>
+        </div>
+        <div class="pbi-card">
+          <div class="pbi-card-header">
+            <span class="pbi-card-title">Top Used Tools</span>
+            <span class="pbi-card-tag">Ranked list</span>
+          </div>
+          <div id="execTopToolCard" style="padding-top:8px;"></div>
         </div>
       </div>
 
@@ -6353,7 +6421,7 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
           <span class="pbi-card-tag">Individual breakdown</span>
         </div>
         <table class="team-table" id="execTeamTable">
-          <thead><tr><th>Name</th><th>Company</th><th>Certifications</th><th>Tools</th><th>Skills</th><th>Last Updated</th></tr></thead>
+          <thead><tr><th>Name</th><th>Cluster</th><th>Certifications</th><th>Tools</th><th>Skills</th><th>Last Updated</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -8616,9 +8684,16 @@ async function handleExecFiles(event) {
   filteredProfiles = [...execProfiles];
   selectedNames.clear();
 
+  enrichAllProfilesWithCluster();
   renderFileList();
   document.getElementById('execGenBtn').style.display = 'block';
   setHardcodedTeamMode(false); // restore full skill sections
+  activeCluster = 'all';
+  ['all','nseu','dach','bnlx'].forEach(k => {
+    const pill = document.getElementById('clusterPill-' + k);
+    if (pill) pill.className = 'dfb-cluster-pill' + (k === 'all' ? ' active-all' : '');
+  });
+  updateClusterCounts();
 
   // Reset file input so same file can be re-uploaded
   event.target.value = '';
@@ -8709,7 +8784,11 @@ function buildFilterDropdown() {
   const inner = document.getElementById('dfbMenuInner');
   if (!inner) return;
   inner.innerHTML = '';
-  execProfiles.forEach(p => {
+  const clusterFull = activeCluster !== 'all' ? CLUSTER_KEY_MAP[activeCluster] : null;
+  const visibleProfiles = clusterFull
+    ? execProfiles.filter(p => p.cluster === clusterFull)
+    : execProfiles;
+  visibleProfiles.forEach(p => {
     const isSelected = selectedNames.has(p.name);
     const item = document.createElement('div');
     item.className = 'dfb-menu-item' + (isSelected ? ' selected' : '');
@@ -8773,12 +8852,76 @@ function updateDropdownLabel() {
   }
 }
 
+// ── Cluster filter state ─────────────────────────────────────────────────
+let activeCluster = 'all'; // 'all' | 'nseu' | 'dach' | 'bnlx'
+
+const CLUSTER_KEY_MAP = {
+  'nseu': 'N&S EU (Inc. Transversal)',
+  'dach': 'DACH (Inc. BASF)',
+  'bnlx': 'Benelux'
+};
+
+// ── Enrich a profile with cluster from CONN_DPMS by name match ───────────
+function enrichProfileWithCluster(profile) {
+  if (profile.cluster) return profile; // already has it (e.g. from JSON)
+  // Normalise: lowercase, strip punctuation for fuzzy match
+  const norm = s => (s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const match = CONN_DPMS.find(d => norm(d.name) === norm(profile.name));
+  if (match) {
+    profile.cluster  = match.cluster;
+    profile.manager  = match.manager;
+    profile.managerEmail = match.managerEmail;
+  } else {
+    profile.cluster = 'Unknown';
+  }
+  return profile;
+}
+
+// ── Enrich all execProfiles in place ─────────────────────────────────────
+function enrichAllProfilesWithCluster() {
+  execProfiles.forEach(p => enrichProfileWithCluster(p));
+}
+
+// ── Update cluster pill counts ────────────────────────────────────────────
+function updateClusterCounts() {
+  const counts = { all: execProfiles.length, nseu: 0, dach: 0, bnlx: 0 };
+  execProfiles.forEach(p => {
+    if (p.cluster === CLUSTER_KEY_MAP.nseu) counts.nseu++;
+    else if (p.cluster === CLUSTER_KEY_MAP.dach) counts.dach++;
+    else if (p.cluster === CLUSTER_KEY_MAP.bnlx) counts.bnlx++;
+  });
+  Object.keys(counts).forEach(k => {
+    const el = document.getElementById('clusterCount-' + k);
+    if (el) el.textContent = counts[k];
+  });
+}
+
+// ── Set cluster filter ────────────────────────────────────────────────────
+function setClusterFilter(key) {
+  activeCluster = key;
+  // Update pill active states
+  ['all','nseu','dach','bnlx'].forEach(k => {
+    const pill = document.getElementById('clusterPill-' + k);
+    if (!pill) return;
+    pill.className = 'dfb-cluster-pill' + (k === key ? ' active-' + k : '');
+  });
+  // Clear member dropdown selection when switching cluster
+  selectedNames.clear();
+  document.getElementById('execNameFilter').value = '';
+  // Rebuild dropdown to show only members in this cluster
+  buildFilterDropdown();
+  applyNameFilter();
+}
+
 function applyNameFilter() {
   const query = document.getElementById('execNameFilter').value.trim().toLowerCase();
+  const clusterFull = activeCluster !== 'all' ? CLUSTER_KEY_MAP[activeCluster] : null;
+
   filteredProfiles = execProfiles.filter(p => {
-    const matchSearch = !query || p.name.toLowerCase().includes(query);
-    const matchDrop   = selectedNames.size === 0 || selectedNames.has(p.name);
-    return matchSearch && matchDrop;
+    const matchSearch  = !query || p.name.toLowerCase().includes(query);
+    const matchDrop    = selectedNames.size === 0 || selectedNames.has(p.name);
+    const matchCluster = !clusterFull || (p.cluster === clusterFull);
+    return matchSearch && matchDrop && matchCluster;
   });
   renderFilterChips();
   renderExecDashboard(filteredProfiles);
@@ -8829,6 +8972,11 @@ function removeDropdownName(name) {
 function clearFilter() {
   document.getElementById('execNameFilter').value = '';
   selectedNames.clear();
+  activeCluster = 'all';
+  ['all','nseu','dach','bnlx'].forEach(k => {
+    const pill = document.getElementById('clusterPill-' + k);
+    if (pill) pill.className = 'dfb-cluster-pill' + (k === 'all' ? ' active-all' : '');
+  });
   buildFilterDropdown();
   filteredProfiles = [...execProfiles];
   renderFilterChips();
@@ -8995,9 +9143,8 @@ function setHardcodedTeamMode(on) {
   if (certHeatmap) certHeatmap.style.display = on ? '' : 'none';
 }
 
-// ── Cert heatmap renderer ─────────────────────────────────────────────────
+// ── Cert heatmap renderer — grouped by cluster ───────────────────────────
 function renderCertHeatmap(profiles) {
-  // Gather all certs that appear at least once, sorted by frequency desc
   const freq = {};
   profiles.forEach(p => p.certs.forEach(c => { freq[c] = (freq[c]||0)+1; }));
   const allCerts = Object.keys(freq).sort((a,b) => freq[b]-freq[a]);
@@ -9007,43 +9154,68 @@ function renderCertHeatmap(profiles) {
     return;
   }
 
-  const isLight = document.documentElement.classList.contains('light');
-  const totalMembers = profiles.length;
+  const isLight   = document.documentElement.classList.contains('light');
+  const totalMem  = profiles.length;
+  const clColorMap = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981'};
+  const clEmojiMap = {'N&S EU (Inc. Transversal)':'🌍','DACH (Inc. BASF)':'🏔️','Benelux':'🌷'};
+  const clusterOrder = ['N&S EU (Inc. Transversal)','DACH (Inc. BASF)','Benelux','Unknown'];
+
+  // Group profiles by cluster
+  const groups = {};
+  clusterOrder.forEach(c => groups[c] = []);
+  profiles.forEach(p => {
+    const key = (p.cluster && clusterOrder.includes(p.cluster)) ? p.cluster : 'Unknown';
+    groups[key].push(p);
+  });
+
+  const thStyle = 'padding:4px 6px;text-align:center;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);min-width:56px;max-width:72px;';
+  const stickyTd = 'padding:6px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(128,128,128,0.1);position:sticky;left:0;background:var(--surface);font-size:12px;';
 
   let html = '<table style="border-collapse:collapse;width:100%;font-size:11px;min-width:600px;">';
 
-  // Header: cert names rotated
-  html += '<tr><th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;' +
-          'border-bottom:1px solid var(--border);min-width:140px;position:sticky;left:0;background:var(--surface);">Name</th>';
+  // Header row
+  html += '<tr><th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);min-width:160px;position:sticky;left:0;background:var(--surface);">Name</th>';
   allCerts.forEach(cert => {
-    const pct = Math.round(freq[cert] / totalMembers * 100);
-    html += '<th style="padding:4px 6px;text-align:center;color:var(--muted);font-weight:700;' +
-            'border-bottom:1px solid var(--border);min-width:62px;max-width:80px;">' +
-            '<div style="writing-mode:vertical-rl;transform:rotate(180deg);height:80px;display:flex;' +
-            'align-items:center;justify-content:flex-start;font-size:10px;line-height:1.2;">' + cert + '</div>' +
-            '<div style="font-size:9px;color:var(--orange);font-weight:800;margin-top:2px;">' + pct + '%</div>' +
-            '</th>';
+    const pct = Math.round(freq[cert] / totalMem * 100);
+    html += '<th style="' + thStyle + '">' +
+      '<div style="writing-mode:vertical-rl;transform:rotate(180deg);height:76px;display:flex;align-items:center;justify-content:flex-start;font-size:10px;line-height:1.2;">' + cert + '</div>' +
+      '<div style="font-size:9px;color:var(--orange);font-weight:800;margin-top:2px;">' + pct + '%</div>' +
+      '</th>';
   });
   html += '</tr>';
 
-  // One row per person
-  profiles.forEach(p => {
-    const certSet = new Set(p.certs);
-    html += '<tr>';
-    html += '<td style="padding:6px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(128,128,128,0.1);' +
-            'position:sticky;left:0;background:var(--surface);font-size:12px;">' + p.name + '</td>';
-    allCerts.forEach(cert => {
-      const has = certSet.has(cert);
-      const bg  = has
-        ? (isLight ? '#FF7900' : '#FF7900')
-        : (isLight ? '#f0f0f0' : '#1a1a1a');
-      const text = has ? '#fff' : (isLight ? '#ccc' : '#333');
-      html += '<td style="padding:5px 6px;text-align:center;background:' + bg + ';' +
-              'border-bottom:1px solid rgba(128,128,128,0.1);border-left:1px solid rgba(128,128,128,0.05);">' +
-              '<span style="color:' + text + ';font-size:13px;font-weight:700;">' + (has ? '✓' : '') + '</span>' +
-              '</td>';
+  // Cluster group rows
+  clusterOrder.forEach(cluster => {
+    const members = groups[cluster];
+    if (!members || members.length === 0) return;
+    const color = clColorMap[cluster] || '#888';
+    const emoji = clEmojiMap[cluster] || '📍';
+    const colspan = allCerts.length + 1;
+
+    // Cluster divider row
+    html += '<tr><td colspan="' + colspan + '" style="padding:8px 12px;background:' + color + '18;' +
+            'border-top:2px solid ' + color + '44;border-bottom:1px solid ' + color + '33;">' +
+            '<span style="font-size:11px;font-weight:800;color:' + color + ';letter-spacing:0.05em;text-transform:uppercase;">' +
+            emoji + ' ' + cluster + '</span>' +
+            '<span style="margin-left:8px;font-size:10px;color:' + color + '99;font-weight:600;">' + members.length + ' members</span>' +
+            '</td></tr>';
+
+    // Member rows within cluster
+    members.forEach(p => {
+      const certSet = new Set(p.certs);
+      html += '<tr>';
+      html += '<td style="' + stickyTd + '">' + p.name + '</td>';
+      allCerts.forEach(cert => {
+        const has = certSet.has(cert);
+        const bg  = has ? color : (isLight ? '#f0f0f0' : '#1a1a1a');
+        const txt = has ? '#fff' : (isLight ? '#ddd' : '#333');
+        html += '<td style="padding:5px 6px;text-align:center;background:' + bg + ';' +
+                'border-bottom:1px solid rgba(128,128,128,0.08);border-left:1px solid rgba(128,128,128,0.05);">' +
+                '<span style="color:' + txt + ';font-size:13px;font-weight:700;">' + (has ? '✓' : '') + '</span>' +
+                '</td>';
+      });
+      html += '</tr>';
     });
-    html += '</tr>';
   });
 
   html += '</table>';
@@ -9075,6 +9247,14 @@ async function loadCurrentTeamDashboard() {
   document.getElementById('execFilterBar').style.display  = 'block';
   document.getElementById('execStorageNote').style.display = 'flex';
 
+  enrichAllProfilesWithCluster();
+  activeCluster = 'all';
+  updateClusterCounts();
+  ['all','nseu','dach','bnlx'].forEach(k => {
+    const pill = document.getElementById('clusterPill-' + k);
+    if (pill) pill.className = 'dfb-cluster-pill' + (k === 'all' ? ' active-all' : '');
+  });
+
   // Render dashboard then apply cert-only mode
   renderExecDashboard(filteredProfiles);
   document.getElementById('execDashboard').style.display = 'block';
@@ -9094,7 +9274,18 @@ function renderExecDashboard(profiles) {
 
   const now = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
   const filterNote = profiles.length < execProfiles.length ? ' · filtered: ' + profiles.length + ' of ' + execProfiles.length : '';
-  document.getElementById('execTitle').textContent = profiles.length + ' Profile' + (profiles.length !== 1 ? 's' : '') + filterNote;
+  // Cluster label for header
+  const clusterLabels = {
+    'N&S EU (Inc. Transversal)': '🌍 N&S EU (Inc. Transversal)',
+    'DACH (Inc. BASF)':          '🏔️ DACH (Inc. BASF)',
+    'Benelux':                   '🌷 Benelux'
+  };
+  const uniqueClusters = [...new Set(profiles.map(p => p.cluster).filter(c => c && c !== 'Unknown'))];
+  const clusterNote = uniqueClusters.length === 1
+    ? ' · ' + (clusterLabels[uniqueClusters[0]] || uniqueClusters[0])
+    : uniqueClusters.length > 1 ? ' · ' + uniqueClusters.length + ' clusters' : '';
+
+  document.getElementById('execTitle').textContent = profiles.length + ' Profile' + (profiles.length !== 1 ? 's' : '') + filterNote + clusterNote;
   document.getElementById('execSubtitle').textContent = 'Generated ' + now + ' · Orange Business Skills Platform';
 
   // ── KPI STRIP ─────────────────────────────────────────────────────────────
@@ -9170,47 +9361,115 @@ function renderExecDashboard(profiles) {
     }
   }
 
-  // ── CERT BAR ──────────────────────────────────────────────────────────────
+  // ── CERT VERTICAL BAR (new slot in Row 2) ─────────────────────────────────
   const topCertsChart = Object.entries(certFreq).sort((a,b) => b[1]-a[1]).slice(0,10);
-  destroyChart('execCertBar');
-  chartInstances['execCertBar'] = new Chart(document.getElementById('execCertBar').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: topCertsChart.map(c=>c[0]),
-      datasets: [{ label:'Count', data: topCertsChart.map(c=>c[1]), backgroundColor:'#FF7900', borderRadius:4 }]
-    },
-    options: {
-      indexAxis: 'y',
-      plugins: { legend: { display:false } },
-      scales: {
-        x: { ticks:{ color:tickColor, stepSize:1 }, grid:{ color:gridColor } },
-        y: { ticks:{ color:labelColor, font:{size:11} }, grid:{ display:false } }
-      }
-    }
+  // Build per-bar tooltip: list holders with cluster
+  const certHoldersByName = {};
+  topCertsChart.forEach(([cert]) => {
+    certHoldersByName[cert] = profiles.filter(p => p.certs.includes(cert)).map(p => {
+      const clusterShort = (p.cluster||'').replace('(Inc. Transversal)','').replace('(Inc. BASF)','').trim();
+      return p.name + (clusterShort ? ' [' + clusterShort + ']' : '');
+    });
   });
+  destroyChart('execCertBarV');
+  if (document.getElementById('execCertBarV')) {
+    chartInstances['execCertBarV'] = new Chart(document.getElementById('execCertBarV').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: topCertsChart.map(c=>c[0]),
+        datasets: [{
+          label: 'Holders',
+          data: topCertsChart.map(c=>c[1]),
+          backgroundColor: topCertsChart.map((_,i) => ['#FF7900','#ff8f1f','#ffa540','#ffba60','#ffd1a3','#e05c00','#cc4f00','#b84200','#a33600','#8f2b00'][i] || '#FF7900'),
+          borderRadius: 5,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: ctx => ctx[0].label,
+              label: ctx => ' ' + ctx.parsed.y + ' holder' + (ctx.parsed.y !== 1 ? 's' : ''),
+              afterLabel: ctx => {
+                const holders = certHoldersByName[ctx.label] || [];
+                return holders.length ? holders.map(n => '  · ' + n) : [];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks:{ color:labelColor, font:{size:9}, maxRotation:35, minRotation:20 }, grid:{ display:false } },
+          y: { ticks:{ color:tickColor, stepSize:1, precision:0 }, grid:{ color:gridColor } }
+        }
+      }
+    });
+  }
 
-  // ── TOOL BAR ──────────────────────────────────────────────────────────────
+  // ── TOOL BAR (horizontal, with cluster tooltip) ───────────────────────────
   const allToolsArr = profiles.flatMap(p => p.tools);
   const toolFreq = {};
   allToolsArr.forEach(t => toolFreq[t] = (toolFreq[t]||0)+1);
   const topTools = Object.entries(toolFreq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  // Per-tool holder list with cluster
+  const toolHoldersByName = {};
+  topTools.forEach(([tool]) => {
+    toolHoldersByName[tool] = profiles.filter(p => p.tools.includes(tool)).map(p => {
+      const clusterShort = (p.cluster||'').replace('(Inc. Transversal)','').replace('(Inc. BASF)','').trim();
+      return p.name + (clusterShort ? ' [' + clusterShort + ']' : '');
+    });
+  });
 
   destroyChart('execToolBar');
   chartInstances['execToolBar'] = new Chart(document.getElementById('execToolBar').getContext('2d'), {
     type: 'bar',
     data: {
       labels: topTools.map(t=>t[0]),
-      datasets: [{ label:'Count', data:topTools.map(t=>t[1]), backgroundColor:'#ff9933', borderRadius:4 }]
+      datasets: [{ label:'Users', data:topTools.map(t=>t[1]), backgroundColor:'#ff9933', borderRadius:4 }]
     },
     options: {
       indexAxis: 'y',
-      plugins: { legend: { display:false } },
+      plugins: {
+        legend: { display:false },
+        tooltip: {
+          callbacks: {
+            title: ctx => ctx[0].label,
+            label: ctx => ' ' + ctx.parsed.x + ' user' + (ctx.parsed.x !== 1 ? 's' : ''),
+            afterLabel: ctx => {
+              const holders = toolHoldersByName[ctx.label] || [];
+              return holders.length ? holders.map(n => '  · ' + n) : [];
+            }
+          }
+        }
+      },
       scales: {
         x: { ticks:{ color:tickColor, stepSize:1 }, grid:{ color:gridColor } },
         y: { ticks:{ color:labelColor, font:{size:11} }, grid:{ display:false } }
       }
     }
   });
+
+  // ── TOP USED TOOLS panel (ranked list) ────────────────────────────────────
+  const topToolEl = document.getElementById('execTopToolCard');
+  if (topToolEl) {
+    if (topTools.length === 0) {
+      topToolEl.innerHTML = '<div style="color:var(--muted);font-size:13px;">No tools recorded.</div>';
+    } else {
+      const maxToolCount = topTools[0][1];
+      topToolEl.innerHTML = '<div class="pbi-top-cert">' +
+        topTools.map(([name, count]) => {
+          const pct = Math.round(count / maxToolCount * 100);
+          return '<div class="pbi-cert-row">' +
+            '<span class="pbi-cert-name">' + name + '</span>' +
+            '<div class="pbi-cert-bar-wrap"><div class="pbi-cert-bar-fill" style="width:' + pct + '%;background:#ff9933;"></div></div>' +
+            '<span class="pbi-cert-count">' + count + '</span>' +
+          '</div>';
+        }).join('') + '</div>';
+    }
+  }
 
   // ── PRODUCTS BAR ─────────────────────────────────────────────────────────
   const allProductsArr = profiles.flatMap(p => p.products||[]);
@@ -9247,7 +9506,16 @@ function renderExecDashboard(profiles) {
             legend: { display: false },
             tooltip: {
               callbacks: {
-                label: ctx => ' ' + ctx.parsed.x + ' DPM' + (ctx.parsed.x !== 1 ? 's' : '')
+                title: ctx => ctx[0].label,
+                label: ctx => ' ' + ctx.parsed.x + ' DPM' + (ctx.parsed.x !== 1 ? 's' : ''),
+                afterLabel: ctx => {
+                  const productName = ctx.label;
+                  const holders = profiles.filter(p => (p.products||[]).includes(productName)).map(p => {
+                    const cs = (p.cluster||'').replace('(Inc. Transversal)','').replace('(Inc. BASF)','').trim();
+                    return p.name + (cs ? ' [' + cs + ']' : '');
+                  });
+                  return holders.length ? holders.map(n => '  · ' + n) : [];
+                }
               }
             }
           },
@@ -9320,10 +9588,17 @@ function renderExecDashboard(profiles) {
       updatedCell = '<span style="font-size:12px;font-weight:600;color:' + (stale ? '#f87171' : '#4ade80') + ';" title="' + d.toLocaleDateString('en-GB') + '">' + label + (stale ? ' ⚠' : '') + '</span>';
     }
     const certPill = '<span class="score-pill ' + (p.certs.length >= 3 ? 'score-high' : p.certs.length >= 1 ? 'score-med' : 'score-low') + '">' + p.certs.length + '</span>';
+    const clusterColorMap = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981'};
+    const clusterCol = p.cluster && p.cluster !== 'Unknown' ? p.cluster : '—';
+    const clusterColor = clusterColorMap[p.cluster] || '#888';
+    const clusterShortMap = {'N&S EU (Inc. Transversal)':'🌍 N&S EU','DACH (Inc. BASF)':'🏔️ DACH','Benelux':'🌷 Benelux'};
+    const clusterBadge = clusterCol !== '—'
+      ? '<span style="display:inline-block;padding:2px 9px;border-radius:100px;font-size:11px;font-weight:700;background:' + clusterColor + '22;color:' + clusterColor + ';border:1px solid ' + clusterColor + '44;">' + (clusterShortMap[p.cluster] || p.cluster) + '</span>'
+      : '<span style="color:var(--muted);font-size:12px;">—</span>';
     tbody.innerHTML +=
       '<tr>' +
         '<td style="font-weight:700">' + p.name + '</td>' +
-        '<td style="color:var(--muted);font-size:12px;">' + p.company + '</td>' +
+        '<td>' + clusterBadge + '</td>' +
         '<td>' + certPill + '</td>' +
         '<td style="font-weight:600">' + p.tools.length + '</td>' +
         '<td style="font-weight:600">' + p.skills.length + '</td>' +
@@ -9334,8 +9609,10 @@ function renderExecDashboard(profiles) {
   // ── COMPARISON DROPDOWNS ──────────────────────────────────────────────────
   const selA = document.getElementById('compareA');
   const selB = document.getElementById('compareB');
-  selA.innerHTML = profiles.map((p,i) => '<option value="' + i + '">' + p.name + '</option>').join('');
-  selB.innerHTML = profiles.map((p,i) => '<option value="' + i + '"' + (i===1?' selected':'') + '>' + p.name + '</option>').join('');
+  const clLabelShort = {'N&S EU (Inc. Transversal)':' · N&S EU','DACH (Inc. BASF)':' · DACH','Benelux':' · Benelux'};
+  const optLabel = p => p.name + (p.cluster && p.cluster !== 'Unknown' ? (clLabelShort[p.cluster] || '') : '');
+  selA.innerHTML = profiles.map((p,i) => '<option value="' + i + '">' + optLabel(p) + '</option>').join('');
+  selB.innerHTML = profiles.map((p,i) => '<option value="' + i + '"' + (i===1?' selected':'') + '>' + optLabel(p) + '</option>').join('');
   document.getElementById('comparisonResult').style.display = 'none';
 
   setTimeout(updateChartTheme, 50);
@@ -9351,26 +9628,56 @@ function renderExecDashboard(profiles) {
 function renderHeatmap(profiles) {
   const cats = Object.keys(PM_CATEGORIES);
   const isLight = document.documentElement.classList.contains('light');
+  const clColorMap = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981'};
+  const clShortMap = {'N&S EU (Inc. Transversal)':'🌍 N&S EU','DACH (Inc. BASF)':'🏔️ DACH','Benelux':'🌷 Benelux'};
+  const clusterOrder = ['N&S EU (Inc. Transversal)','DACH (Inc. BASF)','Benelux','Unknown'];
+
+  // Group by cluster
+  const groups = {};
+  clusterOrder.forEach(c => groups[c] = []);
+  profiles.forEach(p => {
+    const key = (p.cluster && clusterOrder.includes(p.cluster)) ? p.cluster : 'Unknown';
+    groups[key].push(p);
+  });
+
   let html = `<table style="border-collapse:collapse;width:100%;font-size:12px;">`;
-  // header row
-  html += `<tr><th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);">Person</th>`;
+  html += `<tr>
+    <th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);min-width:160px;">Person</th>
+    <th style="padding:8px 12px;text-align:left;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);min-width:100px;">Cluster</th>`;
   cats.forEach(cat => {
     html += `<th style="padding:6px 8px;text-align:center;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);min-width:80px;">${cat}</th>`;
   });
   html += `</tr>`;
-  // data rows
-  profiles.forEach(p => {
-    html += `<tr>`;
-    html += `<td style="padding:8px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.04);">${p.name}</td>`;
-    cats.forEach(cat => {
-      const catSkills = PM_CATEGORIES[cat];
-      const pct = Math.round(p.skills.filter(s => catSkills.includes(s)).length / catSkills.length * 100);
-      const alpha = pct / 100;
-      const bg = `rgba(255,121,0,${0.1 + alpha * 0.75})`;
-      const textColor = pct > 50 ? '#fff' : (isLight ? '#333' : '#ccc');
-      html += `<td style="padding:6px 8px;text-align:center;background:${bg};color:${textColor};font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">${pct}%</td>`;
+
+  clusterOrder.forEach(cluster => {
+    const members = groups[cluster];
+    if (!members || members.length === 0) return;
+    const color = clColorMap[cluster] || '#888';
+    const colspan = cats.length + 2;
+    // Cluster divider
+    html += `<tr><td colspan="${colspan}" style="padding:7px 12px;background:${color}18;border-top:2px solid ${color}44;border-bottom:1px solid ${color}33;">
+      <span style="font-size:11px;font-weight:800;color:${color};letter-spacing:0.05em;text-transform:uppercase;">${clShortMap[cluster] || cluster}</span>
+      <span style="margin-left:8px;font-size:10px;color:${color}99;font-weight:600;">${members.length} members</span>
+      </td></tr>`;
+    members.forEach(p => {
+      const clShort = clShortMap[p.cluster] || (p.cluster || '—');
+      const badgeBg = (clColorMap[p.cluster] || '#888') + '22';
+      const badgeCol = clColorMap[p.cluster] || '#888';
+      html += `<tr>`;
+      html += `<td style="padding:8px 12px;font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.04);">${p.name}</td>`;
+      html += `<td style="padding:6px 12px;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <span style="display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;background:${badgeBg};color:${badgeCol};border:1px solid ${badgeCol}44;">${clShort}</span>
+        </td>`;
+      cats.forEach(cat => {
+        const catSkills = PM_CATEGORIES[cat];
+        const pct = Math.round(p.skills.filter(s => catSkills.includes(s)).length / catSkills.length * 100);
+        const alpha = pct / 100;
+        const bg = `rgba(255,121,0,${0.1 + alpha * 0.75})`;
+        const textColor = pct > 50 ? '#fff' : (isLight ? '#333' : '#ccc');
+        html += `<td style="padding:6px 8px;text-align:center;background:${bg};color:${textColor};font-weight:600;border-bottom:1px solid rgba(255,255,255,0.04);">${pct}%</td>`;
+      });
+      html += `</tr>`;
     });
-    html += `</tr>`;
   });
   html += `</table>`;
   document.getElementById('execHeatmap').innerHTML = html;
@@ -9435,19 +9742,30 @@ function runComparison() {
   });
 
   const statsEl = document.getElementById('compareStats');
-  const mkCol = (p, color) => `
-    <div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid rgba(${color},0.3);">
-      <div style="font-size:15px;font-weight:800;color:rgba(${color},1);margin-bottom:10px;">${p.name}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">PM Score: <strong style="color:var(--text)">${p.score}%</strong></div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Certifications: <strong style="color:var(--text)">${p.certs.length}</strong></div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Tools: <strong style="color:var(--text)">${p.tools.length}</strong></div>
-      <div style="font-size:12px;color:var(--muted);">Skills: <strong style="color:var(--text)">${p.skills.length}</strong></div>
-      <div style="margin-top:10px;font-size:11px;color:var(--muted);">
-        <strong style="color:var(--text);">Unique skills:</strong><br>
-        ${p.skills.filter(s => !profiles[idxA===parseInt(document.getElementById('compareA').value)?idxB:idxA]?.skills.includes(s)).slice(0,4).map(s=>`<span style="display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:var(--surface3);border-radius:12px;">${s}</span>`).join('') || '—'}
-      </div>
-    </div>`;
-  statsEl.innerHTML = mkCol(pA, '255,121,0') + mkCol(pB, '129,140,248');
+  const clColorMapC = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981'};
+  const clShortMapC = {'N&S EU (Inc. Transversal)':'🌍 N&S EU','DACH (Inc. BASF)':'🏔️ DACH','Benelux':'🌷 Benelux'};
+  const buildStatCol = (p, hexColor, rgb) => {
+    const clColor = clColorMapC[p.cluster] || '#888';
+    const clLabel = clShortMapC[p.cluster] || p.cluster || '';
+    const showCluster = p.cluster && p.cluster !== 'Unknown';
+    let html = '<div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid rgba(' + rgb + ',0.3);">';
+    html += '<div style="font-size:15px;font-weight:800;color:' + hexColor + ';margin-bottom:6px;">' + p.name + '</div>';
+    if (showCluster) {
+      html += '<span style="display:inline-block;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:700;background:' + clColor + '22;color:' + clColor + ';border:1px solid ' + clColor + '44;margin-bottom:8px;">' + clLabel + '</span><br>';
+    }
+    html += '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Certifications: <strong style="color:var(--text)">' + p.certs.length + '</strong></div>';
+    const certPills = p.certs.slice(0,5).map(c => '<span style="display:inline-block;margin:2px 3px 2px 0;padding:2px 7px;background:' + hexColor + '22;border-radius:10px;font-size:10px;font-weight:600;color:' + hexColor + ';">' + c + '</span>').join('');
+    if (certPills) html += '<div style="margin-bottom:8px;">' + certPills + '</div>';
+    html += '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Tools: <strong style="color:var(--text)">' + p.tools.length + '</strong></div>';
+    html += '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Skills: <strong style="color:var(--text)">' + p.skills.length + '</strong></div>';
+    const otherP = (p === pA) ? pB : pA;
+    const uniqueSkills = p.skills.filter(s => !otherP || !otherP.skills.includes(s)).slice(0,4);
+    const skillPills = uniqueSkills.length ? uniqueSkills.map(s => '<span style="display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:var(--surface3);border-radius:12px;font-size:11px;">' + s + '</span>').join('') : '—';
+    html += '<div style="margin-top:8px;font-size:11px;color:var(--muted);"><strong style="color:var(--text)">Unique skills:</strong><br>' + skillPills + '</div>';
+    html += '</div>';
+    return html;
+  };
+  statsEl.innerHTML = buildStatCol(pA, '#FF7900', '255,121,0') + buildStatCol(pB, '#818cf8', '129,140,248');
 
   document.getElementById('comparisonResult').style.display = 'block';
   setTimeout(updateChartTheme, 50);
@@ -11124,6 +11442,13 @@ function importManagerReport(event) {
       document.getElementById('execFilterBar').style.display  = 'block';
       document.getElementById('execStorageNote').style.display = 'flex';
 
+      enrichAllProfilesWithCluster();
+      activeCluster = 'all';
+      updateClusterCounts();
+      ['all','nseu','dach','bnlx'].forEach(k => {
+        const pill = document.getElementById('clusterPill-' + k);
+        if (pill) pill.className = 'dfb-cluster-pill' + (k === 'all' ? ' active-all' : '');
+      });
       renderExecDashboard(filteredProfiles);
       document.getElementById('execDashboard').style.display = 'block';
       setHardcodedTeamMode(false); // restore full skill sections
