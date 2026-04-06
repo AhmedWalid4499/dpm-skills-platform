@@ -11664,19 +11664,17 @@ function importManagerReport(event) {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   AI EXECUTIVE REPORT
+   AI EXECUTIVE REPORT — API KEY
    ─────────────────────────────────────────────────────────────
-   API KEY SETUP:
-   1. Go to https://console.anthropic.com  →  API Keys  →  Create Key
-   2. Paste your key below where it says:
-         const CLAUDE_API_KEY = 'sk-ant-YOUR-KEY-HERE';
-   That's it. The key is stored only in this file (on your machine).
+   TO SET YOUR KEY:
+   1. Go to https://console.anthropic.com → API Keys → Create Key
+   2. Replace the value below with your actual key (keep the quotes)
    ─────────────────────────────────────────────────────────────
 ═══════════════════════════════════════════════════════════════ */
 
-// ── PUT YOUR CLAUDE API KEY HERE ─────────────────────────────────────────
-const CLAUDE_API_KEY = 'sk-ant-YOUR-KEY-HERE';
-// ─────────────────────────────────────────────────────────────────────────
+// ▼▼▼ PASTE YOUR CLAUDE API KEY HERE (replace everything between the quotes) ▼▼▼
+const CLAUDE_API_KEY = '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';
+// ▲▲▲ ─────────────────────────────────────────────────────────────────────
 
 function buildAIPrompt(profiles) {
   const total = profiles.length;
@@ -11927,9 +11925,6 @@ function openAIReport() {
     ? (({'nseu':'N&S EU','dach':'DACH','bnlx':'Benelux'})[activeCluster] || activeCluster)
     : 'Full Team';
 
-  const savedKey = localStorage.getItem('ob_claude_key') || '';
-  const hasKey   = savedKey && savedKey.startsWith('sk-ant-') && savedKey.length > 20;
-
   const overlay = document.createElement('div');
   overlay.className = 'ai-modal-overlay';
   overlay.id = 'aiReportModal';
@@ -11945,19 +11940,9 @@ function openAIReport() {
         '<button class="ai-modal-close" onclick="closeAIReport()">×</button>' +
       '</div>' +
 
-      '<div class="ai-modal-key-row">' +
-        '<div class="ai-key-label">Claude API Key</div>' +
-        '<div class="ai-key-input-wrap">' +
-          '<input type="password" id="aiKeyInput" class="ai-key-input" placeholder="sk-ant-api03-..." ' +
-            'value="' + (hasKey ? savedKey : '') + '" autocomplete="off">' +
-          '<button class="ai-key-save-btn" onclick="saveAIKey()">💾 Save</button>' +
-        '</div>' +
-        '<div class="ai-key-hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys. Stored in this browser only.</div>' +
-      '</div>' +
-
       '<div class="ai-modal-body" id="aiReportBody">' +
         '<div style="color:var(--muted);font-size:13px;padding:32px 0;text-align:center;">' +
-          'Enter your Claude API key above and click <strong style="color:var(--text)">Generate Report</strong>.' +
+          'Click <strong style="color:var(--text)">Generate Report</strong> to create your executive summary.' +
         '</div>' +
       '</div>' +
 
@@ -11973,7 +11958,10 @@ function openAIReport() {
   overlay.addEventListener('click', closeAIReport);
   document.body.appendChild(overlay);
 
-  if (hasKey) setTimeout(generateAIReport, 100);
+  // Auto-generate immediately since key is hardcoded
+  if (CLAUDE_API_KEY !== 'sk-ant-YOUR-KEY-HERE') {
+    setTimeout(generateAIReport, 150);
+  }
 }
 
 function closeAIReport() {
@@ -11981,24 +11969,15 @@ function closeAIReport() {
   if (m) m.remove();
 }
 
-function saveAIKey() {
-  const key = (document.getElementById('aiKeyInput').value || '').trim();
-  if (!key) { obToast('Please enter an API key first'); return; }
-  if (!key.startsWith('sk-ant-')) { obToast('Key should start with sk-ant-'); return; }
-  localStorage.setItem('ob_claude_key', key);
-  obToast('🔑 API key saved');
-}
 
 async function generateAIReport() {
-  const keyInput = document.getElementById('aiKeyInput');
-  const apiKey   = (keyInput ? keyInput.value.trim() : '') || localStorage.getItem('ob_claude_key') || CLAUDE_API_KEY;
+  const apiKey = CLAUDE_API_KEY;
 
-  if (!apiKey || apiKey === 'sk-ant-YOUR-KEY-HERE' || !apiKey.startsWith('sk-ant-')) {
+  if (!apiKey || apiKey === 'sk-ant-YOUR-KEY-HERE') {
     document.getElementById('aiReportBody').innerHTML =
-      '<div class="ai-error">⚠️ Please enter a valid Claude API key (starts with <strong>sk-ant-</strong>) and click Save.</div>';
+      '<div class="ai-error">⚠️ API key not set. Open the file in a text editor, find <strong>CLAUDE_API_KEY</strong> and replace the placeholder with your key from <a href="https://console.anthropic.com" target="_blank" style="color:#f87171;">console.anthropic.com</a>.</div>';
     return;
   }
-  if (apiKey !== CLAUDE_API_KEY) localStorage.setItem('ob_claude_key', apiKey);
 
   const genBtn      = document.getElementById('aiGenBtn');
   const copyBtn     = document.getElementById('aiCopyBtn');
