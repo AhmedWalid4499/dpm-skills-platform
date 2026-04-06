@@ -11673,7 +11673,7 @@ function importManagerReport(event) {
 ═══════════════════════════════════════════════════════════════ */
 
 // ▼▼▼ PASTE YOUR CLAUDE API KEY HERE (replace everything between the quotes) ▼▼▼
-const CLAUDE_API_KEY = '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';
+const CLAUDE_API_KEY = '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';
 // ▲▲▲ ─────────────────────────────────────────────────────────────────────
 
 function buildAIPrompt(profiles) {
@@ -12003,12 +12003,12 @@ async function generateAIReport() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'x-api-key': apiKey
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-5-20251030',
         max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -12016,7 +12016,12 @@ async function generateAIReport() {
 
     if (!response.ok) {
       const err = await response.json().catch(()=>({}));
-      throw new Error(err.error ? err.error.message : 'HTTP ' + response.status);
+      const status = response.status;
+      if (status === 401) throw new Error('Authentication failed (401). Your API key is invalid or expired. Get a new key at console.anthropic.com → API Keys.');
+      if (status === 403) throw new Error('Access denied (403). Your API key may not have permission. Check console.anthropic.com.');
+      if (status === 429) throw new Error('Rate limit reached (429). Please wait a moment and try again.');
+      if (status === 529) throw new Error('Anthropic API is overloaded (529). Please try again in a moment.');
+      throw new Error(err.error ? err.error.message : 'API error ' + status);
     }
 
     const data = await response.json();
