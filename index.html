@@ -11673,7 +11673,7 @@ function importManagerReport(event) {
 ═══════════════════════════════════════════════════════════════ */
 
 // ▼▼▼ PASTE YOUR CLAUDE API KEY HERE (replace everything between the quotes) ▼▼▼
-const CLAUDE_API_KEY = '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';
+const CLAUDE_API_KEY = 'sk-ant-YOUR-KEY-HERE';
 // ▲▲▲ ─────────────────────────────────────────────────────────────────────
 
 function buildAIPrompt(profiles) {
@@ -11982,7 +11982,7 @@ function openAIReport() {
         '<button class="ai-copy-btn" id="aiDownloadBtn" onclick="downloadAIReportDocx()" style="display:none;">⬇ Download Word</button>' +
         '<button class="ai-copy-btn" id="aiCopyBtn" onclick="copyAIReport()" style="display:none;">📋 Copy Text</button>' +
         '<button class="ai-regen-btn" id="aiGenBtn" onclick="aiSaveAndGenerate()">✨ Generate Report</button>' +
-        '<span class="ai-footer-note">Powered by Claude claude-sonnet-4-5</span>' +
+        '<span class="ai-footer-note">Powered by Claude Sonnet 4.5</span>' +
       '</div>' +
 
     '</div>';
@@ -12056,7 +12056,7 @@ function aiClearKey() {
 async function generateAIReport() {
   // Always prefer saved localStorage key, fall back to hardcoded constant
   const apiKey = localStorage.getItem('ob_claude_key')
-    || (CLAUDE_API_KEY !== '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' ? CLAUDE_API_KEY : '');
+    || (CLAUDE_API_KEY !== 'sk-ant-YOUR-KEY-HERE' ? CLAUDE_API_KEY : '');
 
   if (!apiKey || !apiKey.startsWith('sk-ant-') || apiKey.length < 30) {
     document.getElementById('aiReportBody').innerHTML =
@@ -12094,7 +12094,7 @@ async function generateAIReport() {
         'x-api-key': apiKey
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20251030',
+        model: 'claude-sonnet-4-5-20250929',
         max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
