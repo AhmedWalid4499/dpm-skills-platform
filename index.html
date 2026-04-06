@@ -11680,189 +11680,420 @@ function buildAIPrompt(profiles) {
   const total = profiles.length;
   const now   = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
 
-  const clusterCounts = {};
-  profiles.forEach(p => { const c = p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
-
+  // Cert stats
   const certFreq = {};
   profiles.forEach(p => p.certs.forEach(c => { certFreq[c]=(certFreq[c]||0)+1; }));
-  const topCerts = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
-  const totalCertCount = topCerts.reduce((s,[,n])=>s+n,0);
-  const membersWithCerts = total - profiles.filter(p=>p.certs.length===0).length;
-  const avgCerts = (totalCertCount/total).toFixed(1);
+  const topCerts      = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
+  const totalCerts    = topCerts.reduce((s,[,n])=>s+n,0);
+  const withCerts     = total - profiles.filter(p=>p.certs.length===0).length;
+  const avgCerts      = (totalCerts/total).toFixed(1);
+  const coverage      = Math.round(withCerts/total*100);
+  const noCertCount   = total - withCerts;
 
+  // Cluster stats
+  const clusterCounts = {};
+  profiles.forEach(p=>{ const c=p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
   const clusterCertMap = {};
   profiles.forEach(p => {
     const c = p.cluster||'Unknown';
-    if (!clusterCertMap[c]) clusterCertMap[c]={total:0,certs:{}};
+    if (!clusterCertMap[c]) clusterCertMap[c]={total:0,withCerts:0,totalCerts:0,certs:{}};
     clusterCertMap[c].total++;
+    if (p.certs.length>0) clusterCertMap[c].withCerts++;
+    clusterCertMap[c].totalCerts += p.certs.length;
     p.certs.forEach(cert=>{ clusterCertMap[c].certs[cert]=(clusterCertMap[c].certs[cert]||0)+1; });
   });
 
+  // Cert diversity (unique certs held)
+  const uniqueCertTypes = topCerts.length;
+  // Top cert holder
+  const topCert = topCerts[0] ? topCerts[0][0] + ' (' + topCerts[0][1] + ' holders, ' + Math.round(topCerts[0][1]/total*100) + '%)' : 'N/A';
+
   const clusterLines = Object.entries(clusterCounts).sort((a,b)=>b[1]-a[1])
-    .map(([c,n])=>'  - '+c+': '+n+' DPMs').join('\n');
+    .map(([c,n])=>'  - ' + c + ': ' + n + ' DPMs (' + Math.round(n/total*100) + '% of team)').join('\n');
+
+  const clusterDetailLines = Object.entries(clusterCertMap).map(([cl,d]) => {
+    const clCoverage = Math.round(d.withCerts/d.total*100);
+    const clAvg      = (d.totalCerts/d.total).toFixed(1);
+    const topClCerts = Object.entries(d.certs).sort((a,b)=>b[1]-a[1]).slice(0,3)
+      .map(([c,n])=>c+'('+n+')').join(', ');
+    return '  ' + cl + ':\n    Members: '+d.total+' | Cert coverage: '+clCoverage+'% | Avg certs: '+clAvg+'\n    Top certs: '+(topClCerts||'none');
+  }).join('\n');
+
   const certLines = topCerts.slice(0,10)
-    .map(([c,n])=>'  - '+c+': '+n+' holders ('+Math.round(n/total*100)+'%)').join('\n');
-  const clusterCertLines = Object.entries(clusterCertMap)
-    .map(([cl,d])=>'  '+cl+' ('+d.total+' DPMs): '+
-      Object.entries(d.certs).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([c,n])=>c+'('+n+')').join(', ')
-    ).join('\n');
-  const noCertNames = profiles.filter(p=>p.certs.length===0).map(p=>p.name).slice(0,10);
+    .map(([c,n],i)=>'  '+(i+1)+'. '+c+': '+n+' holders ('+Math.round(n/total*100)+'% of team)').join('\n');
+
+  const noCertSample = profiles.filter(p=>p.certs.length===0).map(p=>p.name).slice(0,8).join(', ');
 
   return (
-    'You are writing a professional executive report for senior management at Orange Business.\n' +
-    'Report covers the Egypt Delivery Practice Management (DPM) team.\n\n' +
-    'DATE: ' + now + '\nTEAM SIZE: ' + total + ' DPMs\n\n' +
-    'CLUSTERS:\n' + clusterLines + '\n\n' +
-    'CERT STATS: total=' + totalCertCount + ', members_with_certs=' + membersWithCerts + '/' + total +
-      ' (' + Math.round(membersWithCerts/total*100) + '%), avg_per_person=' + avgCerts +
-      ', members_with_zero=' + (total-membersWithCerts) + '\n\n' +
-    'TOP CERTIFICATIONS:\n' + certLines + '\n\n' +
-    'BY CLUSTER:\n' + clusterCertLines + '\n\n' +
-    (noCertNames.length ? 'NO-CERT MEMBERS: ' + noCertNames.join(', ') + '\n\n' : '') +
-    'TASK: Write an executive summary for VP/C-suite audience. Use EXACTLY this structure:\n\n' +
-    '## Executive Summary\n(2-3 impactful sentences)\n\n' +
-    '## Team Composition\n(Cluster breakdown with context)\n\n' +
-    '## Certification Landscape\n(Coverage, strengths, dominant certs)\n\n' +
-    '## Cluster Analysis\n(Compare clusters, gaps, highlights)\n\n' +
-    '## Key Strengths\n(What the data shows the team excels at)\n\n' +
-    '## Development Areas\n(Gaps — frame constructively)\n\n' +
-    '## Strategic Recommendations\n(3-5 numbered actions for leadership)\n\n' +
-    'Rules: professional tone, data-driven, 550-700 words total, mix prose and bullets, bold key numbers.'
+    'You are an expert management consultant writing a polished executive report for C-suite and VP-level leadership at Orange Business.\n' +
+    'The report covers the Egypt Delivery Practice Management (DPM) team certification landscape.\n\n' +
+
+    '=== REPORT DATE: ' + now + ' ===\n\n' +
+
+    '--- KEY METRICS ---\n' +
+    'Total DPMs: ' + total + '\n' +
+    'Unique certification types held: ' + uniqueCertTypes + '\n' +
+    'Total certification entries: ' + totalCerts + '\n' +
+    'Members with at least 1 cert: ' + withCerts + ' of ' + total + ' (' + coverage + '%)\n' +
+    'Members with ZERO certs: ' + noCertCount + ' (' + Math.round(noCertCount/total*100) + '%)\n' +
+    'Average certifications per DPM: ' + avgCerts + '\n' +
+    'Most held certification: ' + topCert + '\n\n' +
+
+    '--- TEAM STRUCTURE ---\n' + clusterLines + '\n\n' +
+
+    '--- TOP 10 CERTIFICATIONS ---\n' + certLines + '\n\n' +
+
+    '--- CLUSTER-LEVEL BREAKDOWN ---\n' + clusterDetailLines + '\n\n' +
+
+    (noCertCount > 0 ? '--- MEMBERS WITHOUT CERTIFICATIONS ---\n  Count: ' + noCertCount + '\n  Sample names: ' + noCertSample + '\n\n' : '') +
+
+    '=== YOUR TASK ===\n' +
+    'Write a sophisticated executive report. Use EXACTLY this section structure:\n\n' +
+
+    '## Executive Summary\n' +
+    'Write 3-4 high-impact sentences. Open with the team\'s overall certification readiness as a strategic asset. Mention the coverage rate and total certifications. Close with a forward-looking statement about readiness.\n\n' +
+
+    '## Team Overview & Composition\n' +
+    'Describe the team structure across the 3 clusters. Use specific numbers for each cluster. Contextualize what this multi-cluster structure means for Orange Business delivery capacity in Europe.\n\n' +
+
+    '## Certification Landscape\n' +
+    'Analyze the certification picture in depth. Which certifications dominate and why does that make sense for a PM practice? What is the certification density? How does the ' + coverage + '% coverage rate compare to best-in-class PM teams? Mention the ' + avgCerts + ' average.\n\n' +
+
+    '## Cluster Performance Analysis\n' +
+    'Compare the three clusters. Which cluster shows strongest certification coverage? Where are the gaps? Be specific with percentages from the data. Frame as competitive insight, not criticism.\n\n' +
+
+    '## Key Strengths\n' +
+    'Identify 3-4 concrete strengths backed by data. Use bold for key numbers. Focus on what this means for delivery capability and client confidence.\n\n' +
+
+    '## Development Opportunities\n' +
+    'Identify 3 specific gaps or opportunities. Frame constructively as investment opportunities. Reference the ' + noCertCount + ' uncertified members specifically.\n\n' +
+
+    '## Strategic Recommendations\n' +
+    'Provide exactly 4 numbered, actionable recommendations. Each should be specific, measurable, and tied to the data. Think certification targets, cluster-level initiatives, and recognition programs.\n\n' +
+
+    'STYLE RULES:\n' +
+    '- Tone: Executive consulting report — authoritative, data-driven, forward-looking\n' +
+    '- Bold (**text**) all key numbers and percentages\n' +
+    '- Use bullet points only in Strengths and Opportunities sections; prose everywhere else\n' +
+    '- Total length: 650-800 words\n' +
+    '- Never use generic phrases like "it is worth noting" or "it is important"\n' +
+    '- Start every section with the most important insight, not context-setting'
   );
 }
 
-// ── Build the infographic HTML (always white background) ──────────────────
+// ── Build the professional infographic HTML (always white background) ─────
 function buildInfographicHTML(profiles, aiText) {
   const total = profiles.length;
   const now   = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  const year  = new Date().getFullYear();
 
-  // Stats
+  // ── Compute all stats ───────────────────────────────────────────────────
   const certFreq = {};
   profiles.forEach(p => p.certs.forEach(c => { certFreq[c]=(certFreq[c]||0)+1; }));
-  const topCerts = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
+  const topCerts       = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
   const totalCertCount = topCerts.reduce((s,[,n])=>s+n,0);
-  const membersWithCerts = total - profiles.filter(p=>p.certs.length===0).length;
-  const certCoverage = Math.round(membersWithCerts/total*100);
-  const avgCerts = (totalCertCount/total).toFixed(1);
+  const withCerts      = total - profiles.filter(p=>p.certs.length===0).length;
+  const noCerts        = total - withCerts;
+  const certCoverage   = Math.round(withCerts/total*100);
+  const avgCerts       = (totalCertCount/total).toFixed(1);
+  const uniqueTypes    = topCerts.length;
 
+  const clusterOrder  = ['N&S EU (Inc. Transversal)','DACH (Inc. BASF)','Benelux'];
+  const clusterShort  = {'N&S EU (Inc. Transversal)':'N&S EU','DACH (Inc. BASF)':'DACH','Benelux':'Benelux'};
+  const clusterColors = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981'};
   const clusterCounts = {};
-  profiles.forEach(p => { const c=p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
-  const clusterOrder  = ['N&S EU (Inc. Transversal)','DACH (Inc. BASF)','Benelux','Unknown'];
-  const clusterColors = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981','Unknown':'#888'};
-  const clusterEmoji  = {'N&S EU (Inc. Transversal)':'🌍','DACH (Inc. BASF)':'🏔️','Benelux':'🌷','Unknown':'📍'};
+  profiles.forEach(p=>{ const c=p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
 
-  // Top 5 certs bar chart (inline SVG)
-  const top5  = topCerts.slice(0,5);
-  const maxN  = top5.length ? top5[0][1] : 1;
-  const barH  = 36;
-  const barGap = 10;
-  const svgH  = top5.length * (barH + barGap) + 10;
-  const labelW = 148;
-  const chartW = 360;
+  // Per-cluster cert coverage
+  const clusterStats = {};
+  profiles.forEach(p => {
+    const c = p.cluster||'Unknown';
+    if (!clusterStats[c]) clusterStats[c]={total:0,withCerts:0,totalCerts:0};
+    clusterStats[c].total++;
+    if (p.certs.length>0) clusterStats[c].withCerts++;
+    clusterStats[c].totalCerts += p.certs.length;
+  });
 
-  const barsSVG = top5.map(([cert,n],i) => {
-    const barW = Math.round((n/maxN)*(chartW - labelW - 60));
-    const y    = i*(barH+barGap) + 5;
-    const pct  = Math.round(n/total*100);
+  // ── SVG: Top 7 Certs horizontal bar chart ──────────────────────────────
+  const top7   = topCerts.slice(0,7);
+  const maxN   = top7.length ? top7[0][1] : 1;
+  const BAR_H  = 28;
+  const BAR_GAP= 8;
+  const LBL_W  = 150;
+  const BAR_AREA = 280;
+  const SVG_W  = LBL_W + BAR_AREA + 80;
+  const SVG_H  = top7.length * (BAR_H + BAR_GAP) + 16;
+
+  const certBarsSVG = top7.map(([cert,n],i) => {
+    const bw  = Math.max(4, Math.round((n/maxN)*BAR_AREA));
+    const y   = 8 + i*(BAR_H+BAR_GAP);
+    const pct = Math.round(n/total*100);
+    const opacity = 1 - i*0.08;
     return (
       '<g>' +
-        '<text x="' + (labelW-8) + '" y="' + (y+barH/2+5) + '" text-anchor="end" font-size="12" fill="#333" font-family="Calibri,Arial">' + cert + '</text>' +
-        '<rect x="' + labelW + '" y="' + y + '" width="' + barW + '" height="' + barH + '" rx="6" fill="#FF7900"/>' +
-        '<text x="' + (labelW+barW+8) + '" y="' + (y+barH/2+5) + '" font-size="13" font-weight="bold" fill="#FF7900" font-family="Calibri,Arial">' + n + ' <tspan font-size="11" fill="#888">(' + pct + '%)</tspan></text>' +
+        '<text x="' + (LBL_W-6) + '" y="' + (y+BAR_H/2+4) + '" ' +
+          'text-anchor="end" font-size="11.5" fill="#444" font-family="Calibri,Arial,sans-serif" font-weight="600">' +
+          cert + '</text>' +
+        '<rect x="' + LBL_W + '" y="' + y + '" width="' + bw + '" height="' + BAR_H + '" ' +
+          'rx="4" fill="#FF7900" opacity="' + opacity + '"/>' +
+        '<text x="' + (LBL_W+bw+7) + '" y="' + (y+BAR_H/2+4) + '" ' +
+          'font-size="12" font-weight="700" fill="#FF7900" font-family="Calibri,Arial,sans-serif">' +
+          n + '</text>' +
+        '<text x="' + (LBL_W+bw+26) + '" y="' + (y+BAR_H/2+4) + '" ' +
+          'font-size="10" fill="#999" font-family="Calibri,Arial,sans-serif">' +
+          pct + '%</text>' +
       '</g>'
     );
   }).join('');
 
-  const svgChart = (
-    '<svg viewBox="0 0 ' + chartW + ' ' + svgH + '" width="' + chartW + '" height="' + svgH + '" xmlns="http://www.w3.org/2000/svg">' +
-      barsSVG +
-    '</svg>'
-  );
+  const certSVG =
+    '<svg viewBox="0 0 ' + SVG_W + ' ' + SVG_H + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
+    certBarsSVG + '</svg>';
 
-  // Cluster pills
-  const clusterPills = clusterOrder
-    .filter(c => clusterCounts[c])
-    .map(c => {
-      const n = clusterCounts[c];
-      const col = clusterColors[c]||'#888';
-      return (
-        '<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;' +
-        'border:2px solid ' + col + ';margin:4px;">' +
-          '<span style="font-size:15px;">' + (clusterEmoji[c]||'📍') + '</span>' +
-          '<span style="font-size:13px;font-weight:700;color:#333;">' + c.replace(' (Inc. Transversal)','').replace(' (Inc. BASF)','') + '</span>' +
-          '<span style="font-size:20px;font-weight:900;color:' + col + ';margin-left:4px;">' + n + '</span>' +
-        '</div>'
-      );
-    }).join('');
+  // ── SVG: Cluster donut-style comparison bars ───────────────────────────
+  const clusterBarsSVG = clusterOrder.filter(c=>clusterCounts[c]).map((c,i) => {
+    const st  = clusterStats[c] || {total:0,withCerts:0,totalCerts:0};
+    const cov = st.total > 0 ? Math.round(st.withCerts/st.total*100) : 0;
+    const avg = st.total > 0 ? (st.totalCerts/st.total).toFixed(1) : '0.0';
+    const col = clusterColors[c] || '#888';
+    const y   = i * 64;
+    const barW= Math.round((cov/100)*200);
+    return (
+      '<g transform="translate(0,' + y + ')">' +
+        '<text x="0" y="14" font-size="12" font-weight="700" fill="#333" font-family="Calibri,Arial,sans-serif">' +
+          clusterShort[c] + '</text>' +
+        '<text x="0" y="26" font-size="10" fill="#888" font-family="Calibri,Arial,sans-serif">' +
+          st.total + ' DPMs · avg ' + avg + ' certs</text>' +
+        '<rect x="0" y="32" width="200" height="10" rx="5" fill="#f0f0f0"/>' +
+        '<rect x="0" y="32" width="' + barW + '" height="10" rx="5" fill="' + col + '"/>' +
+        '<text x="208" y="42" font-size="11" font-weight="700" fill="' + col + '" font-family="Calibri,Arial,sans-serif">' +
+          cov + '%</text>' +
+      '</g>'
+    );
+  }).join('');
 
-  // Parse AI markdown to clean HTML (white-bg version)
+  const clusterSVG =
+    '<svg viewBox="0 0 260 ' + (clusterOrder.filter(c=>clusterCounts[c]).length * 64) + '" ' +
+    'width="100%" xmlns="http://www.w3.org/2000/svg">' +
+    clusterBarsSVG + '</svg>';
+
+  // ── SVG: Mini donut for overall cert coverage ─────────────────────────
+  const r = 42, cx = 52, cy = 52;
+  const circ = 2 * Math.PI * r;
+  const filled = circ * (certCoverage/100);
+  const donutSVG =
+    '<svg width="104" height="104" viewBox="0 0 104 104" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#f0f0f0" stroke-width="12"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#FF7900" stroke-width="12" ' +
+        'stroke-dasharray="' + filled + ' ' + circ + '" stroke-dashoffset="' + (circ/4) + '" stroke-linecap="round"/>' +
+      '<text x="' + cx + '" y="' + (cy+5) + '" text-anchor="middle" font-size="18" font-weight="900" ' +
+        'fill="#FF7900" font-family="Calibri,Arial,sans-serif">' + certCoverage + '%</text>' +
+    '</svg>';
+
+  // ── Parse AI text ───────────────────────────────────────────────────────
   const aiHTML = parseAIToReportHTML(aiText);
 
+  // ── Build full HTML ─────────────────────────────────────────────────────
+  const css =
+    'body{font-family:Calibri,Arial,sans-serif;background:#fff;color:#1a1a1a;margin:0;padding:0;}' +
+    '*{box-sizing:border-box;}' +
+    '.page{max-width:960px;margin:0 auto;padding:0;}' +
+
+    // Header
+    '.rpt-header{background:linear-gradient(135deg,#FF7900 0%,#e05c00 100%);padding:40px 48px 36px;position:relative;overflow:hidden;}' +
+    '.rpt-header::after{content:"";position:absolute;right:-60px;top:-60px;width:280px;height:280px;' +
+      'background:rgba(255,255,255,0.06);border-radius:50%;}' +
+    '.rpt-eyebrow{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-bottom:10px;font-weight:600;}' +
+    '.rpt-title{font-size:34px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin:0 0 6px;line-height:1.1;}' +
+    '.rpt-meta{font-size:13px;color:rgba(255,255,255,0.8);margin:0;}' +
+    '.rpt-header-badge{position:absolute;right:48px;top:50%;transform:translateY(-50%);' +
+      'background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);' +
+      'border-radius:12px;padding:16px 20px;text-align:center;}' +
+    '.rpt-badge-num{font-size:36px;font-weight:900;color:#fff;line-height:1;}' +
+    '.rpt-badge-lbl{font-size:10px;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}' +
+
+    // KPI strip
+    '.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);background:#1a1a1a;}' +
+    '.kpi-tile{padding:20px 16px;text-align:center;border-right:1px solid #2a2a2a;position:relative;}' +
+    '.kpi-tile:last-child{border-right:none;}' +
+    '.kpi-accent{height:3px;background:#FF7900;border-radius:0 0 2px 2px;position:absolute;top:0;left:20%;right:20%;}' +
+    '.kpi-num{font-size:28px;font-weight:900;color:#FF7900;line-height:1;letter-spacing:-0.5px;margin-top:8px;}' +
+    '.kpi-lbl{font-size:9.5px;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-top:5px;line-height:1.3;}' +
+
+    // Body
+    '.rpt-body{padding:36px 48px;}' +
+
+    // Section divider
+    '.section{margin-bottom:36px;}' +
+    '.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}' +
+    '.section-num{width:22px;height:22px;border-radius:50%;background:#FF7900;' +
+      'color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}' +
+    '.section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#FF7900;}' +
+    '.section-line{flex:1;height:1px;background:#e8e8e8;}' +
+
+    // Two-col layout
+    '.two-col{display:grid;grid-template-columns:3fr 2fr;gap:24px;margin-bottom:36px;}' +
+    '.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}' +
+
+    // Cards
+    '.card{background:#f9f9f9;border-radius:10px;padding:20px 22px;border:1px solid #efefef;}' +
+    '.card-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#aaa;margin-bottom:14px;}' +
+    '.card-dark{background:#1a1a1a;border-color:#2a2a2a;}' +
+    '.card-dark .card-title{color:#666;}' +
+    '.card-orange{background:#fff5ec;border-color:#ffd1a3;}' +
+
+    // Insight callout
+    '.callout{background:#fff5ec;border-left:4px solid #FF7900;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;}' +
+    '.callout-text{font-size:13px;color:#1a1a1a;line-height:1.6;margin:0;}' +
+
+    // Stat highlight
+    '.stat-row{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;}' +
+    '.stat-box{background:#fff;border:1.5px solid #efefef;border-radius:8px;padding:12px 16px;min-width:100px;}' +
+    '.stat-box-num{font-size:22px;font-weight:900;color:#FF7900;letter-spacing:-0.5px;line-height:1;}' +
+    '.stat-box-lbl{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}' +
+
+    // AI narrative typography
+    'h2{font-size:15px;font-weight:800;color:#FF7900;margin:24px 0 8px;letter-spacing:-0.1px;}' +
+    'h2:first-child{margin-top:0;}' +
+    'h3{font-size:13.5px;font-weight:700;color:#1a1a1a;margin:14px 0 4px;}' +
+    'p{font-size:13.5px;line-height:1.8;color:#333;margin:0 0 10px;}' +
+    'strong{color:#1a1a1a;font-weight:700;}' +
+    'ul{padding-left:20px;margin:6px 0 12px;}' +
+    'li{font-size:13.5px;color:#444;margin-bottom:5px;line-height:1.65;}' +
+    'ol{padding-left:20px;margin:6px 0 12px;counter-reset:ol-counter;}' +
+    'ol li{font-size:13.5px;color:#444;margin-bottom:8px;line-height:1.65;}' +
+
+    // Footer
+    '.rpt-footer{margin-top:40px;padding:16px 48px;background:#f5f5f5;' +
+      'display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e8e8e8;}' +
+    '.rpt-footer-left{font-size:11px;color:#999;}' +
+    '.rpt-footer-right{font-size:10px;color:#bbb;text-align:right;}' +
+    '.confidential{display:inline-block;padding:2px 8px;background:#ffebe0;border:1px solid #ffd1a3;' +
+      'border-radius:4px;font-size:9px;font-weight:700;color:#e05c00;letter-spacing:.08em;text-transform:uppercase;}';
+
+  // ── KPI values ──────────────────────────────────────────────────────────
+  const kpiTile = (num, lbl) =>
+    '<div class="kpi-tile"><div class="kpi-accent"></div>' +
+    '<div class="kpi-num">' + num + '</div>' +
+    '<div class="kpi-lbl">' + lbl + '</div></div>';
+
+  const certCovBar = clusterOrder.filter(c=>clusterCounts[c]).map(c => {
+    const st  = clusterStats[c]||{total:0,withCerts:0};
+    const cov = st.total>0 ? Math.round(st.withCerts/st.total*100) : 0;
+    const col = clusterColors[c]||'#888';
+    return (
+      '<div style="margin-bottom:10px;">' +
+        '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">' +
+          '<span style="font-size:11px;font-weight:700;color:#333;">' + (clusterShort[c]||c) + '</span>' +
+          '<span style="font-size:11px;font-weight:800;color:' + col + ';">' + cov + '%</span>' +
+        '</div>' +
+        '<div style="background:#eee;border-radius:4px;height:8px;">' +
+          '<div style="background:' + col + ';height:8px;border-radius:4px;width:' + cov + '%;"></div>' +
+        '</div>' +
+        '<div style="font-size:10px;color:#999;margin-top:2px;">' + (clusterStats[c]||{total:0}).total + ' DPMs</div>' +
+      '</div>'
+    );
+  }).join('');
+
   return (
-    '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-    '<style>' +
-      'body{font-family:Calibri,Arial,sans-serif;background:#fff;color:#1a1a1a;margin:0;padding:0;}' +
-      '.page{max-width:900px;margin:0 auto;padding:40px 48px;}' +
-      '.header{background:#FF7900;color:#fff;border-radius:12px;padding:32px 36px;margin-bottom:32px;}' +
-      '.header-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0.85;margin-bottom:8px;}' +
-      '.header-title{font-size:30px;font-weight:900;letter-spacing:-0.5px;margin:0 0 4px;}' +
-      '.header-sub{font-size:13px;opacity:0.85;margin:0;}' +
-      '.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}' +
-      '.kpi{background:#fff5ec;border:2px solid #FF7900;border-radius:12px;padding:16px 12px;text-align:center;}' +
-      '.kpi-num{font-size:38px;font-weight:900;color:#FF7900;line-height:1;letter-spacing:-1px;}' +
-      '.kpi-lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}' +
-      '.section{margin-bottom:28px;}' +
-      '.section-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#FF7900;' +
-        'padding-bottom:6px;border-bottom:2px solid #FF7900;margin-bottom:14px;}' +
-      '.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}' +
-      '.card{background:#f8f8f8;border-radius:10px;padding:18px 20px;}' +
-      '.card-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:12px;}' +
-      'p{font-size:13.5px;line-height:1.75;color:#333;margin:0 0 10px;}' +
-      'strong{color:#1a1a1a;}' +
-      'ul{padding-left:18px;margin:6px 0 10px;}' +
-      'li{font-size:13.5px;color:#333;margin-bottom:4px;line-height:1.6;}' +
-      'h2{font-size:16px;font-weight:800;color:#FF7900;margin:20px 0 8px;letter-spacing:-0.2px;}' +
-      'h3{font-size:14px;font-weight:700;color:#1a1a1a;margin:14px 0 4px;}' +
-      'ol{padding-left:18px;margin:6px 0 10px;}' +
-      'ol li{font-size:13.5px;color:#333;margin-bottom:6px;line-height:1.6;}' +
-      '.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e0e0e0;' +
-        'font-size:11px;color:#aaa;display:flex;justify-content:space-between;}' +
-    '</style></head><body><div class="page">' +
+    '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">' +
+    '<style>' + css + '</style></head>' +
+    '<body><div class="page">' +
 
-    // ── HEADER ──────────────────────────────────────────────────────────────
-    '<div class="header">' +
-      '<div class="header-eyebrow">Orange Business · Delivery Practice</div>' +
-      '<div class="header-title">DPM Team Executive Report</div>' +
-      '<div class="header-sub">' + now + ' &nbsp;·&nbsp; ' + total + ' Delivery Project Managers</div>' +
+    // ── HEADER ────────────────────────────────────────────────────────────
+    '<div class="rpt-header">' +
+      '<div class="rpt-eyebrow">Orange Business &nbsp;·&nbsp; Delivery Practice &nbsp;·&nbsp; Internal Report</div>' +
+      '<div class="rpt-title">DPM Team Certification<br>Executive Report</div>' +
+      '<div class="rpt-meta">' + now + ' &nbsp;·&nbsp; Egypt Delivery Practice Management Team</div>' +
+      '<div class="rpt-header-badge">' +
+        '<div class="rpt-badge-num">' + total + '</div>' +
+        '<div class="rpt-badge-lbl">Total DPMs</div>' +
+      '</div>' +
     '</div>' +
 
-    // ── KPI STRIP ────────────────────────────────────────────────────────────
-    '<div class="kpi-row">' +
-      '<div class="kpi"><div class="kpi-num">' + total + '</div><div class="kpi-lbl">Total DPMs</div></div>' +
-      '<div class="kpi"><div class="kpi-num">' + totalCertCount + '</div><div class="kpi-lbl">Cert Entries</div></div>' +
-      '<div class="kpi"><div class="kpi-num">' + certCoverage + '%</div><div class="kpi-lbl">Cert Coverage</div></div>' +
-      '<div class="kpi"><div class="kpi-num">' + avgCerts + '</div><div class="kpi-lbl">Avg per DPM</div></div>' +
+    // ── KPI STRIP (dark) ──────────────────────────────────────────────────
+    '<div class="kpi-strip">' +
+      kpiTile(totalCertCount, 'Total Cert Entries') +
+      kpiTile(certCoverage + '%', 'Team Coverage') +
+      kpiTile(avgCerts, 'Avg Per DPM') +
+      kpiTile(uniqueTypes, 'Unique Cert Types') +
+      kpiTile(withCerts, 'Certified DPMs') +
+      kpiTile(noCerts, 'Uncertified DPMs') +
     '</div>' +
 
-    // ── TWO-COL: Top certs chart + Cluster breakdown ─────────────────────────
+    '<div class="rpt-body">' +
+
+    // ── OVERVIEW: Donut + Coverage bars ───────────────────────────────────
+    '<div class="section">' +
+      '<div class="section-header">' +
+        '<div class="section-num">1</div>' +
+        '<div class="section-title">Certification Coverage at a Glance</div>' +
+        '<div class="section-line"></div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:24px;align-items:start;">' +
+        '<div style="text-align:center;">' +
+          donutSVG +
+          '<div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;">Coverage</div>' +
+        '</div>' +
+        '<div>' + certCovBar + '</div>' +
+        '<div class="card card-orange">' +
+          '<div class="card-title">Certification Density</div>' +
+          '<div style="display:flex;gap:12px;flex-wrap:wrap;">' +
+            '<div class="stat-box"><div class="stat-box-num">' + avgCerts + '</div><div class="stat-box-lbl">Avg Certs/DPM</div></div>' +
+            '<div class="stat-box"><div class="stat-box-num">' + uniqueTypes + '</div><div class="stat-box-lbl">Cert Types</div></div>' +
+            '<div class="stat-box"><div class="stat-box-num">' + totalCertCount + '</div><div class="stat-box-lbl">Total Held</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── CERTS + CLUSTERS ──────────────────────────────────────────────────
     '<div class="two-col">' +
-      '<div class="card">' +
-        '<div class="card-title">Top 5 Certifications</div>' +
-        svgChart +
+      '<div class="section">' +
+        '<div class="section-header">' +
+          '<div class="section-num">2</div>' +
+          '<div class="section-title">Top 7 Certifications</div>' +
+          '<div class="section-line"></div>' +
+        '</div>' +
+        '<div class="card">' +
+          '<div class="card-title">Holders across the full team (' + total + ' DPMs)</div>' +
+          certSVG +
+        '</div>' +
       '</div>' +
-      '<div class="card">' +
-        '<div class="card-title">Team by Cluster</div>' +
-        '<div style="margin-top:6px;">' + clusterPills + '</div>' +
+      '<div class="section">' +
+        '<div class="section-header">' +
+          '<div class="section-num">3</div>' +
+          '<div class="section-title">Cluster Analysis</div>' +
+          '<div class="section-line"></div>' +
+        '</div>' +
+        '<div class="card">' +
+          '<div class="card-title">Cert coverage by cluster</div>' +
+          clusterSVG +
+        '</div>' +
       '</div>' +
     '</div>' +
 
-    // ── AI NARRATIVE ─────────────────────────────────────────────────────────
-    aiHTML +
+    // ── AI NARRATIVE ──────────────────────────────────────────────────────
+    '<div class="section">' +
+      '<div class="section-header">' +
+        '<div class="section-num">4</div>' +
+        '<div class="section-title">Executive Analysis</div>' +
+        '<div class="section-line"></div>' +
+      '</div>' +
+      '<div>' + aiHTML + '</div>' +
+    '</div>' +
 
-    // ── FOOTER ───────────────────────────────────────────────────────────────
-    '<div class="footer">' +
-      '<span>Orange Business · Delivery Practice — Internal Report</span>' +
-      '<span>Generated ' + now + ' · DPM Skills Platform</span>' +
+    '</div>' + // end rpt-body
+
+    // ── FOOTER ────────────────────────────────────────────────────────────
+    '<div class="rpt-footer">' +
+      '<div class="rpt-footer-left">' +
+        '<span class="confidential">Confidential</span>' +
+        '&nbsp;&nbsp;Orange Business · Delivery Practice — Egypt DPM Team' +
+      '</div>' +
+      '<div class="rpt-footer-right">' +
+        'Generated ' + now + ' · DPM Skills Platform<br>For internal management use only' +
+      '</div>' +
     '</div>' +
 
     '</div></body></html>'
