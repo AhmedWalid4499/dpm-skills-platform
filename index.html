@@ -11925,12 +11925,17 @@ function openAIReport() {
     ? (({'nseu':'N&S EU','dach':'DACH','bnlx':'Benelux'})[activeCluster] || activeCluster)
     : 'Full Team';
 
+  // Check for saved key
+  const savedKey = localStorage.getItem('ob_claude_key') || '';
+  const hasValidKey = savedKey && savedKey.startsWith('sk-ant-') && savedKey.length > 30;
+
   const overlay = document.createElement('div');
   overlay.className = 'ai-modal-overlay';
   overlay.id = 'aiReportModal';
   overlay.innerHTML =
     '<div class="ai-modal" onclick="event.stopPropagation()" style="max-width:920px;">' +
 
+      // Header
       '<div class="ai-modal-header">' +
         '<div class="ai-modal-icon">🤖</div>' +
         '<div>' +
@@ -11940,16 +11945,43 @@ function openAIReport() {
         '<button class="ai-modal-close" onclick="closeAIReport()">×</button>' +
       '</div>' +
 
-      '<div class="ai-modal-body" id="aiReportBody">' +
-        '<div style="color:var(--muted);font-size:13px;padding:32px 0;text-align:center;">' +
-          'Click <strong style="color:var(--text)">Generate Report</strong> to create your executive summary.' +
+      // API key row — always visible, pre-filled if saved
+      '<div style="padding:14px 24px 0;border-bottom:1px solid var(--border);padding-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+          '<span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Claude API Key</span>' +
+          '<input type="password" id="aiKeyInput" autocomplete="off" ' +
+            'placeholder="sk-ant-api03-..." ' +
+            'value="' + (hasValidKey ? savedKey : '') + '" ' +
+            'style="flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;' +
+            'padding:8px 14px;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text);outline:none;" ' +
+            'onkeydown="if(event.key===\'Enter\')aiSaveAndGenerate()"> ' +
+          '<button onclick="aiSaveAndGenerate()" ' +
+            'style="padding:8px 18px;background:var(--orange);border:none;border-radius:10px;' +
+            'font-family:\'Outfit\',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;">' +
+            (hasValidKey ? '✨ Generate' : '🔑 Save & Generate') +
+          '</button>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:6px;">' +
+          (hasValidKey
+            ? '✓ Key saved in this browser — <button onclick="aiClearKey()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">forget key</button>'
+            : 'Get a free key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--orange);">console.anthropic.com</a> → API Keys. Saved in your browser only.') +
         '</div>' +
       '</div>' +
 
+      // Report body
+      '<div class="ai-modal-body" id="aiReportBody">' +
+        '<div style="color:var(--muted);font-size:13px;padding:32px 0;text-align:center;">' +
+          (hasValidKey
+            ? 'Key found — click <strong style="color:var(--text)">✨ Generate</strong> to create your executive summary.'
+            : 'Paste your Claude API key above and click <strong style="color:var(--text)">🔑 Save & Generate</strong>.') +
+        '</div>' +
+      '</div>' +
+
+      // Footer
       '<div class="ai-modal-footer">' +
         '<button class="ai-copy-btn" id="aiDownloadBtn" onclick="downloadAIReportDocx()" style="display:none;">⬇ Download Word</button>' +
         '<button class="ai-copy-btn" id="aiCopyBtn" onclick="copyAIReport()" style="display:none;">📋 Copy Text</button>' +
-        '<button class="ai-regen-btn" id="aiGenBtn" onclick="generateAIReport()">✨ Generate Report</button>' +
+        '<button class="ai-regen-btn" id="aiGenBtn" onclick="aiSaveAndGenerate()">✨ Generate Report</button>' +
         '<span class="ai-footer-note">Powered by Claude claude-sonnet-4-5</span>' +
       '</div>' +
 
@@ -11958,9 +11990,9 @@ function openAIReport() {
   overlay.addEventListener('click', closeAIReport);
   document.body.appendChild(overlay);
 
-  // Auto-generate immediately since key is hardcoded
-  if (CLAUDE_API_KEY !== 'sk-ant-YOUR-KEY-HERE') {
-    setTimeout(generateAIReport, 150);
+  // Auto-generate if key already saved
+  if (hasValidKey) {
+    setTimeout(generateAIReport, 120);
   }
 }
 
@@ -11969,13 +12001,66 @@ function closeAIReport() {
   if (m) m.remove();
 }
 
+// Save key from input then generate
+function aiSaveAndGenerate() {
+  const input = document.getElementById('aiKeyInput');
+  if (!input) return;
+  const key = input.value.trim();
+
+  // If input is empty and we have a saved key, just generate
+  const saved = localStorage.getItem('ob_claude_key') || '';
+  if (!key && saved && saved.startsWith('sk-ant-') && saved.length > 30) {
+    generateAIReport();
+    return;
+  }
+
+  if (!key) {
+    input.style.borderColor = '#f87171';
+    input.style.boxShadow   = '0 0 0 2px rgba(248,113,113,0.2)';
+    input.placeholder = 'Please enter your API key first';
+    input.focus();
+    return;
+  }
+  if (!key.startsWith('sk-ant-') || key.length < 30) {
+    input.style.borderColor = '#f87171';
+    input.style.boxShadow   = '0 0 0 2px rgba(248,113,113,0.2)';
+    input.focus();
+    obToast('⚠️ Key must start with sk-ant- and be a full key');
+    return;
+  }
+
+  // Save and update hint
+  localStorage.setItem('ob_claude_key', key);
+  input.style.borderColor = '#10b981';
+  input.style.boxShadow   = '0 0 0 2px rgba(16,185,129,0.2)';
+
+  const hint = input.closest('div').parentElement.querySelector('div:last-child');
+  if (hint) hint.innerHTML = '✓ Key saved in this browser — <button onclick="aiClearKey()" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">forget key</button>';
+
+  generateAIReport();
+}
+
+// Remove saved key
+function aiClearKey() {
+  localStorage.removeItem('ob_claude_key');
+  const input = document.getElementById('aiKeyInput');
+  if (input) {
+    input.value = '';
+    input.style.borderColor = '';
+    input.style.boxShadow   = '';
+    input.focus();
+  }
+  obToast('🔑 Saved key cleared');
+}
 
 async function generateAIReport() {
-  const apiKey = CLAUDE_API_KEY;
+  // Always prefer saved localStorage key, fall back to hardcoded constant
+  const apiKey = localStorage.getItem('ob_claude_key')
+    || (CLAUDE_API_KEY !== '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' ? CLAUDE_API_KEY : '');
 
-  if (!apiKey || apiKey === 'sk-ant-YOUR-KEY-HERE') {
+  if (!apiKey || !apiKey.startsWith('sk-ant-') || apiKey.length < 30) {
     document.getElementById('aiReportBody').innerHTML =
-      '<div class="ai-error">⚠️ API key not set. Open the file in a text editor, find <strong>CLAUDE_API_KEY</strong> and replace the placeholder with your key from <a href="https://console.anthropic.com" target="_blank" style="color:#f87171;">console.anthropic.com</a>.</div>';
+      '<div class="ai-error">⚠️ No valid API key found. Paste your key in the field above and click Generate.</div>';
     return;
   }
 
@@ -11983,8 +12068,9 @@ async function generateAIReport() {
   const copyBtn     = document.getElementById('aiCopyBtn');
   const downloadBtn = document.getElementById('aiDownloadBtn');
   const body        = document.getElementById('aiReportBody');
+  if (!body) return;
 
-  genBtn.disabled = true;
+  genBtn.disabled   = true;
   genBtn.textContent = '⏳ Generating...';
   if (copyBtn)     copyBtn.style.display     = 'none';
   if (downloadBtn) downloadBtn.style.display = 'none';
@@ -12017,10 +12103,10 @@ async function generateAIReport() {
     if (!response.ok) {
       const err = await response.json().catch(()=>({}));
       const status = response.status;
-      if (status === 401) throw new Error('Authentication failed (401). Your API key is invalid or expired. Get a new key at console.anthropic.com → API Keys.');
-      if (status === 403) throw new Error('Access denied (403). Your API key may not have permission. Check console.anthropic.com.');
+      if (status === 401) throw new Error('Invalid API key (401). Please check your key and try again. Get a new one at console.anthropic.com → API Keys.');
+      if (status === 403) throw new Error('Access denied (403). Your key may lack permissions. Check console.anthropic.com.');
       if (status === 429) throw new Error('Rate limit reached (429). Please wait a moment and try again.');
-      if (status === 529) throw new Error('Anthropic API is overloaded (529). Please try again in a moment.');
+      if (status === 529) throw new Error('Anthropic API overloaded (529). Please try again in a moment.');
       throw new Error(err.error ? err.error.message : 'API error ' + status);
     }
 
@@ -12028,26 +12114,25 @@ async function generateAIReport() {
     const text = data.content && data.content[0] ? data.content[0].text : '';
     if (!text) throw new Error('Empty response from Claude');
 
-    // Build & display infographic
     const infographicHTML = buildInfographicHTML(filteredProfiles, text);
-    window._lastAIReport       = text;
+    window._lastAIReport        = text;
     window._lastInfographicHTML = infographicHTML;
 
-    // Render preview inside modal (using iframe for isolation + white bg)
     body.innerHTML = '<iframe id="aiReportFrame" style="width:100%;height:520px;border:none;border-radius:8px;background:#fff;" srcdoc=""></iframe>';
     document.getElementById('aiReportFrame').srcdoc = infographicHTML;
 
-    genBtn.disabled = false;
+    genBtn.disabled   = false;
     genBtn.textContent = '🔄 Regenerate';
     if (copyBtn)     copyBtn.style.display     = '';
     if (downloadBtn) downloadBtn.style.display = '';
 
   } catch(err) {
     body.innerHTML =
-      '<div class="ai-error"><strong>Error:</strong><br>' + err.message +
-      '<br><br>• Check API key starts with sk-ant-<br>' +
-      '• Check credit at <a href="https://console.anthropic.com" target="_blank" style="color:#f87171;">console.anthropic.com</a></div>';
-    genBtn.disabled = false;
+      '<div class="ai-error"><strong>Error:</strong> ' + err.message +
+      '<br><br>' +
+      '<button onclick="aiSaveAndGenerate()" style="margin-top:8px;padding:8px 16px;background:var(--orange);border:none;border-radius:8px;color:#fff;font-family:Outfit,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Try Again</button>' +
+      '</div>';
+    genBtn.disabled   = false;
     genBtn.textContent = '✨ Generate Report';
   }
 }
