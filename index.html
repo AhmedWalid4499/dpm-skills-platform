@@ -5194,6 +5194,203 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
   .hero h1 .accent::after { animation: none; transform: none; }
   .orbit-ring { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   AI EXECUTIVE REPORT MODAL
+═══════════════════════════════════════════════════════ */
+.ai-modal-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.ai-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%; max-width: 780px;
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  animation: aiModalIn 0.2s cubic-bezier(0.23,1,0.32,1) both;
+  overflow: hidden;
+}
+@keyframes aiModalIn {
+  from { opacity:0; transform: scale(0.96) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+.ai-modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ai-modal-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, #FF7900, #ff9933);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ai-modal-title { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+.ai-modal-subtitle { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.ai-modal-close {
+  margin-left: auto;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 20px; line-height: 1;
+  padding: 4px 8px; border-radius: 6px;
+  transition: color 150ms ease, background 150ms ease;
+}
+.ai-modal-close:hover { color: var(--text); background: var(--surface2); }
+
+.ai-modal-key-row {
+  padding: 16px 24px 0;
+  flex-shrink: 0;
+}
+.ai-key-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.ai-key-input-wrap {
+  display: flex; gap: 8px; align-items: center;
+}
+.ai-key-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.ai-key-input:focus { border-color: var(--orange); }
+.ai-key-input::placeholder { color: var(--muted); }
+.ai-key-save-btn {
+  padding: 9px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+  white-space: nowrap;
+  transition: all 150ms ease;
+}
+.ai-key-save-btn:hover { border-color: var(--orange); color: var(--orange); }
+.ai-key-hint {
+  font-size: 11px; color: var(--muted);
+  margin-top: 5px; line-height: 1.5;
+}
+.ai-key-hint a { color: var(--orange); text-decoration: none; }
+.ai-key-hint a:hover { text-decoration: underline; }
+
+.ai-modal-body {
+  flex: 1; overflow-y: auto;
+  padding: 20px 24px;
+  min-height: 200px;
+}
+.ai-modal-body::-webkit-scrollbar { width: 4px; }
+.ai-modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.ai-generating {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px; padding: 48px 0;
+  color: var(--muted);
+}
+.ai-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: aiSpin 0.7s linear infinite;
+}
+@keyframes aiSpin { to { transform: rotate(360deg); } }
+.ai-generating-text { font-size: 14px; font-weight: 600; }
+.ai-generating-sub  { font-size: 12px; margin-top: -8px; }
+
+.ai-report-output {
+  font-size: 14px; line-height: 1.75;
+  color: var(--text);
+}
+.ai-report-output h2 {
+  font-size: 18px; font-weight: 800;
+  color: var(--orange);
+  margin: 24px 0 8px;
+  letter-spacing: -0.4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.ai-report-output h2:first-child { margin-top: 0; }
+.ai-report-output h3 {
+  font-size: 14px; font-weight: 700;
+  margin: 14px 0 4px;
+  color: var(--text);
+}
+.ai-report-output p { margin: 0 0 10px; color: var(--muted); }
+.ai-report-output strong { color: var(--text); }
+.ai-report-output ul {
+  margin: 6px 0 10px; padding-left: 20px;
+}
+.ai-report-output li { margin-bottom: 4px; color: var(--muted); }
+.ai-report-output .ai-stat-row {
+  display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0;
+}
+.ai-report-output .ai-stat {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 110px;
+}
+.ai-report-output .ai-stat-num {
+  font-size: 22px; font-weight: 800;
+  color: var(--orange); letter-spacing: -1px;
+}
+.ai-report-output .ai-stat-lbl {
+  font-size: 11px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.ai-error {
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 10px; padding: 16px;
+  color: #f87171; font-size: 13px;
+}
+
+.ai-modal-footer {
+  display: flex; gap: 8px; align-items: center;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ai-copy-btn {
+  padding: 9px 18px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  color: var(--text);
+  transition: all 150ms ease;
+}
+.ai-copy-btn:hover { border-color: var(--orange); color: var(--orange); }
+.ai-regen-btn {
+  padding: 9px 18px;
+  background: var(--orange); border: none;
+  border-radius: 10px; font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  color: white;
+  transition: all 150ms ease;
+}
+.ai-regen-btn:hover { background: var(--orange-dim); }
+.ai-regen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.ai-footer-note {
+  margin-left: auto; font-size: 11px;
+  color: var(--muted);
+}
 </style>
 </head>
 <body>
@@ -6311,6 +6508,7 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
           </div>
         </div>
         <div class="pbi-header-actions">
+          <button class="pbi-action-btn" onclick="openAIReport()" title="Generate AI executive summary" style="background:linear-gradient(135deg,rgba(255,121,0,0.15),rgba(255,121,0,0.05));border-color:rgba(255,121,0,0.4);color:var(--orange);font-weight:700;">🤖 AI Report</button>
           <button class="pbi-action-btn pbi-action-report-export" onclick="exportManagerReport()" title="Save all loaded profiles as a single report file">💾 Save Report</button>
           <button class="pbi-action-btn pbi-action-report-import" onclick="document.getElementById('managerReportInput').click()" title="Load a previously saved report file">📂 Load Report</button>
           <input type="file" id="managerReportInput" accept=".json" style="display:none" onchange="importManagerReport(event)">
@@ -11462,6 +11660,598 @@ function importManagerReport(event) {
     }
   };
   reader.readAsText(file);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   AI EXECUTIVE REPORT
+   ─────────────────────────────────────────────────────────────
+   API KEY SETUP:
+   1. Go to https://console.anthropic.com  →  API Keys  →  Create Key
+   2. Paste your key below where it says:
+         const CLAUDE_API_KEY = 'sk-ant-YOUR-KEY-HERE';
+   That's it. The key is stored only in this file (on your machine).
+   ─────────────────────────────────────────────────────────────
+═══════════════════════════════════════════════════════════════ */
+
+// ── PUT YOUR CLAUDE API KEY HERE ─────────────────────────────────────────
+const CLAUDE_API_KEY = 'sk-ant-YOUR-KEY-HERE';
+// ─────────────────────────────────────────────────────────────────────────
+
+function buildAIPrompt(profiles) {
+  const total = profiles.length;
+  const now   = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+
+  const clusterCounts = {};
+  profiles.forEach(p => { const c = p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
+
+  const certFreq = {};
+  profiles.forEach(p => p.certs.forEach(c => { certFreq[c]=(certFreq[c]||0)+1; }));
+  const topCerts = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
+  const totalCertCount = topCerts.reduce((s,[,n])=>s+n,0);
+  const membersWithCerts = total - profiles.filter(p=>p.certs.length===0).length;
+  const avgCerts = (totalCertCount/total).toFixed(1);
+
+  const clusterCertMap = {};
+  profiles.forEach(p => {
+    const c = p.cluster||'Unknown';
+    if (!clusterCertMap[c]) clusterCertMap[c]={total:0,certs:{}};
+    clusterCertMap[c].total++;
+    p.certs.forEach(cert=>{ clusterCertMap[c].certs[cert]=(clusterCertMap[c].certs[cert]||0)+1; });
+  });
+
+  const clusterLines = Object.entries(clusterCounts).sort((a,b)=>b[1]-a[1])
+    .map(([c,n])=>'  - '+c+': '+n+' DPMs').join('\n');
+  const certLines = topCerts.slice(0,10)
+    .map(([c,n])=>'  - '+c+': '+n+' holders ('+Math.round(n/total*100)+'%)').join('\n');
+  const clusterCertLines = Object.entries(clusterCertMap)
+    .map(([cl,d])=>'  '+cl+' ('+d.total+' DPMs): '+
+      Object.entries(d.certs).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([c,n])=>c+'('+n+')').join(', ')
+    ).join('\n');
+  const noCertNames = profiles.filter(p=>p.certs.length===0).map(p=>p.name).slice(0,10);
+
+  return (
+    'You are writing a professional executive report for senior management at Orange Business.\n' +
+    'Report covers the Egypt Delivery Practice Management (DPM) team.\n\n' +
+    'DATE: ' + now + '\nTEAM SIZE: ' + total + ' DPMs\n\n' +
+    'CLUSTERS:\n' + clusterLines + '\n\n' +
+    'CERT STATS: total=' + totalCertCount + ', members_with_certs=' + membersWithCerts + '/' + total +
+      ' (' + Math.round(membersWithCerts/total*100) + '%), avg_per_person=' + avgCerts +
+      ', members_with_zero=' + (total-membersWithCerts) + '\n\n' +
+    'TOP CERTIFICATIONS:\n' + certLines + '\n\n' +
+    'BY CLUSTER:\n' + clusterCertLines + '\n\n' +
+    (noCertNames.length ? 'NO-CERT MEMBERS: ' + noCertNames.join(', ') + '\n\n' : '') +
+    'TASK: Write an executive summary for VP/C-suite audience. Use EXACTLY this structure:\n\n' +
+    '## Executive Summary\n(2-3 impactful sentences)\n\n' +
+    '## Team Composition\n(Cluster breakdown with context)\n\n' +
+    '## Certification Landscape\n(Coverage, strengths, dominant certs)\n\n' +
+    '## Cluster Analysis\n(Compare clusters, gaps, highlights)\n\n' +
+    '## Key Strengths\n(What the data shows the team excels at)\n\n' +
+    '## Development Areas\n(Gaps — frame constructively)\n\n' +
+    '## Strategic Recommendations\n(3-5 numbered actions for leadership)\n\n' +
+    'Rules: professional tone, data-driven, 550-700 words total, mix prose and bullets, bold key numbers.'
+  );
+}
+
+// ── Build the infographic HTML (always white background) ──────────────────
+function buildInfographicHTML(profiles, aiText) {
+  const total = profiles.length;
+  const now   = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+
+  // Stats
+  const certFreq = {};
+  profiles.forEach(p => p.certs.forEach(c => { certFreq[c]=(certFreq[c]||0)+1; }));
+  const topCerts = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
+  const totalCertCount = topCerts.reduce((s,[,n])=>s+n,0);
+  const membersWithCerts = total - profiles.filter(p=>p.certs.length===0).length;
+  const certCoverage = Math.round(membersWithCerts/total*100);
+  const avgCerts = (totalCertCount/total).toFixed(1);
+
+  const clusterCounts = {};
+  profiles.forEach(p => { const c=p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
+  const clusterOrder  = ['N&S EU (Inc. Transversal)','DACH (Inc. BASF)','Benelux','Unknown'];
+  const clusterColors = {'N&S EU (Inc. Transversal)':'#FF7900','DACH (Inc. BASF)':'#0078d4','Benelux':'#10b981','Unknown':'#888'};
+  const clusterEmoji  = {'N&S EU (Inc. Transversal)':'🌍','DACH (Inc. BASF)':'🏔️','Benelux':'🌷','Unknown':'📍'};
+
+  // Top 5 certs bar chart (inline SVG)
+  const top5  = topCerts.slice(0,5);
+  const maxN  = top5.length ? top5[0][1] : 1;
+  const barH  = 36;
+  const barGap = 10;
+  const svgH  = top5.length * (barH + barGap) + 10;
+  const labelW = 148;
+  const chartW = 360;
+
+  const barsSVG = top5.map(([cert,n],i) => {
+    const barW = Math.round((n/maxN)*(chartW - labelW - 60));
+    const y    = i*(barH+barGap) + 5;
+    const pct  = Math.round(n/total*100);
+    return (
+      '<g>' +
+        '<text x="' + (labelW-8) + '" y="' + (y+barH/2+5) + '" text-anchor="end" font-size="12" fill="#333" font-family="Calibri,Arial">' + cert + '</text>' +
+        '<rect x="' + labelW + '" y="' + y + '" width="' + barW + '" height="' + barH + '" rx="6" fill="#FF7900"/>' +
+        '<text x="' + (labelW+barW+8) + '" y="' + (y+barH/2+5) + '" font-size="13" font-weight="bold" fill="#FF7900" font-family="Calibri,Arial">' + n + ' <tspan font-size="11" fill="#888">(' + pct + '%)</tspan></text>' +
+      '</g>'
+    );
+  }).join('');
+
+  const svgChart = (
+    '<svg viewBox="0 0 ' + chartW + ' ' + svgH + '" width="' + chartW + '" height="' + svgH + '" xmlns="http://www.w3.org/2000/svg">' +
+      barsSVG +
+    '</svg>'
+  );
+
+  // Cluster pills
+  const clusterPills = clusterOrder
+    .filter(c => clusterCounts[c])
+    .map(c => {
+      const n = clusterCounts[c];
+      const col = clusterColors[c]||'#888';
+      return (
+        '<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;' +
+        'border:2px solid ' + col + ';margin:4px;">' +
+          '<span style="font-size:15px;">' + (clusterEmoji[c]||'📍') + '</span>' +
+          '<span style="font-size:13px;font-weight:700;color:#333;">' + c.replace(' (Inc. Transversal)','').replace(' (Inc. BASF)','') + '</span>' +
+          '<span style="font-size:20px;font-weight:900;color:' + col + ';margin-left:4px;">' + n + '</span>' +
+        '</div>'
+      );
+    }).join('');
+
+  // Parse AI markdown to clean HTML (white-bg version)
+  const aiHTML = parseAIToReportHTML(aiText);
+
+  return (
+    '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<style>' +
+      'body{font-family:Calibri,Arial,sans-serif;background:#fff;color:#1a1a1a;margin:0;padding:0;}' +
+      '.page{max-width:900px;margin:0 auto;padding:40px 48px;}' +
+      '.header{background:#FF7900;color:#fff;border-radius:12px;padding:32px 36px;margin-bottom:32px;}' +
+      '.header-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0.85;margin-bottom:8px;}' +
+      '.header-title{font-size:30px;font-weight:900;letter-spacing:-0.5px;margin:0 0 4px;}' +
+      '.header-sub{font-size:13px;opacity:0.85;margin:0;}' +
+      '.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}' +
+      '.kpi{background:#fff5ec;border:2px solid #FF7900;border-radius:12px;padding:16px 12px;text-align:center;}' +
+      '.kpi-num{font-size:38px;font-weight:900;color:#FF7900;line-height:1;letter-spacing:-1px;}' +
+      '.kpi-lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}' +
+      '.section{margin-bottom:28px;}' +
+      '.section-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#FF7900;' +
+        'padding-bottom:6px;border-bottom:2px solid #FF7900;margin-bottom:14px;}' +
+      '.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}' +
+      '.card{background:#f8f8f8;border-radius:10px;padding:18px 20px;}' +
+      '.card-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:12px;}' +
+      'p{font-size:13.5px;line-height:1.75;color:#333;margin:0 0 10px;}' +
+      'strong{color:#1a1a1a;}' +
+      'ul{padding-left:18px;margin:6px 0 10px;}' +
+      'li{font-size:13.5px;color:#333;margin-bottom:4px;line-height:1.6;}' +
+      'h2{font-size:16px;font-weight:800;color:#FF7900;margin:20px 0 8px;letter-spacing:-0.2px;}' +
+      'h3{font-size:14px;font-weight:700;color:#1a1a1a;margin:14px 0 4px;}' +
+      'ol{padding-left:18px;margin:6px 0 10px;}' +
+      'ol li{font-size:13.5px;color:#333;margin-bottom:6px;line-height:1.6;}' +
+      '.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e0e0e0;' +
+        'font-size:11px;color:#aaa;display:flex;justify-content:space-between;}' +
+    '</style></head><body><div class="page">' +
+
+    // ── HEADER ──────────────────────────────────────────────────────────────
+    '<div class="header">' +
+      '<div class="header-eyebrow">Orange Business · Delivery Practice</div>' +
+      '<div class="header-title">DPM Team Executive Report</div>' +
+      '<div class="header-sub">' + now + ' &nbsp;·&nbsp; ' + total + ' Delivery Project Managers</div>' +
+    '</div>' +
+
+    // ── KPI STRIP ────────────────────────────────────────────────────────────
+    '<div class="kpi-row">' +
+      '<div class="kpi"><div class="kpi-num">' + total + '</div><div class="kpi-lbl">Total DPMs</div></div>' +
+      '<div class="kpi"><div class="kpi-num">' + totalCertCount + '</div><div class="kpi-lbl">Cert Entries</div></div>' +
+      '<div class="kpi"><div class="kpi-num">' + certCoverage + '%</div><div class="kpi-lbl">Cert Coverage</div></div>' +
+      '<div class="kpi"><div class="kpi-num">' + avgCerts + '</div><div class="kpi-lbl">Avg per DPM</div></div>' +
+    '</div>' +
+
+    // ── TWO-COL: Top certs chart + Cluster breakdown ─────────────────────────
+    '<div class="two-col">' +
+      '<div class="card">' +
+        '<div class="card-title">Top 5 Certifications</div>' +
+        svgChart +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="card-title">Team by Cluster</div>' +
+        '<div style="margin-top:6px;">' + clusterPills + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── AI NARRATIVE ─────────────────────────────────────────────────────────
+    aiHTML +
+
+    // ── FOOTER ───────────────────────────────────────────────────────────────
+    '<div class="footer">' +
+      '<span>Orange Business · Delivery Practice — Internal Report</span>' +
+      '<span>Generated ' + now + ' · DPM Skills Platform</span>' +
+    '</div>' +
+
+    '</div></body></html>'
+  );
+}
+
+// ── Parse AI markdown into white-bg-safe HTML ─────────────────────────────
+function parseAIToReportHTML(text) {
+  if (!text) return '';
+  const lines = text.split('\n');
+  let html = '';
+  let inUl = false;
+  let inOl = false;
+  let olIdx = 0;
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    const bold = s => s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+
+    if (trimmed.startsWith('## ')) {
+      if (inUl) { html += '</ul>'; inUl=false; }
+      if (inOl) { html += '</ol>'; inOl=false; olIdx=0; }
+      html += '<h2>' + bold(trimmed.slice(3)) + '</h2>';
+    } else if (trimmed.startsWith('### ')) {
+      if (inUl) { html += '</ul>'; inUl=false; }
+      if (inOl) { html += '</ol>'; inOl=false; olIdx=0; }
+      html += '<h3>' + bold(trimmed.slice(4)) + '</h3>';
+    } else if (/^\d+\./.test(trimmed)) {
+      if (inUl) { html += '</ul>'; inUl=false; }
+      if (!inOl) { html += '<ol>'; inOl=true; olIdx=0; }
+      html += '<li>' + bold(trimmed.replace(/^\d+\.\s*/,'')) + '</li>';
+    } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      if (inOl) { html += '</ol>'; inOl=false; olIdx=0; }
+      if (!inUl) { html += '<ul>'; inUl=true; }
+      html += '<li>' + bold(trimmed.slice(2)) + '</li>';
+    } else if (trimmed === '') {
+      if (inUl) { html += '</ul>'; inUl=false; }
+      if (inOl) { html += '</ol>'; inOl=false; olIdx=0; }
+    } else {
+      if (inUl) { html += '</ul>'; inUl=false; }
+      if (inOl) { html += '</ol>'; inOl=false; olIdx=0; }
+      html += '<p>' + bold(trimmed) + '</p>';
+    }
+  });
+  if (inUl) html += '</ul>';
+  if (inOl) html += '</ol>';
+  return html;
+}
+
+// ── Open modal ────────────────────────────────────────────────────────────
+function openAIReport() {
+  if (!filteredProfiles || filteredProfiles.length === 0) {
+    obAlert('Please load team data first.', {title:'No data loaded', icon:'📊'});
+    return;
+  }
+  const existing = document.getElementById('aiReportModal');
+  if (existing) existing.remove();
+
+  const clusterLabel = activeCluster !== 'all'
+    ? (({'nseu':'N&S EU','dach':'DACH','bnlx':'Benelux'})[activeCluster] || activeCluster)
+    : 'Full Team';
+
+  const savedKey = localStorage.getItem('ob_claude_key') || '';
+  const hasKey   = savedKey && savedKey.startsWith('sk-ant-') && savedKey.length > 20;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'ai-modal-overlay';
+  overlay.id = 'aiReportModal';
+  overlay.innerHTML =
+    '<div class="ai-modal" onclick="event.stopPropagation()" style="max-width:920px;">' +
+
+      '<div class="ai-modal-header">' +
+        '<div class="ai-modal-icon">🤖</div>' +
+        '<div>' +
+          '<div class="ai-modal-title">AI Executive Report</div>' +
+          '<div class="ai-modal-subtitle">' + filteredProfiles.length + ' DPMs · ' + clusterLabel + '</div>' +
+        '</div>' +
+        '<button class="ai-modal-close" onclick="closeAIReport()">×</button>' +
+      '</div>' +
+
+      '<div class="ai-modal-key-row">' +
+        '<div class="ai-key-label">Claude API Key</div>' +
+        '<div class="ai-key-input-wrap">' +
+          '<input type="password" id="aiKeyInput" class="ai-key-input" placeholder="sk-ant-api03-..." ' +
+            'value="' + (hasKey ? savedKey : '') + '" autocomplete="off">' +
+          '<button class="ai-key-save-btn" onclick="saveAIKey()">💾 Save</button>' +
+        '</div>' +
+        '<div class="ai-key-hint">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys. Stored in this browser only.</div>' +
+      '</div>' +
+
+      '<div class="ai-modal-body" id="aiReportBody">' +
+        '<div style="color:var(--muted);font-size:13px;padding:32px 0;text-align:center;">' +
+          'Enter your Claude API key above and click <strong style="color:var(--text)">Generate Report</strong>.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ai-modal-footer">' +
+        '<button class="ai-copy-btn" id="aiDownloadBtn" onclick="downloadAIReportDocx()" style="display:none;">⬇ Download Word</button>' +
+        '<button class="ai-copy-btn" id="aiCopyBtn" onclick="copyAIReport()" style="display:none;">📋 Copy Text</button>' +
+        '<button class="ai-regen-btn" id="aiGenBtn" onclick="generateAIReport()">✨ Generate Report</button>' +
+        '<span class="ai-footer-note">Powered by Claude claude-sonnet-4-5</span>' +
+      '</div>' +
+
+    '</div>';
+
+  overlay.addEventListener('click', closeAIReport);
+  document.body.appendChild(overlay);
+
+  if (hasKey) setTimeout(generateAIReport, 100);
+}
+
+function closeAIReport() {
+  const m = document.getElementById('aiReportModal');
+  if (m) m.remove();
+}
+
+function saveAIKey() {
+  const key = (document.getElementById('aiKeyInput').value || '').trim();
+  if (!key) { obToast('Please enter an API key first'); return; }
+  if (!key.startsWith('sk-ant-')) { obToast('Key should start with sk-ant-'); return; }
+  localStorage.setItem('ob_claude_key', key);
+  obToast('🔑 API key saved');
+}
+
+async function generateAIReport() {
+  const keyInput = document.getElementById('aiKeyInput');
+  const apiKey   = (keyInput ? keyInput.value.trim() : '') || localStorage.getItem('ob_claude_key') || CLAUDE_API_KEY;
+
+  if (!apiKey || apiKey === 'sk-ant-YOUR-KEY-HERE' || !apiKey.startsWith('sk-ant-')) {
+    document.getElementById('aiReportBody').innerHTML =
+      '<div class="ai-error">⚠️ Please enter a valid Claude API key (starts with <strong>sk-ant-</strong>) and click Save.</div>';
+    return;
+  }
+  if (apiKey !== CLAUDE_API_KEY) localStorage.setItem('ob_claude_key', apiKey);
+
+  const genBtn      = document.getElementById('aiGenBtn');
+  const copyBtn     = document.getElementById('aiCopyBtn');
+  const downloadBtn = document.getElementById('aiDownloadBtn');
+  const body        = document.getElementById('aiReportBody');
+
+  genBtn.disabled = true;
+  genBtn.textContent = '⏳ Generating...';
+  if (copyBtn)     copyBtn.style.display     = 'none';
+  if (downloadBtn) downloadBtn.style.display = 'none';
+
+  body.innerHTML =
+    '<div class="ai-generating">' +
+      '<div class="ai-spinner"></div>' +
+      '<div class="ai-generating-text">Analysing team data...</div>' +
+      '<div class="ai-generating-sub">Claude is writing your executive report</div>' +
+    '</div>';
+
+  try {
+    const prompt = buildAIPrompt(filteredProfiles);
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(()=>({}));
+      throw new Error(err.error ? err.error.message : 'HTTP ' + response.status);
+    }
+
+    const data = await response.json();
+    const text = data.content && data.content[0] ? data.content[0].text : '';
+    if (!text) throw new Error('Empty response from Claude');
+
+    // Build & display infographic
+    const infographicHTML = buildInfographicHTML(filteredProfiles, text);
+    window._lastAIReport       = text;
+    window._lastInfographicHTML = infographicHTML;
+
+    // Render preview inside modal (using iframe for isolation + white bg)
+    body.innerHTML = '<iframe id="aiReportFrame" style="width:100%;height:520px;border:none;border-radius:8px;background:#fff;" srcdoc=""></iframe>';
+    document.getElementById('aiReportFrame').srcdoc = infographicHTML;
+
+    genBtn.disabled = false;
+    genBtn.textContent = '🔄 Regenerate';
+    if (copyBtn)     copyBtn.style.display     = '';
+    if (downloadBtn) downloadBtn.style.display = '';
+
+  } catch(err) {
+    body.innerHTML =
+      '<div class="ai-error"><strong>Error:</strong><br>' + err.message +
+      '<br><br>• Check API key starts with sk-ant-<br>' +
+      '• Check credit at <a href="https://console.anthropic.com" target="_blank" style="color:#f87171;">console.anthropic.com</a></div>';
+    genBtn.disabled = false;
+    genBtn.textContent = '✨ Generate Report';
+  }
+}
+
+// ── Download as Word document ─────────────────────────────────────────────
+async function downloadAIReportDocx() {
+  const html = window._lastInfographicHTML;
+  if (!html) return;
+
+  const total = filteredProfiles.length;
+  const now   = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+
+  const certFreq = {};
+  filteredProfiles.forEach(p => p.certs.forEach(c => { certFreq[c]=(certFreq[c]||0)+1; }));
+  const topCerts = Object.entries(certFreq).sort((a,b)=>b[1]-a[1]);
+  const totalCerts = topCerts.reduce((s,[,n])=>s+n,0);
+  const membersWithCerts = total - filteredProfiles.filter(p=>p.certs.length===0).length;
+  const certCoverage = Math.round(membersWithCerts/total*100);
+  const avgCerts = (totalCerts/total).toFixed(1);
+  const clusterCounts = {};
+  filteredProfiles.forEach(p => { const c=p.cluster||'Unknown'; clusterCounts[c]=(clusterCounts[c]||0)+1; });
+
+  // Convert AI text to OOXML paragraphs
+  const aiText  = window._lastAIReport || '';
+  const aiLines = aiText.split('\n');
+  let docParas  = '';
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const boldRun = s => {
+    // Split on **bold** markers
+    const parts = s.split(/\*\*(.+?)\*\*/g);
+    return parts.map((p,i) => i%2===1
+      ? '<w:r><w:rPr><w:b/><w:color w:val="1a1a1a"/></w:rPr><w:t xml:space="preserve">' + esc(p) + '</w:t></w:r>'
+      : (p ? '<w:r><w:t xml:space="preserve">' + esc(p) + '</w:t></w:r>' : '')
+    ).join('');
+  };
+
+  let inList = false;
+  aiLines.forEach(line => {
+    const t = line.trim();
+    if (!t) { if(inList){docParas+='</w:body>';inList=false;} return; }
+    if (t.startsWith('## ')) {
+      inList=false;
+      docParas += '<w:p><w:pPr><w:pStyle w:val="Heading2"/><w:spacing w:before="240" w:after="80"/></w:pPr>' +
+        '<w:r><w:rPr><w:b/><w:color w:val="FF7900"/><w:sz w:val="26"/></w:rPr><w:t>' + esc(t.slice(3)) + '</w:t></w:r></w:p>';
+    } else if (t.startsWith('### ')) {
+      docParas += '<w:p><w:pPr><w:spacing w:before="160" w:after="60"/></w:pPr>' +
+        '<w:r><w:rPr><w:b/><w:sz w:val="22"/></w:rPr><w:t>' + esc(t.slice(4)) + '</w:t></w:r></w:p>';
+    } else if (t.startsWith('- ') || t.startsWith('* ') || /^\d+\./.test(t)) {
+      const txt = t.replace(/^[-*]\s+/,'').replace(/^\d+\.\s*/,'');
+      docParas += '<w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>' +
+        '<w:spacing w:after="40"/></w:pPr>' + boldRun(txt) + '</w:p>';
+    } else {
+      docParas += '<w:p><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr>' +
+        boldRun(t) + '</w:p>';
+    }
+  });
+
+  // KPI table XML
+  const kpiCell = (num, lbl) =>
+    '<w:tc><w:tcPr><w:tcW w:w="2268" w:type="dxa"/>' +
+    '<w:shd w:val="clear" w:color="auto" w:fill="FFF5EC"/>' +
+    '<w:tcBorders><w:top w:val="single" w:sz="4" w:color="FF7900"/>' +
+    '<w:bottom w:val="single" w:sz="4" w:color="FF7900"/>' +
+    '<w:left w:val="single" w:sz="4" w:color="FF7900"/>' +
+    '<w:right w:val="single" w:sz="4" w:color="FF7900"/></w:tcBorders>' +
+    '<w:tcMar><w:top w:w="100" w:type="dxa"/><w:bottom w:w="100" w:type="dxa"/>' +
+    '<w:left w:w="120" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tcMar></w:tcPr>' +
+    '<w:p><w:pPr><w:jc w:val="center"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:color w:val="FF7900"/><w:sz w:val="52"/></w:rPr><w:t>' + esc(num) + '</w:t></w:r></w:p>' +
+    '<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="0"/></w:pPr>' +
+    '<w:r><w:rPr><w:color w:val="888888"/><w:sz w:val="16"/></w:rPr><w:t>' + esc(lbl) + '</w:t></w:r></w:p>' +
+    '</w:tc>';
+
+  const kpiTable =
+    '<w:tbl><w:tblPr><w:tblW w:w="9072" w:type="dxa"/>' +
+    '<w:tblCellSpacing w:w="144" w:type="dxa"/><w:tblLook w:val="0000"/></w:tblPr>' +
+    '<w:tr>' +
+    kpiCell(String(total), 'Total DPMs') +
+    kpiCell(String(totalCerts), 'Cert Entries') +
+    kpiCell(certCoverage + '%', 'Cert Coverage') +
+    kpiCell(String(avgCerts), 'Avg Per DPM') +
+    '</w:tr></w:tbl>';
+
+  // Top 5 certs table
+  const top5 = topCerts.slice(0,5);
+  const maxN  = top5.length ? top5[0][1] : 1;
+  let certTableRows = top5.map(([cert,n]) => {
+    const barPct = Math.round(n/maxN*100);
+    const pct    = Math.round(n/total*100);
+    return '<w:tr>' +
+      '<w:tc><w:tcPr><w:tcW w:w="2500" w:type="dxa"/></w:tcPr>' +
+      '<w:p><w:pPr><w:spacing w:after="60"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="20"/></w:rPr><w:t>' + esc(cert) + '</w:t></w:r></w:p></w:tc>' +
+      '<w:tc><w:tcPr><w:tcW w:w="4500" w:type="dxa"/></w:tcPr>' +
+      '<w:p><w:pPr><w:spacing w:after="60"/><w:shd w:val="clear" w:fill="FF7900" w:color="auto"/></w:pPr>' +
+      '<w:r><w:rPr><w:color w:val="FFFFFF"/><w:sz w:val="18"/></w:rPr><w:t xml:space="preserve">' +
+        '█'.repeat(Math.max(1,Math.round(barPct/10))) + '</w:t></w:r></w:p></w:tc>' +
+      '<w:tc><w:tcPr><w:tcW w:w="1572" w:type="dxa"/></w:tcPr>' +
+      '<w:p><w:pPr><w:jc w:val="right"/><w:spacing w:after="60"/></w:pPr>' +
+      '<w:r><w:rPr><w:b/><w:color w:val="FF7900"/><w:sz w:val="20"/></w:rPr><w:t>' + n + ' (' + pct + '%)</w:t></w:r></w:p></w:tc>' +
+      '</w:tr>';
+  }).join('');
+
+  const certTable =
+    '<w:tbl><w:tblPr><w:tblW w:w="8572" w:type="dxa"/><w:tblBorders>' +
+    '<w:top w:val="none"/><w:bottom w:val="none"/><w:left w:val="none"/><w:right w:val="none"/>' +
+    '<w:insideH w:val="none"/><w:insideV w:val="none"/></w:tblBorders></w:tblPr>' +
+    certTableRows + '</w:tbl>';
+
+  const headerPara =
+    '<w:p><w:pPr><w:shd w:val="clear" w:fill="FF7900" w:color="auto"/>' +
+    '<w:spacing w:before="0" w:after="0"/><w:jc w:val="center"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:color w:val="FFFFFF"/><w:sz w:val="44"/></w:rPr><w:t>DPM Team Executive Report</w:t></w:r></w:p>' +
+    '<w:p><w:pPr><w:shd w:val="clear" w:fill="FF7900" w:color="auto"/>' +
+    '<w:spacing w:before="0" w:after="200"/><w:jc w:val="center"/></w:pPr>' +
+    '<w:r><w:rPr><w:color w:val="FFFFFF"/><w:sz w:val="20"/></w:rPr><w:t>' + esc(now) + ' · Orange Business · Delivery Practice</w:t></w:r></w:p>';
+
+  const docXML =
+    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"' +
+    ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+    '<w:body>' +
+    '<w:sectPr><w:pgMar w:top="720" w:right="900" w:bottom="720" w:left="900"/></w:sectPr>' +
+    headerPara +
+    '<w:p><w:pPr><w:spacing w:before="280" w:after="60"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:color w:val="FF7900"/><w:sz w:val="20"/><w:caps/></w:rPr><w:t>At a Glance</w:t></w:r></w:p>' +
+    kpiTable +
+    '<w:p><w:pPr><w:spacing w:before="280" w:after="60"/></w:pPr>' +
+    '<w:r><w:rPr><w:b/><w:color w:val="FF7900"/><w:sz w:val="20"/><w:caps/></w:rPr><w:t>Top 5 Certifications</w:t></w:r></w:p>' +
+    certTable +
+    '<w:p><w:pPr><w:spacing w:before="280" w:after="100"/></w:pPr></w:p>' +
+    docParas +
+    '<w:p><w:pPr><w:spacing w:before="280" w:after="0"/><w:pBdr><w:top w:val="single" w:sz="4" w:color="DDDDDD"/></w:pBdr></w:pPr>' +
+    '<w:r><w:rPr><w:color w:val="AAAAAA"/><w:sz w:val="16"/></w:rPr>' +
+    '<w:t>Orange Business · Delivery Practice — Internal Report · Generated ' + esc(now) + ' · DPM Skills Platform</w:t></w:r></w:p>' +
+    '</w:body></w:document>';
+
+  // Relationships
+  const relsXML =
+    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+    '</Relationships>';
+  const wordRelsXML =
+    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+    '</Relationships>';
+  const contentTypesXML =
+    '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+    '<Default Extension="xml" ContentType="application/xml"/>' +
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+    '</Types>';
+
+  try {
+    const zip = new JSZip();
+    zip.file('[Content_Types].xml', contentTypesXML);
+    zip.file('_rels/.rels', relsXML);
+    zip.file('word/document.xml', docXML);
+    zip.file('word/_rels/document.xml.rels', wordRelsXML);
+
+    const blob = await zip.generateAsync({ type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    const dateStr = new Date().toISOString().slice(0,10);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OB_DPM_Executive_Report_' + dateStr + '.docx';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    obToast('⬇ Report downloaded as Word document');
+  } catch(e) {
+    obAlert('Word export failed: ' + e.message, {title:'Export Error', icon:'❌'});
+  }
+}
+
+function copyAIReport() {
+  const text = window._lastAIReport || '';
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    obToast('📋 Report text copied to clipboard');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    obToast('📋 Report copied');
+  });
 }
 
 // ── Simple toast notification ─────────────────────────────────────────────
