@@ -44,12 +44,13 @@ A clean 11-step wizard covering:
 | 8 | Products & Services — 25 Orange Business products |
 | 9 | Work Experience — jobs with bullet points |
 | 10 | Custom Sections — free-form additional content |
-| 11 | Template selection + Generate |
+| 11 | Template selection + Generate — **5 CV templates**: Minimal, Corporate, Modern, Executive (graphite/hairline), Editorial (serif masthead) |
 
 **Exports:**
-- 📄 **Word Document** — branded `.docx` profile
+- 📄 **PDF** — one-click, print-ready A4 CV generated client-side (brand colours preserved, smart page breaks). This is the recommended share format.
+- 📝 **Word Document** — branded `.docx` profile
 - 📦 **JSON Profile** — structured data file for the Manager Dashboard (filename includes name + cluster)
-- 🖨 **Print** — browser print dialog
+- 🖨 **Print** — opens the browser print dialog with a dedicated professional A4 print stylesheet (choose *Save as PDF* for vector-quality, selectable text)
 - 📤 **Send to SharePoint** — downloads JSON and opens your SharePoint folder in one click
 
 ---
@@ -116,7 +117,8 @@ Select one or more DPMs → pick a topic → write your message → one click op
 | Deployment | GitHub Pages (static hosting) |
 | Backend | None |
 | Authentication | None |
-| Libraries | Chart.js 4.4.1, JSZip 3.10.1, Google Fonts |
+| Libraries | Chart.js 4.4.1, JSZip 3.10.1, html2pdf.js 0.10.3 (loaded on demand, multi-CDN fallback), Google Fonts |
+| Navigation | Responsive header with a mobile slide-in menu, scroll-progress bar, and back-to-top button |
 | Fonts | Outfit (headings), DM Mono (mono/labels) |
 | Browser storage | `localStorage` (profiles persist across sessions) |
 | Themes | Light + Dark mode, toggled in header, persisted in `localStorage` |
