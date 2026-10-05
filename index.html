@@ -2197,6 +2197,117 @@ html.light .viz-section { box-shadow: 0 1px 6px var(--shadow); }
 html.light .exec-chart-card { box-shadow: 0 1px 6px var(--shadow); }
 html.light .exec-kpi { box-shadow: 0 1px 4px var(--shadow); }
 
+/* ============================================================
+   LIVE CV BUILDER — thumbnails, live preview rail, autosave UI
+============================================================ */
+/* Photo / logo upload + thumbnail */
+.wz-upload-row { display: flex; align-items: center; gap: 12px; }
+.wz-upload-row input[type=file] { flex: 1; min-width: 0; }
+.wz-thumb { position: relative; display: inline-flex; }
+.wz-thumb:empty { display: none; }
+.wz-thumb img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); display: block; }
+.wz-thumb.wz-thumb-logo img { border-radius: 8px; object-fit: contain; background: #fff; }
+.wz-thumb-rm { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: none; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+
+/* "Saved ✓" pill in the progress bar */
+.wz-saved-pill { position: absolute; right: 24px; top: -2px; font-size: 11px; font-weight: 800; color: #16a34a; background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3); padding: 2px 10px; border-radius: 20px; opacity: 0; transform: translateY(-4px); transition: opacity .2s, transform .2s; pointer-events: none; }
+.wz-saved-pill.show { opacity: 1; transform: translateY(0); }
+
+/* Resume-draft entry card */
+.wz-entry-resume { border-color: var(--orange) !important; }
+.wz-discard-link { position: absolute; bottom: 10px; right: 14px; background: none; border: none; color: var(--muted); font-size: 11px; text-decoration: underline; cursor: pointer; font-family: inherit; }
+.wz-discard-link:hover { color: #ef4444; }
+
+/* Empty-state note under list sections */
+.wz-empty { border: 1px dashed var(--border); border-radius: 10px; padding: 14px 16px; color: var(--muted); font-size: 13px; text-align: center; margin-top: 10px; }
+
+/* Inline field validation */
+.form-field.field-error input, .form-field.field-error textarea { border-color: #ef4444 !important; }
+.field-msg { display: none; font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 600; }
+.form-field.field-error .field-msg { display: block; }
+
+/* Suggestion chips */
+.ob-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.ob-chip { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 16px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit; transition: all .15s; }
+.ob-chip:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-glow); }
+
+/* Live word counter */
+.ob-count { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 4px; display: block; text-align: right; }
+.ob-count.ok { color: #16a34a; }
+.ob-count.warn { color: #f59e0b; }
+
+/* Count badge in check-grid step headers */
+.wz-count-badge { display: inline-block; margin-left: 8px; background: var(--orange); color: #fff; font-size: 11px; font-weight: 800; padding: 1px 9px; border-radius: 20px; vertical-align: middle; }
+
+/* Checkbox pop */
+@keyframes wzPop { 0% { transform: scale(1); } 40% { transform: scale(1.13); } 100% { transform: scale(1); } }
+.check-label:has(input:checked) { animation: wzPop .22s ease; }
+@media (prefers-reduced-motion: reduce) { .check-label:has(input:checked) { animation: none; } }
+
+/* ── Live two-pane preview (desktop) ── */
+@media (min-width: 992px) {
+  body.wz-building #page-builder { padding-right: clamp(380px, 36vw, 460px); }
+  body.wz-building .wz-progress-wrap,
+  body.wz-building .wz-step-wrap { max-width: min(760px, calc(100vw - clamp(380px, 36vw, 460px) - 48px)); }
+  body.wz-building #cvPreviewWrap {
+    display: block !important;
+    position: fixed; top: 104px; right: 20px; bottom: 20px;
+    width: clamp(360px, 33vw, 430px);
+    max-width: none; margin: 0; padding: 0; overflow: auto; z-index: 6;
+  }
+  body.wz-building #cvPreviewWrap .cv-generated-bar { display: none !important; }
+  body.wz-building #cvPreviewWrap .cv-doc { box-shadow: 0 10px 40px var(--shadow); border-radius: 10px; }
+}
+body.wz-building #personalDashWrap { display: none !important; }
+
+/* ── Mobile live preview: FAB + bottom sheet ── */
+#wzPreviewFab {
+  display: none;
+  position: fixed; right: 16px; bottom: 16px; z-index: 300;
+  background: linear-gradient(135deg, #FF7900, #ff9b3d); color: #fff; border: none;
+  border-radius: 30px; padding: 12px 20px; font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 26px rgba(0,0,0,.3);
+  align-items: center; gap: 6px;
+}
+#wzSheetClose {
+  display: none;
+  position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 340;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 24px; padding: 8px 18px; font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+@media (max-width: 991px) {
+  body.wz-building #wzPreviewFab { display: inline-flex; }
+  body.wz-building #cvPreviewWrap.wz-sheet {
+    display: block !important; position: fixed; inset: 0; z-index: 330;
+    margin: 0; max-width: none; padding: 54px 10px 24px; overflow: auto; background: var(--bg);
+  }
+  body.wz-building #cvPreviewWrap.wz-sheet .cv-generated-bar { display: none !important; }
+}
+
+/* ── Mobile wizard ergonomics ── */
+@media (max-width: 580px) {
+  .wz-step-wrap { padding: 0 16px 96px; }
+  .wz-step-body { padding: 18px 16px; }
+  .wz-step-body input, .wz-step-body textarea, .wz-step-body select { font-size: 16px; } /* no iOS zoom */
+  .wz-nav-bar {
+    position: sticky; bottom: 0; z-index: 7;
+    background: var(--bg);
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .wz-nav-bar .wz-btn-primary { flex: 2; min-height: 48px; }
+  .wz-nav-bar .wz-btn-secondary { flex: 1; min-height: 48px; }
+  .wz-completeness-mini { display: none; }
+  .wz-step-labels {
+    flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .wz-step-labels::-webkit-scrollbar { display: none; }
+  .wz-step-label { flex: 0 0 auto; scroll-snap-align: center; font-size: 11px; padding: 2px 6px; }
+}
+
 /* ===== PRINT / PDF STYLES ===== */
 @page {
   size: A4 portrait;
@@ -6096,6 +6207,7 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
 <!-- ── Step Progress Bar (shown on steps 1–11) ───────────────────────────── -->
 <div id="wzProgressBar" style="display:none;">
   <div class="wz-progress-wrap">
+    <span class="wz-saved-pill" id="wzSavedPill">Saved ✓</span>
     <div class="wz-progress-track">
       <div class="wz-progress-fill" id="wzProgressFill"></div>
     </div>
@@ -6136,15 +6248,23 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
         </div>
         <div class="form-field">
           <label>Profile Photo <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <input type="file" id="photoUpload" accept="image/*">
+          <div class="wz-upload-row">
+            <input type="file" id="photoUpload" accept="image/*" onchange="wzReadImage(this,'photo')">
+            <div class="wz-thumb" id="wzPhotoThumb"></div>
+          </div>
         </div>
         <div class="form-field">
           <label>Company Logo <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <input type="file" id="logoUpload" accept="image/*">
+          <div class="wz-upload-row">
+            <input type="file" id="logoUpload" accept="image/*" onchange="wzReadImage(this,'logo')">
+            <div class="wz-thumb wz-thumb-logo" id="wzLogoThumb"></div>
+          </div>
         </div>
         <div class="form-field" style="grid-column: 1 / -1;">
           <label>Professional Summary <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <textarea id="summary" rows="4" placeholder="Brief description of your PM expertise and focus areas..." style="resize:vertical;"></textarea>
+          <div class="ob-chip-row" id="wzSummaryChips"></div>
+          <textarea id="summary" rows="4" placeholder="Brief description of your PM expertise and focus areas..." style="resize:vertical;" oninput="wzCount('summary','wzSummaryCount',40,120)"></textarea>
+          <span class="ob-count" id="wzSummaryCount"></span>
         </div>
       </div>
     </div>
@@ -6472,6 +6592,7 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
         </label>
       </div>
       <p style="font-size:13px;color:var(--muted);margin:14px 0 6px;">Responsibilities</p>
+      <div class="ob-chip-row" id="wzBulletChips"></div>
       <div id="bulletContainer" class="bullet-list"></div>
       <input class="add-input" type="text" id="bulletInput" placeholder="Type a responsibility and press Enter">
       <button class="btn-add-job" onclick="addJob()">+ Add This Job</button>
@@ -6613,7 +6734,7 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
         </label>
       </div>
 
-      <button class="btn-generate-full" onclick="generateCV()" style="margin-top:28px;">⚡ Generate Skills Profile</button>
+      <button class="btn-generate-full" id="wzFinishBtn" onclick="generateCV()" style="margin-top:28px;">✓ Finish &amp; Download →</button>
     </div>
     <div class="wz-nav-bar" style="margin-top:0;">
       <button class="wz-btn-secondary" onclick="wzGoto(10)">← Back</button>
@@ -7304,6 +7425,9 @@ let filteredProfiles = [];
 let execFiles = [];
 let chartInstances = {};
 let currentCVData = null;
+let photoDataURL = null;   // downscaled profile photo (data URL)
+let logoDataURL = null;    // downscaled company logo (data URL)
+let livePreviewTimer = null;
 
 const PM_CATEGORIES = {
   'Delivery':         ['Project Planning','Agile / Scrum','Waterfall Delivery','Hybrid Methodology','Program Management','Portfolio Management'],
@@ -7429,9 +7553,11 @@ function addItem(e, grid) {
   if (!value) return;
   const label = document.createElement('label');
   label.className = 'check-label';
-  label.innerHTML = `<input type="checkbox" value="${value}" checked> ${value}`;
+  label.innerHTML = `<input type="checkbox" value="${escH(value)}" checked> ${escH(value)}`;
   document.getElementById(grid).appendChild(label);
   e.target.value = '';
+  if (typeof updateCompleteness === 'function') updateCompleteness();
+  scheduleLivePreview();
 }
 
 /* ===================================================
@@ -7610,7 +7736,7 @@ function renderBullets() {
     const div = document.createElement('div');
     div.className = 'bullet-item';
     div.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;';
-    div.innerHTML = `<span style="flex:1;">▸ ${b}</span>
+    div.innerHTML = `<span style="flex:1;">▸ ${escH(b)}</span>
       <button onclick="removeBullet(${i})" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;">✕</button>`;
     container.appendChild(div);
   });
@@ -7625,34 +7751,30 @@ function removeBullet(idx) {
    ADD JOB
 =================================================== */
 function addJob() {
-  const title = document.getElementById('jobTitle').value;
-  const company = document.getElementById('jobCompany').value;
+  const title = document.getElementById('jobTitle').value.trim();
+  const company = document.getElementById('jobCompany').value.trim();
   const start = document.getElementById('jobStart').value;
   let end = document.getElementById('jobEnd').value;
   if (document.getElementById('currentJob').checked) end = 'Present';
+  if (!title && !company) { obToast('Add a job title or company first'); return; }
 
-  const idx = jobs.length;
   jobs.push({ title, company, start, end, bullets: [...bullets] });
   bullets = [];
   document.getElementById('bulletContainer').innerHTML = '';
-
-  const box = document.createElement('div');
-  box.className = 'job-card';
-  box.dataset.idx = idx;
-  box.innerHTML = `<span style="flex:1;">${title} — ${company}</span>
-    <button onclick="removeJob(${idx})" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">✕ Remove</button>`;
-  document.getElementById('jobList').appendChild(box);
+  renderJobList();   // single source of truth — indices always match the array
 
   document.getElementById('jobTitle').value = '';
   document.getElementById('jobCompany').value = '';
   document.getElementById('jobStart').value = '';
   document.getElementById('jobEnd').value = '';
   document.getElementById('currentJob').checked = false;
+  scheduleLivePreview();
 }
 
 function removeJob(idx) {
   jobs.splice(idx, 1);
   renderJobList();
+  scheduleLivePreview();
 }
 
 function renderJobList() {
@@ -7662,10 +7784,11 @@ function renderJobList() {
     const box = document.createElement('div');
     box.className = 'job-card';
     box.dataset.idx = i;
-    box.innerHTML = `<span style="flex:1;">${job.title} — ${job.company}</span>
+    box.innerHTML = `<span style="flex:1;">${escH(job.title)} — ${escH(job.company)}</span>
       <button onclick="removeJob(${i})" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">✕ Remove</button>`;
     list.appendChild(box);
   });
+  wzToggleEmpty('jobList', jobs.length, 'No roles added yet — add your work history above.');
 }
 
 /* ===================================================
@@ -7688,11 +7811,13 @@ function addEducation() {
   document.getElementById('eduStart').value = '';
   document.getElementById('eduEnd').value = '';
   document.getElementById('currentEdu').checked = false;
+  scheduleLivePreview();
 }
 
 function removeEducation(idx) {
   education.splice(idx, 1);
   renderEduList();
+  scheduleLivePreview();
 }
 
 function renderEduList() {
@@ -7702,10 +7827,11 @@ function renderEduList() {
     const dateStr = [e.start, e.end].filter(Boolean).join(' – ');
     const box = document.createElement('div');
     box.className = 'job-card';
-    box.innerHTML = `<span style="flex:1;">📚 <strong>${e.degree}</strong> — ${e.institution}${dateStr ? ' <span style="color:var(--muted);font-size:12px;">('+dateStr+')</span>' : ''}</span>
+    box.innerHTML = `<span style="flex:1;">📚 <strong>${escH(e.degree)}</strong> — ${escH(e.institution)}${dateStr ? ' <span style="color:var(--muted);font-size:12px;">('+escH(dateStr)+')</span>' : ''}</span>
       <button onclick="removeEducation(${i})" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">✕ Remove</button>`;
     list.appendChild(box);
   });
+  wzToggleEmpty('eduList', education.length, 'No education added yet.');
 }
 
 /* ===================================================
@@ -7718,11 +7844,13 @@ function addLanguage() {
   languages.push({ name, level });
   renderLangList();
   document.getElementById('langName').value = '';
+  scheduleLivePreview();
 }
 
 function removeLanguage(idx) {
   languages.splice(idx, 1);
   renderLangList();
+  scheduleLivePreview();
 }
 
 function renderLangList() {
@@ -7731,10 +7859,11 @@ function renderLangList() {
   languages.forEach((l, i) => {
     const chip = document.createElement('div');
     chip.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:5px 8px 5px 14px;background:var(--orange-glow);border:1px solid var(--border);border-radius:20px;font-size:13px;font-weight:600;color:var(--orange);';
-    chip.innerHTML = `${l.name} · ${l.level}
+    chip.innerHTML = `${escH(l.name)} · ${escH(l.level)}
       <button onclick="removeLanguage(${i})" style="background:rgba(239,68,68,0.2);border:none;color:#f87171;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;">✕</button>`;
     list.appendChild(chip);
   });
+  wzToggleEmpty('langList', languages.length, 'No languages added yet.');
 }
 
 /* ── Custom links state ─────────────────────────────────────────── */
@@ -7760,11 +7889,13 @@ function wzAddCustomLink() {
   document.getElementById('customLinkLabel').value = '';
   document.getElementById('customLinkUrl').value   = '';
   wzRenderCustomLinks();
+  scheduleLivePreview();
 }
 
 function wzRemoveCustomLink(i) {
   customLinks.splice(i, 1);
   wzRenderCustomLinks();
+  scheduleLivePreview();
 }
 
 function wzRenderCustomLinks() {
@@ -7774,9 +7905,11 @@ function wzRenderCustomLinks() {
   customLinks.forEach((cl, i) => {
     const row = document.createElement('div');
     row.className = 'custom-link-row';
+    const safe = sanitizeUrl(cl.url);
     row.innerHTML =
-      '<span class="cl-label">' + cl.label + '</span>' +
-      '<a href="' + cl.url + '" target="_blank">' + cl.url + '</a>' +
+      '<span class="cl-label">' + escH(cl.label) + '</span>' +
+      (safe ? '<a href="' + escH(safe) + '" target="_blank" rel="noopener noreferrer">' + escH(cl.url) + '</a>'
+            : '<span style="color:var(--muted);">' + escH(cl.url) + '</span>') +
       '<button onclick="wzRemoveCustomLink(' + i + ')">✕</button>';
     container.appendChild(row);
   });
@@ -7789,11 +7922,21 @@ function wzSyncPresetLinks() { /* live sync handled at generate time */ }
 =================================================== */
 let wzCurrent = 0; // 0 = welcome
 let wzMaxReached = 0; // furthest step the user has reached (for clickable labels)
+const WZ_DRAFT_KEY = 'ob_dpm_draft_v1'; // autosaved in-progress profile
+let wzLastPct = 0; // for milestone toasts
 
 const WZ_STEP_NAMES = ['', 'Basic Info', 'Education', 'Languages', 'Links',
   'Certifications', 'Tools', 'Skills', 'Products', 'Experience', 'Custom', 'Template'];
 
 function wzGoto(step) {
+  // Soft nudge: leaving step 1 without a name (never blocks navigation)
+  if (wzCurrent === 1 && step > 1) {
+    const nm = document.getElementById('name');
+    if (nm && !nm.value.trim()) {
+      const f = nm.closest('.form-field'); if (f) f.classList.add('field-error');
+      obToast('Tip: add your name so your CV has a title');
+    }
+  }
   // Hide all screens
   document.querySelectorAll('.wz-screen').forEach(s => {
     s.classList.remove('wz-screen-active');
@@ -7815,6 +7958,8 @@ function wzGoto(step) {
   const bar = document.getElementById('wzProgressBar');
   if (step === 0) {
     bar.style.display = 'none';
+    document.body.classList.remove('wz-building');
+    if (typeof wzCloseMobilePreview === 'function') wzCloseMobilePreview();
     // Hide cv preview if going back to welcome
     document.getElementById('cvPreviewWrap').style.display = 'none';
     const pd = document.getElementById('personalDashWrap');
@@ -7822,11 +7967,16 @@ function wzGoto(step) {
   } else if (step <= 11) {
     bar.style.display = 'block';
     wzUpdateProgress(step);
+    // Enter live-building mode: show the live preview rail / enable the FAB
+    document.body.classList.add('wz-building');
+    try { renderCVDoc(collectCVData()); } catch (_) {}
+    wzSaveDraft();
   }
 
   // Scroll to top of page
   window.scrollTo({ top: 0, behavior: 'smooth' });
   updateCompleteness();
+  if (typeof updateStepMini === 'function') updateStepMini(step);
 }
 
 function wzUpdateProgress(step) {
@@ -7850,14 +8000,228 @@ function wzUpdateProgress(step) {
     }
     labelsEl.appendChild(div);
   });
+  // Center the active label on small screens
+  if (window.matchMedia && window.matchMedia('(max-width:580px)').matches) {
+    const active = labelsEl.querySelector('.wz-label-active');
+    if (active && active.scrollIntoView) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      active.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    }
+  }
+}
+
+/* ===================================================
+   LIVE-BUILDER HELPERS: mobile sheet, autosave, minis
+=================================================== */
+function wzOpenMobilePreview() {
+  const wrap = document.getElementById('cvPreviewWrap');
+  if (!wrap) return;
+  try { renderCVDoc(collectCVData()); } catch (_) {}
+  wrap.classList.add('wz-sheet');
+  const close = document.getElementById('wzSheetClose');
+  if (close) close.style.display = 'inline-flex';
+  document.body.style.overflow = 'hidden';
+}
+function wzCloseMobilePreview() {
+  const wrap = document.getElementById('cvPreviewWrap');
+  if (wrap) wrap.classList.remove('wz-sheet');
+  const close = document.getElementById('wzSheetClose');
+  if (close) close.style.display = 'none';
+  if (!document.body.classList.contains('printing-cv')) document.body.style.overflow = '';
+}
+
+/* Empty-state note under a list section */
+function wzToggleEmpty(listId, count, msg) {
+  const list = document.getElementById(listId);
+  if (!list || !list.parentNode) return;
+  let note = list.parentNode.querySelector('.wz-empty[data-for="' + listId + '"]');
+  if (count > 0) { if (note) note.remove(); return; }
+  if (!note) {
+    note = document.createElement('div');
+    note.className = 'wz-empty';
+    note.dataset.for = listId;
+    note.textContent = msg;
+    list.parentNode.insertBefore(note, list.nextSibling);
+  }
+}
+
+/* Autosave the in-progress profile (debounced) */
+let wzSaveTimer = null;
+function wzSaveDraft() {
+  if (!document.body.classList.contains('wz-building')) return;
+  clearTimeout(wzSaveTimer);
+  wzSaveTimer = setTimeout(() => {
+    if (!document.body.classList.contains('wz-building')) return;  // left build mode
+    try {
+      const d = collectCVData(); d._step = wzCurrent;
+      localStorage.setItem(WZ_DRAFT_KEY, JSON.stringify(d));
+    } catch (e) {
+      try { const d = collectCVData(); d._step = wzCurrent; d.photo = ''; d.logo = '';
+        localStorage.setItem(WZ_DRAFT_KEY, JSON.stringify(d)); } catch (_) {}
+    }
+    wzFlashSaved();
+  }, 500);
+}
+function wzFlashSaved() {
+  const el = document.getElementById('wzSavedPill');
+  if (!el) return;
+  el.classList.add('show');
+  clearTimeout(wzFlashSaved._t);
+  wzFlashSaved._t = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+/* Per-step contextual status in the nav bar */
+function updateStepMini(step) {
+  const el = document.getElementById('wzCompMini' + step);
+  if (!el) return;
+  const n = sel => document.querySelectorAll(sel).length;
+  const val = id => ((document.getElementById(id) || {}).value || '').trim();
+  let msg = '';
+  switch (step) {
+    case 1: msg = val('name') ? 'Looking good ✓' : 'Add your name'; break;
+    case 2: msg = education.length ? education.length + ' added ✓' : 'Optional — add if relevant'; break;
+    case 3: msg = languages.length ? languages.length + ' added ✓' : 'Optional'; break;
+    case 4: { const c = ['linkLinkedin','linkWebsite','linkX','linkBehance','linkResearch','linkScholar'].filter(val).length + customLinks.length; msg = c ? c + ' link' + (c > 1 ? 's' : '') + ' ✓' : 'Optional'; break; }
+    case 5: { const c = n('#certGrid input:checked'); msg = c ? c + ' selected ✓' : 'Tick your certifications'; break; }
+    case 6: { const c = n('#toolGrid input:checked'); msg = c ? c + ' selected ✓' : 'Tick your tools'; break; }
+    case 7: { const c = n('#skillGrid input:checked'); msg = c >= 5 ? c + ' selected ✓' : 'Pick 5+ (' + c + '/5)'; break; }
+    case 8: { const c = n('#productGrid input:checked'); msg = c ? c + ' selected ✓' : 'Optional'; break; }
+    case 9: msg = jobs.length ? jobs.length + ' role' + (jobs.length > 1 ? 's' : '') + ' ✓' : 'Add your experience'; break;
+    case 10: msg = customSections.length ? customSections.length + ' section' + (customSections.length > 1 ? 's' : '') + ' ✓' : 'Optional'; break;
+    case 11: msg = 'Pick a template, then finish'; break;
+  }
+  el.textContent = msg;
+}
+
+/* ── Suggestion chips + word counters (T8/T9) ── */
+const SUMMARY_STARTERS = [
+  'Delivery Project Manager with 10+ years leading complex, multi-vendor programmes across cloud, security and networking.',
+  'Results-driven PM specialising in hybrid Agile delivery, stakeholder management and risk governance for enterprise clients.',
+  'Certified Delivery PM with a track record of on-time, on-budget delivery of large-scale digital transformation projects.'
+];
+const BULLET_TEMPLATES = [
+  'Led end-to-end delivery of [project], completing on time and [X]% under budget.',
+  'Managed a cross-functional team of [N] across [locations], lifting delivery velocity by [X]%.',
+  'Owned governance and stakeholder communications for a [$X] programme.',
+  'Mitigated delivery risk through [action], reducing [metric] by [X]%.'
+];
+function wzInitChips() {
+  const sc = document.getElementById('wzSummaryChips');
+  if (sc && !sc.children.length) SUMMARY_STARTERS.forEach((t, i) => {
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'ob-chip';
+    btn.textContent = '✨ Starter ' + (i + 1); btn.title = t;
+    btn.onclick = () => wzFillField('summary', t, 'wzSummaryCount', 40, 120);
+    sc.appendChild(btn);
+  });
+  const bc = document.getElementById('wzBulletChips');
+  if (bc && !bc.children.length) BULLET_TEMPLATES.forEach(t => {
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'ob-chip';
+    btn.textContent = t.replace(/\[.*?\]/g, '…').replace(/\.$/, '').slice(0, 30); btn.title = t;
+    btn.onclick = () => { const el = document.getElementById('bulletInput'); if (el) { el.value = t; el.focus(); } };
+    bc.appendChild(btn);
+  });
+}
+function wzFillField(id, text, countId, lo, hi) {
+  const el = document.getElementById(id); if (!el) return;
+  el.value = text;
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+  if (countId) wzCount(id, countId, lo, hi);
+  el.focus();
+}
+function wzCount(id, countId, lo, hi) {
+  const el = document.getElementById(id); const out = document.getElementById(countId);
+  if (!el || !out) return;
+  const words = (el.value.trim().match(/\S+/g) || []).length;
+  out.textContent = words ? words + ' word' + (words === 1 ? '' : 's') : '';
+  out.classList.toggle('ok', words >= lo && words <= hi);
+  out.classList.toggle('warn', words > 0 && (words < lo || words > hi));
+}
+
+/* ── Inline URL validation (T7) ── */
+function wzValidateUrl(input) {
+  const field = input.closest('.form-field'); if (!field) return true;
+  const ok = !input.value.trim() || /^https?:\/\//i.test(input.value.trim());
+  field.classList.toggle('field-error', !ok);
+  let msg = field.querySelector('.field-msg');
+  if (!ok) {
+    if (!msg) { msg = document.createElement('div'); msg.className = 'field-msg'; field.appendChild(msg); }
+    msg.textContent = 'Start the link with https://';
+  }
+  return ok;
+}
+function wzInitValidation() {
+  ['linkLinkedin','linkWebsite','linkX','linkBehance','linkResearch','linkScholar','customLinkUrl'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    el.addEventListener('blur', () => wzValidateUrl(el));
+    el.addEventListener('input', () => { const f = el.closest('.form-field'); if (f) f.classList.remove('field-error'); });
+  });
+  const nm = document.getElementById('name');
+  if (nm) nm.addEventListener('input', () => { const f = nm.closest('.form-field'); if (f) f.classList.remove('field-error'); });
 }
 
 function wzStart(mode) {
   if (mode === 'new') {
-    // Clear all fields first
+    // Clear all fields + any saved draft, then start fresh
     clearAllFormFields();
+    try { localStorage.removeItem(WZ_DRAFT_KEY); } catch (_) {}
+    const card = document.getElementById('wzResumeCard');
+    if (card) card.remove();
     wzGoto(1);
   }
+}
+
+/* Resume-on-return: show a draft card on the welcome screen */
+function wzInitResume() {
+  let raw;
+  try { raw = localStorage.getItem(WZ_DRAFT_KEY); } catch (_) { return; }
+  if (!raw) return;
+  let d; try { d = JSON.parse(raw); } catch (_) { return; }
+  if (!d) return;
+  const who = [d.name, d.jobRole].filter(Boolean).join(' · ') || 'Untitled profile';
+  const when = d.lastUpdated ? wzRelativeTime(d.lastUpdated) : '';
+  const cards = document.querySelector('#wzScreen0 .wz-welcome-cards');
+  if (!cards || document.getElementById('wzResumeCard')) return;
+  const btn = document.createElement('button');
+  btn.className = 'wz-entry-card wz-entry-resume';
+  btn.id = 'wzResumeCard';
+  btn.onclick = () => wzResumeDraft();
+  btn.innerHTML =
+    '<div class="wz-entry-icon">⏱️</div>' +
+    '<div class="wz-entry-title">Resume your draft</div>' +
+    '<div class="wz-entry-desc">' + escH(who) + (when ? ' — edited ' + escH(when) : '') + '</div>' +
+    '<div class="wz-entry-arrow">→</div>';
+  cards.insertBefore(btn, cards.firstChild);
+  // Discard link
+  const disc = document.createElement('button');
+  disc.type = 'button';
+  disc.className = 'wz-discard-link';
+  disc.textContent = 'Discard draft';
+  disc.onclick = (e) => { e.stopPropagation(); wzDiscardDraft(); };
+  btn.appendChild(disc);
+}
+function wzResumeDraft() {
+  let d; try { d = JSON.parse(localStorage.getItem(WZ_DRAFT_KEY)); } catch (_) { return; }
+  if (!d) return;
+  populateAllFormFields(d, 'draft');
+  wzGoto(d._step && d._step >= 1 && d._step <= 11 ? d._step : 1);
+}
+function wzDiscardDraft() {
+  try { localStorage.removeItem(WZ_DRAFT_KEY); } catch (_) {}
+  const card = document.getElementById('wzResumeCard');
+  if (card) card.remove();
+  obToast('Draft discarded');
+}
+function wzRelativeTime(iso) {
+  try {
+    const then = new Date(iso).getTime(); const diff = Date.now() - then;
+    const m = Math.round(diff / 60000);
+    if (m < 1) return 'just now';
+    if (m < 60) return m + ' min ago';
+    const h = Math.round(m / 60);
+    if (h < 24) return h + ' hour' + (h > 1 ? 's' : '') + ' ago';
+    const dys = Math.round(h / 24);
+    return dys + ' day' + (dys > 1 ? 's' : '') + ' ago';
+  } catch (_) { return ''; }
 }
 
 function wzLoadJSON(event) {
@@ -7876,6 +8240,57 @@ function wzLoadJSON(event) {
   reader.readAsText(file);
   // Reset input so same file can be re-loaded
   event.target.value = '';
+}
+
+/* ===================================================
+   IMAGE UPLOAD — downscale + live thumbnail
+=================================================== */
+function wzReadImage(input, which) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 512;
+      let w = img.width, h = img.height;
+      if (w > max || h > max) { const r = Math.min(max / w, max / h); w = Math.round(w * r); h = Math.round(h * r); }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      let url;
+      try { url = which === 'logo' ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.9); }
+      catch (_) { url = e.target.result; }
+      if (which === 'logo') logoDataURL = url; else photoDataURL = url;
+      wzRenderThumb(which);
+      scheduleLivePreview();
+      wzSaveDraft();
+    };
+    img.onerror = () => obToast('Could not read that image');
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function wzRenderThumb(which) {
+  const url = which === 'logo' ? logoDataURL : photoDataURL;
+  const box = document.getElementById(which === 'logo' ? 'wzLogoThumb' : 'wzPhotoThumb');
+  if (!box) return;
+  box.innerHTML = '';
+  if (!url) return;
+  const img = document.createElement('img'); img.src = url; img.alt = which + ' preview';
+  const rm = document.createElement('button');
+  rm.type = 'button'; rm.className = 'wz-thumb-rm'; rm.title = 'Remove image'; rm.textContent = '✕';
+  rm.onclick = () => wzRemoveImage(which);
+  box.append(img, rm);
+}
+
+function wzRemoveImage(which) {
+  if (which === 'logo') { logoDataURL = null; const i = document.getElementById('logoUpload'); if (i) i.value = ''; }
+  else { photoDataURL = null; const i = document.getElementById('photoUpload'); if (i) i.value = ''; }
+  wzRenderThumb(which);
+  scheduleLivePreview();
+  wzSaveDraft();
 }
 
 function clearAllFormFields() {
@@ -7903,8 +8318,10 @@ function clearAllFormFields() {
   renderCustomSectionsList();
   // Photo/logo
   ['photoUpload','logoUpload'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-  if (typeof photoDataURL !== 'undefined') photoDataURL = null;
-  if (typeof logoDataURL !== 'undefined') logoDataURL = null;
+  photoDataURL = null;
+  logoDataURL = null;
+  wzRenderThumb('photo');
+  wzRenderThumb('logo');
 }
 
 function populateAllFormFields(data, filename) {
@@ -7949,6 +8366,24 @@ function populateAllFormFields(data, filename) {
   // Custom sections
   customSections = (data.customSections || []).map(s => ({ ...s }));
   renderCustomSectionsList();
+
+  // APM cluster (restore hidden value + selected button)
+  const cluster = data.apmCluster || '';
+  setValue('apmCluster', cluster);
+  document.querySelectorAll('#clusterBtns .wz-level-btn').forEach(b =>
+    b.classList.toggle('selected', b.dataset.val === cluster));
+
+  // Photo / logo + thumbnails
+  photoDataURL = data.photo || null;
+  logoDataURL  = data.logo  || null;
+  wzRenderThumb('photo');
+  wzRenderThumb('logo');
+
+  // Template radio
+  if (data.template) {
+    const r = document.querySelector('input[name="cvTemplate"][value="' + data.template + '"]');
+    if (r) { r.checked = true; if (typeof highlightTplCard === 'function') highlightTplCard(r); }
+  }
 
   updateCompleteness();
 }
@@ -8475,16 +8910,19 @@ function addCustomSection() {
   document.getElementById('customSecDetails').value  = '';
 
   renderCustomSectionsList();
+  scheduleLivePreview();
 }
 
 function removeCustomSection(i) {
   customSections.splice(i, 1);
   renderCustomSectionsList();
+  scheduleLivePreview();
 }
 
 function renderCustomSectionsList() {
   const list = document.getElementById('customSectionsList');
   list.innerHTML = '';
+  wzToggleEmpty('customSectionsList', customSections.length, 'No extra sections yet — add things like Awards, Volunteering or Publications.');
   if (!customSections.length) return;
 
   // Group entries by heading
@@ -8712,205 +9150,170 @@ function renderPersonalDashboard(d) {
   setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
 }
 
-function generateCV() {
-  // Read selected template from radio picker
+/* ===================================================
+   URL SANITIZER (for links rendered into the CV)
+=================================================== */
+function sanitizeUrl(u) {
+  u = (u || '').trim();
+  if (!u) return '';
+  if (/^(https?:|mailto:)/i.test(u)) return u;
+  if (/^[\w.+-]+@[\w.-]+\.[a-z]{2,}$/i.test(u)) return 'mailto:' + u;
+  if (/^[\w-]+(\.[\w-]+)+(\/|$)/i.test(u)) return 'https://' + u;  // bare domain
+  return '';  // reject javascript:, data:, vbscript:, etc.
+}
+
+/* ===================================================
+   COLLECT: form -> data object  (pure, no side effects)
+=================================================== */
+function collectCVData() {
+  const gv = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const checked = sel => { const a = []; document.querySelectorAll(sel).forEach(c => a.push(c.value)); return a; };
+
   const tplRadio = document.querySelector('input[name="cvTemplate"]:checked');
-  if (tplRadio) currentTemplate = tplRadio.value;
+  const template = tplRadio ? tplRadio.value : (currentTemplate || 'minimal');
 
-  const name = document.getElementById('name').value;
-  const company = document.getElementById('company').value;
-  const jobRole = document.getElementById('jobRole').value.trim();
-  const apmCluster = (document.getElementById('apmCluster') ? document.getElementById('apmCluster').value.trim() : '');
-  const summaryInput = document.getElementById('summary').value.trim();
+  const certs    = checked('#certGrid input:checked');
+  const tools    = checked('#toolGrid input:checked');
+  const skills   = checked('#skillGrid input:checked');
+  const products = checked('#productGrid input:checked');
 
-  document.getElementById('cvName').textContent = name;
-  document.getElementById('cvCompany').textContent = company;
-  document.getElementById('cvJobRole').textContent = jobRole;
+  const links = {};
+  [['LinkedIn','linkLinkedin'],['Behance','linkBehance'],['ResearchGate','linkResearch'],
+   ['Google Scholar','linkScholar'],['X','linkX'],['Website','linkWebsite']].forEach(([label, id]) => {
+    const v = gv(id).trim(); if (v) links[label] = v;
+  });
 
-  // Summary — only show if user provided one
+  return {
+    schemaVersion: '1.0',
+    generatedAt: new Date().toISOString(),
+    lastUpdated: new Date().toISOString(),
+    name: gv('name'),
+    company: gv('company'),
+    jobRole: gv('jobRole').trim(),
+    apmCluster: gv('apmCluster').trim(),
+    summary: gv('summary').trim(),
+    certifications: certs,
+    tools, skills, products,
+    jobs: jobs.map(j => ({ ...j, bullets: (j.bullets || []).slice() })),
+    education: education.map(e => ({ ...e })),
+    languages: languages.map(l => ({ ...l })),
+    links,
+    customLinks: (customLinks || []).map(l => ({ ...l })),
+    customSections: (customSections || []).map(s => ({ ...s })),
+    photo: photoDataURL || '',
+    logo: logoDataURL || '',
+    template,
+    pmScore: calcPMScore(certs, tools, skills)
+  };
+}
+
+/* ===================================================
+   RENDER: data object -> #cvDoc  (safe, synchronous)
+=================================================== */
+function renderCVDoc(data) {
+  document.getElementById('cvName').textContent = data.name || '';
+  document.getElementById('cvCompany').textContent = data.company || '';
+  document.getElementById('cvJobRole').textContent = data.jobRole || '';
+
   const summarySection = document.getElementById('cvSummarySection');
-  if (summaryInput) {
-    document.getElementById('cvSummary').textContent = summaryInput;
+  if ((data.summary || '').trim()) {
+    document.getElementById('cvSummary').textContent = data.summary;
     summarySection.style.display = 'block';
-  } else {
-    summarySection.style.display = 'none';
-  }
+  } else summarySection.style.display = 'none';
 
-  const certList = document.getElementById('cvCertList');
-  const toolList = document.getElementById('cvToolList');
-  const skillList = document.getElementById('cvSkillList');
-  const productList = document.getElementById('cvProductList');
-  const expList = document.getElementById('cvExpList');
-  const linksList = document.getElementById('cvLinksList');
-  certList.innerHTML = ''; toolList.innerHTML = ''; skillList.innerHTML = ''; productList.innerHTML = ''; expList.innerHTML = ''; linksList.innerHTML = '';
-
-  const certs = [], tools = [], skills = [], products = [];
-
-  document.querySelectorAll('#certGrid input:checked').forEach(c => {
-    const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
-    certList.appendChild(tag); certs.push(c.value);
-  });
-
-  document.querySelectorAll('#toolGrid input:checked').forEach(c => {
-    const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
-    toolList.appendChild(tag); tools.push(c.value);
-  });
-
-  document.querySelectorAll('#skillGrid input:checked').forEach(c => {
-    const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
-    skillList.appendChild(tag); skills.push(c.value);
-  });
-
-  document.querySelectorAll('#productGrid input:checked').forEach(c => {
-    const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = c.value;
-    productList.appendChild(tag); products.push(c.value);
-  });
-
-  // Show/hide products section
+  const fillTags = (id, arr) => {
+    const el = document.getElementById(id); el.innerHTML = '';
+    (arr || []).forEach(v => { const t = document.createElement('div'); t.className = 'cv-tag'; t.textContent = v; el.appendChild(t); });
+  };
+  fillTags('cvCertList', data.certifications);
+  fillTags('cvToolList', data.tools);
+  fillTags('cvSkillList', data.skills);
+  fillTags('cvProductList', data.products);
   const prodSec = document.getElementById('cvProductSection');
-  if (prodSec) prodSec.style.display = products.length ? 'block' : 'none';
+  if (prodSec) prodSec.style.display = (data.products && data.products.length) ? 'block' : 'none';
 
-  jobs.forEach(job => {
+  // Experience
+  const expList = document.getElementById('cvExpList'); expList.innerHTML = '';
+  (data.jobs || []).forEach(job => {
     const block = document.createElement('div'); block.className = 'cv-exp-block';
-    const titleEl = document.createElement('div'); titleEl.className = 'cv-exp-title'; titleEl.textContent = job.title;
-    const compEl = document.createElement('div'); compEl.className = 'cv-exp-company'; compEl.textContent = job.company;
+    const titleEl = document.createElement('div'); titleEl.className = 'cv-exp-title'; titleEl.textContent = job.title || '';
+    const compEl = document.createElement('div'); compEl.className = 'cv-exp-company'; compEl.textContent = job.company || '';
     const datesEl = document.createElement('div'); datesEl.className = 'cv-exp-dates';
     datesEl.textContent = (job.start ? fmtDate(job.start) : '') + (job.end ? ' – ' + fmtDate(job.end) : '');
     const ul = document.createElement('ul');
-    job.bullets.forEach(b => { const li = document.createElement('li'); li.textContent = b; ul.appendChild(li); });
+    (job.bullets || []).forEach(b => { const li = document.createElement('li'); li.textContent = b; ul.appendChild(li); });
     block.append(titleEl, compEl, datesEl, ul);
     expList.appendChild(block);
   });
 
-  // Education
+  // Education (DOM nodes — no innerHTML injection)
   const eduSection = document.getElementById('cvEduSection');
-  const eduList = document.getElementById('cvEduList');
-  eduList.innerHTML = '';
-  if (education.length > 0) {
-    education.forEach(e => {
+  const eduList = document.getElementById('cvEduList'); eduList.innerHTML = '';
+  if ((data.education || []).length > 0) {
+    data.education.forEach(e => {
       const dateStr = [e.start ? fmtDate(e.start) : '', e.end ? fmtDate(e.end) : ''].filter(Boolean).join(' – ');
-      const d = document.createElement('div');
-      d.style.cssText = 'margin-bottom:8px;';
-      d.innerHTML = `<span style="font-weight:700;font-size:14px;">${e.degree}</span> <span style="color:#FF7900;font-size:13px;">${e.institution}</span>${dateStr ? ' <span style="color:#888;font-size:12px;">' + dateStr + '</span>' : ''}`;
+      const d = document.createElement('div'); d.style.cssText = 'margin-bottom:8px;';
+      const deg = document.createElement('span'); deg.style.cssText = 'font-weight:700;font-size:14px;'; deg.textContent = e.degree || '';
+      const inst = document.createElement('span'); inst.style.cssText = 'color:#FF7900;font-size:13px;'; inst.textContent = ' ' + (e.institution || '');
+      d.append(deg, inst);
+      if (dateStr) { const dt = document.createElement('span'); dt.style.cssText = 'color:#888;font-size:12px;'; dt.textContent = ' ' + dateStr; d.append(dt); }
       eduList.appendChild(d);
     });
     eduSection.style.display = 'block';
-  } else {
-    eduSection.style.display = 'none';
-  }
+  } else eduSection.style.display = 'none';
 
   // Languages
   const langSection = document.getElementById('cvLangSection');
-  const langList = document.getElementById('cvLangList');
-  langList.innerHTML = '';
-  if (languages.length > 0) {
-    languages.forEach(l => {
-      const tag = document.createElement('div'); tag.className = 'cv-tag';
-      tag.textContent = `${l.name} · ${l.level}`;
-      langList.appendChild(tag);
-    });
+  const langList = document.getElementById('cvLangList'); langList.innerHTML = '';
+  if ((data.languages || []).length > 0) {
+    data.languages.forEach(l => { const tag = document.createElement('div'); tag.className = 'cv-tag'; tag.textContent = l.name + ' · ' + l.level; langList.appendChild(tag); });
     langSection.style.display = 'block';
-  } else {
-    langSection.style.display = 'none';
-  }
+  } else langSection.style.display = 'none';
 
-  // Links
-  const addLink = (label, id) => {
-    const url = document.getElementById(id).value.trim();
-    if (url) {
-      const a = document.createElement('a'); a.className = 'cv-link';
-      a.href = url; a.textContent = label; a.target = '_blank';
-      linksList.appendChild(a);
-    }
-  };
-  ['LinkedIn','Behance','ResearchGate','Google Scholar','X','Website'].forEach((n,i) =>
-    addLink(n, ['linkLinkedin','linkBehance','linkResearch','linkScholar','linkX','linkWebsite'][i]));
-  // Custom links
-  (customLinks || []).forEach(cl => {
+  // Links (sanitized hrefs)
+  const linksList = document.getElementById('cvLinksList'); linksList.innerHTML = '';
+  const addLink = (label, url) => {
+    const safe = sanitizeUrl(url); if (!safe) return;
     const a = document.createElement('a'); a.className = 'cv-link';
-    a.href = cl.url; a.textContent = cl.label; a.target = '_blank';
+    a.href = safe; a.textContent = label; a.target = '_blank'; a.rel = 'noopener noreferrer';
     linksList.appendChild(a);
-  });
+  };
+  const lk = data.links || {};
+  ['LinkedIn','Behance','ResearchGate','Google Scholar','X','Website'].forEach(label => { if (lk[label]) addLink(label, lk[label]); });
+  (data.customLinks || []).forEach(cl => { if (cl && cl.url) addLink(cl.label || cl.url, cl.url); });
 
-  // Logo
-  const logoInput = document.getElementById('logoUpload');
-  const logoBox = document.getElementById('cvLogoBox');
-  if (logoInput.files.length > 0) {
-    const reader = new FileReader();
-    reader.onload = e => { logoBox.innerHTML = `<img src="${e.target.result}">`; };
-    reader.readAsDataURL(logoInput.files[0]);
-  } else { logoBox.innerHTML = ''; }
+  // Logo / Photo (synchronous from data URL — no FileReader race)
+  const logoBox = document.getElementById('cvLogoBox'); logoBox.innerHTML = '';
+  if (data.logo) { const img = document.createElement('img'); img.src = data.logo; logoBox.appendChild(img); }
+  const photoBox = document.getElementById('cvPhotoBox'); photoBox.innerHTML = '';
+  if (data.photo) { const img = document.createElement('img'); img.src = data.photo; img.alt = 'Profile photo'; photoBox.appendChild(img); }
 
-  // Profile photo
-  const photoInput = document.getElementById('photoUpload');
-  const photoBox = document.getElementById('cvPhotoBox');
-  if (photoInput.files.length > 0) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      photoBox.innerHTML = `<img src="${e.target.result}" alt="Profile photo">`;
-    };
-    reader.readAsDataURL(photoInput.files[0]);
-  } else { photoBox.innerHTML = ''; }
-
-  // Render custom sections into the final CV (grouped by heading)
+  // Custom sections (grouped by heading, inserted before the generated-date line)
   const cvBodyArea = document.querySelector('#cvDoc .cv-body-area');
   document.querySelectorAll('.cv-custom-section').forEach(el => el.remove());
-  if (customSections.length > 0 && cvBodyArea) {
+  const anchor = document.getElementById('cvGeneratedDate');
+  if ((data.customSections || []).length > 0 && cvBodyArea) {
     const groups = {}; const order = [];
-    customSections.forEach(sec => {
-      const h = sec.heading || sec.title || 'Additional';
-      if (!groups[h]) { groups[h] = []; order.push(h); }
-      groups[h].push(sec);
-    });
-    const anchor = document.getElementById('cvGeneratedDate');
+    data.customSections.forEach(sec => { const h = sec.heading || sec.title || 'Additional'; if (!groups[h]) { groups[h] = []; order.push(h); } groups[h].push(sec); });
     order.forEach(heading => {
-      // Section heading
-      const secTitle = document.createElement('div');
-      secTitle.className = 'cv-section-title cv-custom-section';
-      secTitle.textContent = heading;
+      const secTitle = document.createElement('div'); secTitle.className = 'cv-section-title cv-custom-section'; secTitle.textContent = heading;
       cvBodyArea.insertBefore(secTitle, anchor);
-      // Entries
       groups[heading].forEach(sec => {
-        const secBody = document.createElement('div');
-        secBody.className = 'cv-custom-section';
-        secBody.style.cssText = 'margin-bottom:10px;padding-bottom:6px;';
+        const secBody = document.createElement('div'); secBody.className = 'cv-custom-section'; secBody.style.cssText = 'margin-bottom:10px;padding-bottom:6px;';
         const start = sec.start ? fmtDate(sec.start) : '';
-        const end   = sec.current ? 'Present' : (sec.end ? fmtDate(sec.end) : '');
-        if (sec.subtitle) {
-          const sub = document.createElement('div');
-          sub.style.cssText = 'font-size:13px;font-weight:700;color:#222;margin-bottom:1px;';
-          sub.textContent = sec.subtitle;
-          secBody.appendChild(sub);
-        }
-        if (sec.org) {
-          const org = document.createElement('div');
-          org.style.cssText = 'font-size:12px;color:#555;margin-bottom:2px;';
-          org.textContent = sec.org;
-          secBody.appendChild(org);
-        }
-        if (start || end) {
-          const dates = document.createElement('div');
-          dates.style.cssText = 'font-size:11px;color:#888;margin-bottom:4px;';
-          dates.textContent = start + (start && end ? ' – ' : '') + end;
-          secBody.appendChild(dates);
-        }
+        const end = sec.current ? 'Present' : (sec.end ? fmtDate(sec.end) : '');
+        if (sec.subtitle) { const sub = document.createElement('div'); sub.style.cssText = 'font-size:13px;font-weight:700;color:#222;margin-bottom:1px;'; sub.textContent = sec.subtitle; secBody.appendChild(sub); }
+        if (sec.org) { const org = document.createElement('div'); org.style.cssText = 'font-size:12px;color:#555;margin-bottom:2px;'; org.textContent = sec.org; secBody.appendChild(org); }
+        if (start || end) { const dates = document.createElement('div'); dates.style.cssText = 'font-size:11px;color:#888;margin-bottom:4px;'; dates.textContent = start + (start && end ? ' – ' : '') + end; secBody.appendChild(dates); }
         if (sec.details) {
           const lines = sec.details.split('\n').filter(l => l.trim());
           const isBullets = lines.some(l => /^[•\-\*]/.test(l.trim()));
           if (isBullets || lines.length > 1) {
-            const ul = document.createElement('ul');
-            ul.style.cssText = 'margin:4px 0 0 14px;padding:0;font-size:12px;color:#333;line-height:1.6;';
-            lines.forEach(l => {
-              const li = document.createElement('li');
-              li.textContent = l.replace(/^[•\-\*]\s*/,'');
-              ul.appendChild(li);
-            });
+            const ul = document.createElement('ul'); ul.style.cssText = 'margin:4px 0 0 14px;padding:0;font-size:12px;color:#333;line-height:1.6;';
+            lines.forEach(l => { const li = document.createElement('li'); li.textContent = l.replace(/^[•\-\*]\s*/, ''); ul.appendChild(li); });
             secBody.appendChild(ul);
           } else {
-            const det = document.createElement('div');
-            det.style.cssText = 'font-size:12px;color:#333;line-height:1.6;';
-            det.textContent = sec.details;
-            secBody.appendChild(det);
+            const det = document.createElement('div'); det.style.cssText = 'font-size:12px;color:#333;line-height:1.6;'; det.textContent = sec.details; secBody.appendChild(det);
           }
         }
         cvBodyArea.insertBefore(secBody, anchor);
@@ -8918,48 +9321,55 @@ function generateCV() {
     });
   }
 
-  document.getElementById('cvPreviewWrap').style.display = 'block';
-  // Apply whichever template is currently active (default: minimal)
-  const activeTplBtn = document.querySelector('.tpl-btn.tpl-active');
-  const activeTpl = activeTplBtn ? activeTplBtn.textContent.trim().toLowerCase() : 'minimal';
-  applyTemplate(activeTpl, activeTplBtn);
-
-  // Store for JSON export
-  const links = {};
-  [['LinkedIn','linkLinkedin'],['Behance','linkBehance'],['ResearchGate','linkResearch'],
-   ['Google Scholar','linkScholar'],['X','linkX'],['Website','linkWebsite']].forEach(([label, id]) => {
-    const v = document.getElementById(id).value.trim();
-    if (v) links[label] = v;
-  });
-  currentCVData = {
-    schemaVersion: '1.0',
-    generatedAt: new Date().toISOString(),
-    lastUpdated: new Date().toISOString(),
-    name, company, jobRole, apmCluster,
-    summary: summaryInput,
-    certifications: certs,
-    tools, skills, products, jobs,
-    education, languages, links,
-    customLinks: customLinks || [],
-    pmScore: calcPMScore(certs, tools, skills)
-  };
-
   // Generated-on date line
   const genDateEl = document.getElementById('cvGeneratedDate');
   if (genDateEl) {
     const today = new Date();
     const day = today.getDate();
-    const suffix = (day % 10 === 1 && day !== 11) ? 'st'
-                 : (day % 10 === 2 && day !== 12) ? 'nd'
-                 : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+    const suffix = (day % 10 === 1 && day !== 11) ? 'st' : (day % 10 === 2 && day !== 12) ? 'nd' : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
     const month = today.toLocaleString('en-GB', { month: 'long' });
     genDateEl.textContent = 'Generated on: ' + day + suffix + ' of ' + month + ', ' + today.getFullYear();
   }
 
-  window.scrollTo({ top: document.getElementById('cvPreviewWrap').offsetTop - 80, behavior: 'smooth' });
+  // Apply the REAL selected template (fixes the previous always-minimal bug)
+  applyTemplate(data.template || 'minimal', null);
+}
 
-  // Render personal dashboard below
-  renderPersonalDashboard(currentCVData);
+/* ===================================================
+   LIVE PREVIEW (debounced) — never commits currentCVData
+=================================================== */
+function scheduleLivePreview() {
+  if (!document.body.classList.contains('wz-building')) return;
+  clearTimeout(livePreviewTimer);
+  livePreviewTimer = setTimeout(() => {
+    try { renderCVDoc(collectCVData()); wzSaveDraft(); } catch (e) { /* ignore mid-edit */ }
+  }, 180);
+}
+
+/* ===================================================
+   GENERATE — the "Finish & Download" commit point
+=================================================== */
+function generateCV() {
+  const tplRadio = document.querySelector('input[name="cvTemplate"]:checked');
+  if (tplRadio) currentTemplate = tplRadio.value;
+
+  currentCVData = collectCVData();
+  renderCVDoc(currentCVData);
+
+  // Leave live-building mode -> full review
+  document.body.classList.remove('wz-building');
+  if (typeof wzCloseMobilePreview === 'function') wzCloseMobilePreview();
+
+  document.getElementById('cvPreviewWrap').style.display = 'block';
+  // Charts are a nice-to-have — never let a charting hiccup block the CV/downloads
+  try { renderPersonalDashboard(currentCVData); } catch (e) { console.warn('dashboard skipped:', e); }
+
+  // Draft has served its purpose — cancel any pending save, then clear it
+  clearTimeout(wzSaveTimer); clearTimeout(livePreviewTimer);
+  try { localStorage.removeItem(WZ_DRAFT_KEY); } catch (_) {}
+
+  const wrap = document.getElementById('cvPreviewWrap');
+  window.scrollTo({ top: (wrap.offsetTop || 0) - 80, behavior: 'smooth' });
 }
 
 /* ===================================================
@@ -10550,6 +10960,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initTour();
   initLanding();
   initPageChrome();
+  wzInitResume();
+  wzInitChips();
+  wzInitValidation();
 
   // Mark first template card as selected
   const defaultCard = document.getElementById('tplCard_minimal');
@@ -11229,14 +11642,26 @@ function updateCompleteness() {
     document.getElementById('completenessPct').style.color = 'var(--orange)';
   }
   document.getElementById('completenessHint').textContent = hint;
+
+  // Milestone toasts — fire once on upward crossings, only while building
+  if (document.body.classList.contains('wz-building')) {
+    if (pct >= 100 && wzLastPct < 100) obToast('🎉 Profile complete — ready to finish!');
+    else if (pct >= 50 && wzLastPct < 50) obToast('Halfway there — looking great!');
+  }
+  wzLastPct = pct;
 }
 
 function initCompleteness() {
   // Watch all text inputs, textareas, checkboxes in builder
   const builder = document.getElementById('page-builder');
   if (!builder) return;
-  builder.addEventListener('input', updateCompleteness);
-  builder.addEventListener('change', updateCompleteness);
+  const onEdit = () => {
+    updateCompleteness();
+    if (typeof updateStepMini === 'function') updateStepMini(wzCurrent);
+    scheduleLivePreview();
+  };
+  builder.addEventListener('input', onEdit);
+  builder.addEventListener('change', onEdit);
   updateCompleteness();
 }
 
@@ -13091,6 +13516,10 @@ function obToast(msg) {
 
 <!-- BACK TO TOP -->
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top" title="Back to top">↑</button>
+
+<!-- MOBILE LIVE-PREVIEW FAB + SHEET CLOSE -->
+<button id="wzPreviewFab" onclick="wzOpenMobilePreview()" aria-label="Preview CV">👁️ Preview</button>
+<button id="wzSheetClose" onclick="wzCloseMobilePreview()" aria-label="Close preview">✕ Close preview</button>
 
 
 <!-- ═══════════════════════════════════════════════
