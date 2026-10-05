@@ -2204,14 +2204,27 @@ html.light .exec-kpi { box-shadow: 0 1px 4px var(--shadow); }
 }
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  html, body { background: #ffffff !important; color: #000 !important; }
+  /* Always strip app chrome so ANY page prints cleanly */
   header, #scrollProgress, #navBackdrop, #backToTop, .nav-tabs, .nav-toggle,
-  .action-bar, .cv-generated-bar, .btn-dl, .exec-upload-zone, .gen-section,
-  #cvPreviewWrap > .action-bar, #personalDashWrap, footer, .wz-progress-wrap { display: none !important; }
+  .theme-toggle-wrap, footer { display: none !important; }
 
-  /* The CV fills the printed page edge-to-edge of the @page margin box */
-  #cvPreviewWrap { display: block !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
-  .cv-doc {
+  /* When printing a CV (printCV() adds .printing-cv), show ONLY the CV document */
+  body.printing-cv { background: #ffffff !important; color: #000 !important; }
+  body.printing-cv .page,
+  body.printing-cv #personalDashWrap,
+  body.printing-cv .cv-generated-bar,
+  body.printing-cv .wz-progress-wrap,
+  body.printing-cv .wz-step-wrap,
+  body.printing-cv .wz-nav-bar,
+  body.printing-cv .gen-section,
+  body.printing-cv .action-bar,
+  body.printing-cv .exec-upload-zone { display: none !important; }
+  /* Re-show the builder page + preview wrapper that hold the CV */
+  body.printing-cv #page-builder { display: block !important; }
+  body.printing-cv #cvPreviewWrap {
+    display: block !important; max-width: none !important; margin: 0 !important; padding: 0 !important;
+  }
+  body.printing-cv .cv-doc {
     box-shadow: none !important;
     border-radius: 0 !important;
     width: 100% !important;
@@ -2233,7 +2246,8 @@ html.light .exec-kpi { box-shadow: 0 1px 4px var(--shadow); }
   .chart-row, .exec-charts-grid { grid-template-columns: 1fr; }
   .exec-grid { grid-template-columns: 1fr 1fr; }
   .pm-score-wrap { flex-direction: column; }
-  .theme-toggle-wrap { display: none; }
+  /* theme toggle stays visible on phones so dark/light is reachable;
+     the hamburger is to its right, the tour button is hidden <=980px */
 }
 
 /* =========================================================
@@ -2867,10 +2881,10 @@ html.light .da-chip { border-color: #e0e0e0; }
 /* ── Template radio card picker (inside builder form) ── */
 .tpl-radio-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
   gap: 14px;
 }
-@media (max-width: 600px) { .tpl-radio-grid { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .tpl-radio-grid { grid-template-columns: 1fr; } }
 
 .tpl-radio-card {
   position: relative;
@@ -3160,6 +3174,147 @@ html.light .tpl-radio-card { background: #fff; }
   border-radius: 6px; font-weight: 700;
 }
 
+/* Base profile-photo style (templates can override via .cv-doc.tpl-X #cvPhotoBox img) */
+#cvPhotoBox img {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #FF7900;
+}
+
+/* ══════════════════════════════════════════════════
+   TEMPLATE: EXECUTIVE
+   Graphite/charcoal, understated senior layout.
+   Authority through type, hairline rules, whitespace.
+══════════════════════════════════════════════════ */
+.cv-doc.tpl-executive {
+  background: #ffffff;
+  color: #1f2937;
+  font-family: 'Outfit', Georgia, sans-serif;
+}
+.cv-doc.tpl-executive .cv-top-bar { background: #c05600; height: 3px; }
+.cv-doc.tpl-executive .cv-inner { padding: 0; }
+.cv-doc.tpl-executive .cv-header-row {
+  background: #ffffff;
+  padding: 42px 52px 24px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0;
+}
+.cv-doc.tpl-executive .cv-name {
+  font-size: 34px; font-weight: 800; color: #111827;
+  letter-spacing: -0.6px; line-height: 1.05;
+}
+.cv-doc.tpl-executive .cv-jobrole {
+  color: #374151; font-weight: 600; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 2.4px; margin-top: 9px;
+}
+.cv-doc.tpl-executive .cv-company { color: #6b7280; font-size: 13px; font-weight: 500; margin-top: 4px; }
+.cv-doc.tpl-executive #cvPhotoBox img { border: 1px solid #e5e7eb; }
+.cv-doc.tpl-executive .cv-body-area { padding: 10px 52px 46px; }
+.cv-doc.tpl-executive .cv-section-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 2.8px;
+  text-transform: uppercase; color: #111827;
+  border-bottom: 1px solid #d1d5db; padding-bottom: 6px; margin: 30px 0 14px;
+}
+.cv-doc.tpl-executive .cv-summary { color: #374151; line-height: 1.85; font-size: 13.5px; }
+.cv-doc.tpl-executive .cv-exp-title { color: #111827; font-weight: 700; font-size: 14px; }
+.cv-doc.tpl-executive .cv-exp-company { color: #c05600; font-weight: 600; }
+.cv-doc.tpl-executive .cv-exp-dates {
+  color: #9ca3af; font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 0.3px; text-transform: uppercase;
+}
+.cv-doc.tpl-executive .cv-exp-block li { color: #4b5563; line-height: 1.7; }
+.cv-doc.tpl-executive .cv-tag {
+  background: #ffffff; color: #374151; border: 1px solid #d1d5db;
+  border-radius: 3px; font-size: 11px; font-weight: 500; letter-spacing: 0.2px;
+}
+.cv-doc.tpl-executive .cv-link {
+  color: #c05600; background: #fafafa; border: 1px solid #e5e7eb;
+  border-radius: 3px; font-weight: 600;
+}
+.cv-doc.tpl-executive #cvGeneratedDate { color: #9ca3af; }
+
+/* ══════════════════════════════════════════════════
+   TEMPLATE: EDITORIAL
+   Print-magazine feel — Georgia serif masthead + labels,
+   Outfit body, hairline rules, deep-orange accent.
+══════════════════════════════════════════════════ */
+.cv-doc.tpl-editorial {
+  background: #fff;
+  color: #35332c;
+  font-family: 'Outfit', Georgia, sans-serif;
+}
+.cv-doc.tpl-editorial .cv-top-bar { background: #c2410c; height: 2px; }
+.cv-doc.tpl-editorial .cv-inner { padding: 0; }
+.cv-doc.tpl-editorial .cv-header-row {
+  padding: 40px 48px 18px;
+  margin-bottom: 0;
+  border-bottom: 3px double #1f1e1a;
+  align-items: flex-end;
+}
+.cv-doc.tpl-editorial .cv-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 34px; font-weight: 700; color: #1f1e1a;
+  letter-spacing: -0.2px; line-height: 1.05;
+}
+.cv-doc.tpl-editorial .cv-jobrole {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 2.5px; color: #c2410c; margin-top: 8px;
+}
+.cv-doc.tpl-editorial .cv-company {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic; font-size: 14px; color: #6f6a60; margin-top: 3px;
+}
+.cv-doc.tpl-editorial #cvPhotoBox img { border: 1px solid #d9d4c9; }
+.cv-doc.tpl-editorial .cv-body-area { padding: 26px 48px 38px; }
+.cv-doc.tpl-editorial .cv-section-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 3px; color: #c2410c;
+  border-bottom: 1px solid #d9d4c9; padding-bottom: 6px; margin: 28px 0 14px;
+}
+.cv-doc.tpl-editorial .cv-summary { font-size: 14px; line-height: 1.8; color: #35332c; }
+.cv-doc.tpl-editorial .cv-exp-title { font-size: 14px; font-weight: 700; color: #1f1e1a; }
+.cv-doc.tpl-editorial .cv-exp-company {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic; font-weight: 400; font-size: 13px; color: #c2410c;
+}
+.cv-doc.tpl-editorial .cv-exp-dates {
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.3px; color: #8a857a;
+}
+.cv-doc.tpl-editorial .cv-exp-block li { font-size: 13px; color: #35332c; line-height: 1.65; }
+.cv-doc.tpl-editorial .cv-tag {
+  background: #faf8f3; color: #262521; border: 1px solid #cfcabf;
+  border-radius: 2px; padding: 4px 11px; font-size: 11px; font-weight: 500; letter-spacing: 0.2px;
+}
+.cv-doc.tpl-editorial .cv-link {
+  color: #c2410c; background: transparent; border: none;
+  border-bottom: 1px solid #e3b7a3; border-radius: 0;
+  padding: 2px 1px; font-size: 13px; font-weight: 600;
+}
+.cv-doc.tpl-editorial #cvGeneratedDate { color: #8a857a; }
+
+/* Picker thumbnails for the new templates */
+.tpl-thumb-executive { background: #fff; }
+.tpl-thumb-executive .exec-topbar { height: 3px; background: #c05600; }
+.tpl-thumb-executive .exec-name { height: 8px; background: #111827; border-radius: 1px; margin: 10px 9px 4px; width: 58%; }
+.tpl-thumb-executive .exec-role { height: 4px; background: #9ca3af; border-radius: 1px; margin: 0 9px 7px; width: 34%; }
+.tpl-thumb-executive .exec-rule { height: 1px; background: #d1d5db; margin: 7px 9px; }
+.tpl-thumb-executive .exec-line { height: 4px; background: #e5e7eb; border-radius: 1px; margin: 4px 9px 3px; }
+.tpl-thumb-executive .exec-line.short { width: 62%; }
+.tpl-thumb-executive .exec-tags { display: flex; gap: 4px; margin: 8px 9px 0; }
+.tpl-thumb-executive .exec-tags span { height: 8px; width: 20px; border-radius: 2px; background: #fff; border: 1px solid #d1d5db; }
+
+.tpl-thumb-editorial { background: #fff; }
+.tpl-thumb-editorial .edi-topbar { height: 2px; background: #c2410c; }
+.tpl-thumb-editorial .edi-name { background: #1f1e1a; height: 8px; width: 62%; border-radius: 1px; margin: 9px 8px 3px; }
+.tpl-thumb-editorial .edi-role { background: #c2410c; height: 4px; width: 34%; border-radius: 1px; margin: 0 8px 5px; }
+.tpl-thumb-editorial .edi-rule-dbl { height: 3px; border-top: 1px solid #1f1e1a; border-bottom: 1px solid #1f1e1a; margin: 0 8px 7px; }
+.tpl-thumb-editorial .edi-line { background: #e2ded5; height: 4px; border-radius: 1px; margin: 4px 8px 2px; }
+.tpl-thumb-editorial .edi-line.short { width: 60%; }
+.tpl-thumb-editorial .edi-tags { display: flex; gap: 3px; margin: 7px 8px 0; }
+.tpl-thumb-editorial .edi-tags span { height: 8px; width: 20px; border-radius: 2px; background: #faf8f3; border: 1px solid #cfcabf; }
 
 /* ── Manager Dashboard: stored profile list ── */
 .uploaded-file-item {
@@ -4102,7 +4257,11 @@ html.light .tpl-radio-card { background: #fff; }
 .wz-progress-wrap {
   max-width: 760px;
   margin: 0 auto 32px;
-  padding: 0 24px;
+  padding: 14px 24px 12px;
+  position: sticky;
+  top: 61px;
+  z-index: 6;
+  background: var(--bg);
 }
 .wz-progress-track {
   height: 6px;
@@ -4134,6 +4293,15 @@ html.light .tpl-radio-card { background: #fff; }
 }
 .wz-step-label.wz-label-done { color: var(--orange); }
 .wz-step-label.wz-label-active { color: var(--text); }
+button.wz-step-label {
+  font-family: 'Outfit', sans-serif;
+  background: none;
+  border: none;
+  padding: 2px 1px;
+  border-radius: 4px;
+}
+.wz-label-clickable { cursor: pointer; }
+.wz-label-clickable:hover { color: var(--orange); background: var(--orange-glow); }
 
 /* Step card */
 .wz-step-wrap {
@@ -6423,6 +6591,26 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
           <div class="tpl-radio-info"><strong>Modern</strong><span>Bold sidebar, pill sections</span></div>
           <div class="tpl-radio-check">✓</div>
         </label>
+        <label class="tpl-radio-card" id="tplCard_executive">
+          <input type="radio" name="cvTemplate" value="executive" onchange="highlightTplCard(this)">
+          <div class="tpl-radio-thumb tpl-thumb-executive">
+            <div class="exec-topbar"></div><div class="exec-name"></div><div class="exec-role"></div>
+            <div class="exec-rule"></div><div class="exec-line"></div><div class="exec-line short"></div>
+            <div class="exec-tags"><span></span><span></span><span></span></div>
+          </div>
+          <div class="tpl-radio-info"><strong>Executive</strong><span>Graphite, hairline rules</span></div>
+          <div class="tpl-radio-check">✓</div>
+        </label>
+        <label class="tpl-radio-card" id="tplCard_editorial">
+          <input type="radio" name="cvTemplate" value="editorial" onchange="highlightTplCard(this)">
+          <div class="tpl-radio-thumb tpl-thumb-editorial">
+            <div class="edi-topbar"></div><div class="edi-name"></div><div class="edi-role"></div>
+            <div class="edi-rule-dbl"></div><div class="edi-line"></div><div class="edi-line short"></div>
+            <div class="edi-tags"><span></span><span></span><span></span></div>
+          </div>
+          <div class="tpl-radio-info"><strong>Editorial</strong><span>Serif masthead, classic</span></div>
+          <div class="tpl-radio-check">✓</div>
+        </label>
       </div>
 
       <button class="btn-generate-full" onclick="generateCV()" style="margin-top:28px;">⚡ Generate Skills Profile</button>
@@ -6445,13 +6633,15 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
           <button class="cvgb-tpl active" data-tpl="minimal" onclick="switchTpl('minimal',this)">Minimal</button>
           <button class="cvgb-tpl" data-tpl="corporate" onclick="switchTpl('corporate',this)">Corporate</button>
           <button class="cvgb-tpl" data-tpl="modern" onclick="switchTpl('modern',this)">Modern</button>
+          <button class="cvgb-tpl" data-tpl="executive" onclick="switchTpl('executive',this)">Executive</button>
+          <button class="cvgb-tpl" data-tpl="editorial" onclick="switchTpl('editorial',this)">Editorial</button>
         </div>
       </div>
       <div class="cvgb-right">
         <button class="cvgb-btn cvgb-pdf" id="cvgbPdfBtn" onclick="downloadCVPDF()">📄&nbsp; Download PDF</button>
         <button class="cvgb-btn cvgb-word" onclick="downloadCVDocx()">⬇&nbsp; Word</button>
         <button class="cvgb-btn cvgb-json" onclick="downloadCVJSON()">⬇&nbsp; JSON</button>
-        <button class="cvgb-btn cvgb-print" onclick="window.print()">🖨&nbsp; Print</button>
+        <button class="cvgb-btn cvgb-print" onclick="printCV()">🖨&nbsp; Print</button>
         <button class="cvgb-btn cvgb-sharepoint" id="spUploadBtn" onclick="sendToSharePoint()">📤&nbsp; SharePoint</button>
       </div>
     </div>
@@ -7136,6 +7326,7 @@ function showPage(page) {
   tabs[map[page]].classList.add('active');
   if (page === 'resources') { initResources(); initDaCourses(); }
   if (page === 'connect') initConnect();
+  try { history.replaceState(null, '', '#' + page); } catch (_) {}
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -7171,6 +7362,24 @@ function initPageChrome() {
   onScroll();
   // Close the mobile menu with Escape
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNav(); });
+  // Force-close the drawer when leaving mobile width, so body scroll-lock and
+  // the backdrop never get stranded after a resize/rotate while it's open.
+  const mq = window.matchMedia('(max-width: 980px)');
+  (mq.addEventListener ? mq.addEventListener('change', e => { if (!e.matches) closeNav(); })
+                       : mq.addListener(e => { if (!e.matches) closeNav(); }));
+  // Deep-link routing: honor the URL hash on load + back/forward
+  routeFromHash();
+  window.addEventListener('hashchange', routeFromHash);
+}
+
+/* Map the URL hash (#builder, #resources, …) to a page on load / navigation */
+function routeFromHash() {
+  const valid = ['home','builder','executive','resources','connect','links'];
+  const h = (location.hash || '').replace('#','');
+  if (valid.includes(h)) {
+    const active = document.querySelector('.page.active');
+    if (!active || active.id !== 'page-' + h) showPage(h);
+  }
 }
 
 /* ===================================================
@@ -7579,6 +7788,7 @@ function wzSyncPresetLinks() { /* live sync handled at generate time */ }
    WIZARD NAVIGATION
 =================================================== */
 let wzCurrent = 0; // 0 = welcome
+let wzMaxReached = 0; // furthest step the user has reached (for clickable labels)
 
 const WZ_STEP_NAMES = ['', 'Basic Info', 'Education', 'Languages', 'Links',
   'Certifications', 'Tools', 'Skills', 'Products', 'Experience', 'Custom', 'Template'];
@@ -7600,6 +7810,7 @@ function wzGoto(step) {
     });
   }
   wzCurrent = step;
+  if (step > wzMaxReached) wzMaxReached = step;
 
   const bar = document.getElementById('wzProgressBar');
   if (step === 0) {
@@ -7626,10 +7837,17 @@ function wzUpdateProgress(step) {
   labelsEl.innerHTML = '';
   WZ_STEP_NAMES.slice(1).forEach((name, i) => {
     const s = i + 1;
-    const div = document.createElement('div');
+    const reached = s <= wzMaxReached;
+    const div = document.createElement(reached ? 'button' : 'div');
     div.className = 'wz-step-label' +
-      (s < step ? ' wz-label-done' : s === step ? ' wz-label-active' : '');
+      (s < step ? ' wz-label-done' : s === step ? ' wz-label-active' : '') +
+      (reached ? ' wz-label-clickable' : '');
     div.textContent = name;
+    if (reached) {
+      div.type = 'button';
+      div.title = 'Go to ' + name;
+      div.onclick = () => wzGoto(s);
+    }
     labelsEl.appendChild(div);
   });
 }
@@ -7776,7 +7994,7 @@ function applyTemplate(name, btn) {
   if (!doc) return;
 
   // Swap template class
-  doc.classList.remove('tpl-minimal', 'tpl-corporate', 'tpl-modern');
+  doc.classList.remove('tpl-minimal', 'tpl-corporate', 'tpl-modern', 'tpl-executive', 'tpl-editorial');
   doc.classList.add('tpl-' + name);
 
   // Sync generated bar buttons
@@ -8629,7 +8847,7 @@ function generateCV() {
   if (photoInput.files.length > 0) {
     const reader = new FileReader();
     reader.onload = e => {
-      photoBox.innerHTML = `<img src="${e.target.result}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #FF7900;">`;
+      photoBox.innerHTML = `<img src="${e.target.result}" alt="Profile photo">`;
     };
     reader.readAsDataURL(photoInput.files[0]);
   } else { photoBox.innerHTML = ''; }
@@ -8782,9 +9000,19 @@ async function downloadCVDocx() {
 
     const d = currentCVData;
     const tpl    = currentTemplate || 'minimal';
-    const accent = tpl === 'corporate' ? '3B5BDB' : 'FF7900';
-    const hdrBg  = tpl === 'corporate' ? '1E2233' : tpl === 'modern' ? '18181B' : 'FF7900';
-    const tagFg  = tpl === 'corporate' ? '3B5BDB' : 'C05800';
+    // Per-template Word colours. Header band always carries WHITE text,
+    // so every hdrBg must be dark enough to stay readable.
+    const TPL_DOCX = {
+      minimal:   { accent: 'FF7900', hdrBg: 'FF7900', tagFg: 'C05800' },
+      corporate: { accent: '3B5BDB', hdrBg: '1E2233', tagFg: '3B5BDB' },
+      modern:    { accent: 'FF7900', hdrBg: '18181B', tagFg: 'C05800' },
+      executive: { accent: 'C05600', hdrBg: '1F2937', tagFg: '374151' },
+      editorial: { accent: 'C2410C', hdrBg: '1F1E1A', tagFg: '55504A' }
+    };
+    const _c = TPL_DOCX[tpl] || TPL_DOCX.minimal;
+    const accent = _c.accent;
+    const hdrBg  = _c.hdrBg;
+    const tagFg  = _c.tagFg;
 
     // ── XML primitives ────────────────────────────────────────────
     const esc = s => String(s||'')
@@ -8972,6 +9200,20 @@ async function downloadCVDocx() {
   finish();
 }
 /* ===================================================
+   PRINT CV  (scoped so only the CV document prints,
+   while a plain Ctrl+P on any other page still works)
+=================================================== */
+function printCV() {
+  if (!currentCVData) { obAlert('Please generate your CV first.', {title:'Nothing to print', icon:'🖨️'}); return; }
+  const add = () => document.body.classList.add('printing-cv');
+  const remove = () => document.body.classList.remove('printing-cv');
+  window.addEventListener('beforeprint', add, { once: true });
+  window.addEventListener('afterprint', remove, { once: true });
+  add();            // apply immediately for browsers that skip beforeprint
+  window.print();
+}
+
+/* ===================================================
    DOWNLOAD CV AS PDF  (client-side, html2pdf.js)
    Produces a crisp A4 PDF from the live CV preview,
    with brand colours preserved and smart page breaks.
@@ -9017,13 +9259,21 @@ async function downloadCVPDF() {
 
     const safeName = (currentCVData.name || 'DPM').trim().replace(/[^\w\-]+/g, '_').replace(/^_|_$/g, '') || 'DPM';
 
+    // Scale the raster down for tall (multi-page) CVs so the rendered canvas
+    // stays under browser pixel caps (~16.7M px / ~16k per dimension on Safari);
+    // short CVs still get a crisp 2.5x.
+    const docH = clone.scrollHeight || 1123;
+    const scale = Math.max(1.4, Math.min(2.5, Math.floor((15800 / docH) * 100) / 100));
+
     await window.html2pdf().set({
       margin:   [10, 10, 12, 10],
       filename: safeName + '_CV.pdf',
-      image:    { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2.5, useCORS: true, backgroundColor: '#ffffff', windowWidth: 794, scrollX: 0, scrollY: 0 },
+      image:    { type: 'jpeg', quality: 0.97 },
+      html2canvas: { scale: scale, useCORS: true, backgroundColor: '#ffffff', windowWidth: 794, scrollX: 0, scrollY: 0 },
       jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-      pagebreak:{ mode: ['css', 'legacy'], avoid: ['.cv-exp-block', '.cv-section-title', '.cv-tag', '.cv-link'] }
+      // Only avoid breaking *inside* a section heading — avoiding breaks inside
+      // whole experience blocks clips any block taller than one page.
+      pagebreak:{ mode: ['css', 'legacy'], avoid: ['.cv-section-title'] }
     }).from(clone).save();
 
     obToast('✓ PDF downloaded');

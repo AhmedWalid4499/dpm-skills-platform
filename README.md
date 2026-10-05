@@ -44,7 +44,7 @@ A clean 11-step wizard covering:
 | 8 | Products & Services — 25 Orange Business products |
 | 9 | Work Experience — jobs with bullet points |
 | 10 | Custom Sections — free-form additional content |
-| 11 | Template selection + Generate |
+| 11 | Template selection + Generate — **5 CV templates**: Minimal, Corporate, Modern, Executive (graphite/hairline), Editorial (serif masthead) |
 
 **Exports:**
 - 📄 **PDF** — one-click, print-ready A4 CV generated client-side (brand colours preserved, smart page breaks). This is the recommended share format.
