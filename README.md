@@ -7,7 +7,7 @@
 
 ## 🚀 Live Site
 
-**[→ Open Platform](https://ahmedwalid4499.github.io/orange-dpm-skills/)**
+**[→ Open Platform](https://ahmedwalid4499.github.io/dpm-skills-platform/)**
 
 > No login required. No backend. No installation. Just open and use.
 
