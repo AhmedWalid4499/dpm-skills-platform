@@ -101,7 +101,125 @@ header {
 }
 
 .nav-tab:hover { color: var(--white); }
-.nav-tab.active { background: var(--orange); color: white; }
+.nav-tab.active { background: var(--orange); color: white; box-shadow: 0 2px 10px var(--orange-glow); }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.header-tour-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.header-tour-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ===== SCROLL PROGRESS BAR ===== */
+#scrollProgress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--orange), #ffb066);
+  z-index: 200;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 8px var(--orange-glow);
+}
+
+/* ===== MOBILE NAV TOGGLE (hamburger) ===== */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px; height: 42px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0 11px;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+#navBackdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  z-index: 98;
+}
+#navBackdrop.open { display: block; }
+
+/* ===== BACK TO TOP ===== */
+#backToTop {
+  position: fixed;
+  bottom: 26px; right: 26px;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--orange);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 150;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.18s;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.3), 0 0 0 4px var(--orange-glow);
+}
+#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#backToTop:hover { background: var(--orange-dim); transform: translateY(-3px); }
+
+@media (max-width: 980px) {
+  header { padding: 14px 20px; }
+  .nav-toggle { display: flex; }
+  .header-tour-btn { display: none; }
+  .nav-tabs {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: min(290px, 82vw);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 86px 18px 24px;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--border);
+    background: var(--header-bg);
+    box-shadow: -12px 0 40px var(--shadow);
+    transform: translateX(105%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    z-index: 99;
+    overflow-y: auto;
+  }
+  .nav-tabs.open { transform: translateX(0); }
+  .nav-tab {
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+}
 
 /* ===== HERO ===== */
 .hero {
@@ -2080,11 +2198,36 @@ html.light .exec-chart-card { box-shadow: 0 1px 6px var(--shadow); }
 html.light .exec-kpi { box-shadow: 0 1px 4px var(--shadow); }
 
 /* ===== PRINT / PDF STYLES ===== */
-@media print {
-  body { background: white; color: black; }
-  header, .nav-tabs, .action-bar, .cv-generated-bar, .btn-dl, .exec-upload-zone, .gen-section, #cvPreviewWrap > .action-bar { display: none !important; }
-  .cv-doc { box-shadow: none; }
+@page {
+  size: A4 portrait;
+  margin: 12mm 12mm 14mm;
 }
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { background: #ffffff !important; color: #000 !important; }
+  header, #scrollProgress, #navBackdrop, #backToTop, .nav-tabs, .nav-toggle,
+  .action-bar, .cv-generated-bar, .btn-dl, .exec-upload-zone, .gen-section,
+  #cvPreviewWrap > .action-bar, #personalDashWrap, footer, .wz-progress-wrap { display: none !important; }
+
+  /* The CV fills the printed page edge-to-edge of the @page margin box */
+  #cvPreviewWrap { display: block !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
+  .cv-doc {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* Keep logical blocks from splitting across pages */
+  .cv-section-title { break-after: avoid; page-break-after: avoid; }
+  .cv-exp-block, .cv-tag, .cv-link, .cv-header-row { break-inside: avoid; page-break-inside: avoid; }
+  .cv-summary { orphans: 3; widows: 3; }
+}
+
+/* Break hints also respected by html2pdf capture */
+.cv-section-title { break-after: avoid; }
+.cv-exp-block { break-inside: avoid; }
 
 @media (max-width: 640px) {
   .chart-row, .exec-charts-grid { grid-template-columns: 1fr; }
@@ -2858,10 +3001,13 @@ html.light .tpl-radio-card { background: #fff; }
   transition: all 0.18s;
   white-space: nowrap;
 }
-.cvgb-word  { background: var(--orange); color: #fff; border: none; }
-.cvgb-word:hover { background: var(--orange-dim); }
-.cvgb-json  { background: transparent; color: var(--orange); border: 1.5px solid rgba(255,121,0,0.5); }
-.cvgb-json:hover  { background: rgba(255,121,0,0.08); }
+.cvgb-pdf   { background: linear-gradient(135deg, #FF7900, #ff9b3d); color: #fff; border: none; box-shadow: 0 4px 14px var(--orange-glow); }
+.cvgb-pdf:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+.cvgb-pdf:disabled { cursor: progress; }
+.cvgb-word  { background: transparent; color: var(--orange); border: 1.5px solid rgba(255,121,0,0.5); }
+.cvgb-word:hover { background: rgba(255,121,0,0.08); }
+.cvgb-json  { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+.cvgb-json:hover  { border-color: var(--orange); color: var(--orange); }
 .cvgb-print { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
 .cvgb-print:hover { border-color: var(--muted); color: var(--text); }
 
@@ -5395,10 +5541,11 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
 </head>
 <body>
 
+<div id="scrollProgress" aria-hidden="true"></div>
 <header>
-  <div class="header-logo">Orange <span>Business</span> · DPM Skills</div>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="nav-tabs">
+  <div class="header-logo" onclick="showPage('home')" style="cursor:pointer;">Orange <span>Business</span> · DPM Skills</div>
+  <div class="header-right">
+    <div class="nav-tabs" id="navTabs">
       <button class="nav-tab active" onclick="showPage('home')">Home</button>
       <button class="nav-tab" onclick="showPage('builder')">CV Builder</button>
       <button class="nav-tab" onclick="showPage('executive')">Manager Dashboard</button>
@@ -5406,14 +5553,18 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
       <button class="nav-tab" onclick="showPage('connect')">Ask for Help</button>
       <button class="nav-tab" onclick="showPage('links')">🔗 Useful Links</button>
     </div>
-    <button onclick="showTour()" title="Take the onboarding tour" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">👋 Tour</button>
+    <button onclick="showTour()" class="header-tour-btn" title="Take the onboarding tour">👋 Tour</button>
     <div class="theme-toggle-wrap" title="Toggle light / dark mode">
       <span class="theme-icon" id="themeIconDark">🌙</span>
       <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme"></button>
       <span class="theme-icon" id="themeIconLight">☀️</span>
     </div>
+    <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Open navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div id="navBackdrop" onclick="closeNav()" aria-hidden="true"></div>
 
 <!-- HOME PAGE -->
 <div id="page-home" class="page active">
@@ -6297,10 +6448,11 @@ html.light .cta-banner { background: linear-gradient(135deg, rgba(232,109,0,0.08
         </div>
       </div>
       <div class="cvgb-right">
-        <button class="cvgb-btn cvgb-word" onclick="downloadCVDocx()">⬇&nbsp; Download Word</button>
-        <button class="cvgb-btn cvgb-json" onclick="downloadCVJSON()">⬇&nbsp; Download JSON</button>
+        <button class="cvgb-btn cvgb-pdf" id="cvgbPdfBtn" onclick="downloadCVPDF()">📄&nbsp; Download PDF</button>
+        <button class="cvgb-btn cvgb-word" onclick="downloadCVDocx()">⬇&nbsp; Word</button>
+        <button class="cvgb-btn cvgb-json" onclick="downloadCVJSON()">⬇&nbsp; JSON</button>
         <button class="cvgb-btn cvgb-print" onclick="window.print()">🖨&nbsp; Print</button>
-        <button class="cvgb-btn cvgb-sharepoint" id="spUploadBtn" onclick="sendToSharePoint()">📤&nbsp; Send to SharePoint</button>
+        <button class="cvgb-btn cvgb-sharepoint" id="spUploadBtn" onclick="sendToSharePoint()">📤&nbsp; SharePoint</button>
       </div>
     </div>
     <div class="cv-doc" id="cvDoc">
@@ -6975,6 +7127,7 @@ const PM_CATEGORIES = {
    NAVIGATION
 =================================================== */
 function showPage(page) {
+  closeNav();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
@@ -6984,6 +7137,40 @@ function showPage(page) {
   if (page === 'resources') { initResources(); initDaCourses(); }
   if (page === 'connect') initConnect();
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===================================================
+   MOBILE NAV + PAGE CHROME (progress bar, back-to-top)
+=================================================== */
+function toggleNav() {
+  const open = document.getElementById('navTabs').classList.toggle('open');
+  document.getElementById('navToggle').classList.toggle('open', open);
+  document.getElementById('navToggle').setAttribute('aria-expanded', open ? 'true' : 'false');
+  document.getElementById('navBackdrop').classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeNav() {
+  document.getElementById('navTabs')?.classList.remove('open');
+  document.getElementById('navToggle')?.classList.remove('open');
+  document.getElementById('navToggle')?.setAttribute('aria-expanded', 'false');
+  document.getElementById('navBackdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function initPageChrome() {
+  const prog = document.getElementById('scrollProgress');
+  const btt  = document.getElementById('backToTop');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    if (prog) prog.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    if (btt) btt.classList.toggle('show', scrolled > 420);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  onScroll();
+  // Close the mobile menu with Escape
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNav(); });
 }
 
 /* ===================================================
@@ -8785,6 +8972,71 @@ async function downloadCVDocx() {
   finish();
 }
 /* ===================================================
+   DOWNLOAD CV AS PDF  (client-side, html2pdf.js)
+   Produces a crisp A4 PDF from the live CV preview,
+   with brand colours preserved and smart page breaks.
+=================================================== */
+async function downloadCVPDF() {
+  if (!currentCVData) { obAlert('Please generate your CV first.', {title:'Nothing to export', icon:'📄'}); return; }
+
+  const btn  = document.getElementById('cvgbPdfBtn');
+  const orig = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '⏳&nbsp; Building PDF…'; btn.disabled = true; }
+
+  let holder = null;
+  try {
+    // Load the PDF engine on demand, trying several CDNs for resilience.
+    if (typeof window.html2pdf === 'undefined') {
+      const cdns = [
+        'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.3/html2pdf.bundle.min.js',
+        'https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.3/dist/html2pdf.bundle.min.js',
+        'https://unpkg.com/html2pdf.js@0.10.3/dist/html2pdf.bundle.min.js'
+      ];
+      for (const url of cdns) {
+        try { await loadScript(url); } catch (_) { /* try next */ }
+        if (typeof window.html2pdf !== 'undefined') break;
+      }
+    }
+    if (typeof window.html2pdf === 'undefined') {
+      throw new Error('The PDF engine could not be loaded. Please check your connection, or use the Print button and choose “Save as PDF”.');
+    }
+
+    // Render from a clean, fixed-width, print-safe clone so the output
+    // never inherits the dark UI theme, rounded corners, or shadows.
+    const src = document.getElementById('cvDoc');
+    holder = document.createElement('div');
+    holder.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;background:#ffffff;';
+    const clone = src.cloneNode(true);
+    clone.style.boxShadow = 'none';
+    clone.style.borderRadius = '0';
+    clone.style.width = '794px';
+    clone.style.maxWidth = 'none';
+    clone.style.margin = '0';
+    holder.appendChild(clone);
+    document.body.appendChild(holder);
+
+    const safeName = (currentCVData.name || 'DPM').trim().replace(/[^\w\-]+/g, '_').replace(/^_|_$/g, '') || 'DPM';
+
+    await window.html2pdf().set({
+      margin:   [10, 10, 12, 10],
+      filename: safeName + '_CV.pdf',
+      image:    { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2.5, useCORS: true, backgroundColor: '#ffffff', windowWidth: 794, scrollX: 0, scrollY: 0 },
+      jsPDF:    { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+      pagebreak:{ mode: ['css', 'legacy'], avoid: ['.cv-exp-block', '.cv-section-title', '.cv-tag', '.cv-link'] }
+    }).from(clone).save();
+
+    obToast('✓ PDF downloaded');
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    obAlert((err && err.message) || 'Could not generate the PDF.', {title:'PDF export failed', icon:'⚠️'});
+  } finally {
+    if (holder && holder.parentNode) holder.remove();
+    if (btn) { btn.innerHTML = orig; btn.disabled = false; }
+  }
+}
+
+/* ===================================================
    DOWNLOAD CV JSON
 =================================================== */
 function downloadCVJSON() {
@@ -10047,6 +10299,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCompleteness();
   initTour();
   initLanding();
+  initPageChrome();
 
   // Mark first template card as selected
   const defaultCard = document.getElementById('tplCard_minimal');
@@ -12585,6 +12838,9 @@ function obToast(msg) {
 <footer style="border-top:1px solid var(--border);padding:20px;text-align:center;font-size:12px;color:var(--muted);font-family:'Outfit',sans-serif;">
   © 2026 Ahmed El-Bourgy · All rights reserved
 </footer>
+
+<!-- BACK TO TOP -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top" title="Back to top">↑</button>
 
 
 <!-- ═══════════════════════════════════════════════
